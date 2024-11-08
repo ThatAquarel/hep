@@ -14,7 +14,6 @@ def main(events_file, mass_file):
             if len(header_rows) and (i - header_rows[-1]) > 5:
                 break
     events = pd.read_csv(events_file, sep="\\s+", skiprows=header_rows)
-
     (event_start,) = np.where(events["#"] == 0)
 
     event_col = np.empty(len(events), dtype=np.int32)
@@ -31,7 +30,9 @@ def main(events_file, mass_file):
 
     y = events[events["typ"] == 0]
     n_y_max = y["#"].max()
+    print(f"max {n_y_max} photons per event")
     n_events = len(event_start)
+    print(f"calculate inv mass for {n_events} events")
 
     y_groups = []
     indices = pd.Series(range(n_events), name="event_n")
@@ -46,9 +47,12 @@ def main(events_file, mass_file):
     y_combinations = combinations(range(n_y_max), 2)
 
     mass_col = lambda i, j: f"M{i}{j}"
-    m_combinations = [mass_col(i, j) for i, j in y_combinations]
+    columns = [mass_col(i, j) for i, j in y_combinations]
+    columns.insert(0, "photons")
 
-    mass = pd.DataFrame(index=indices, columns=m_combinations)
+    mass = pd.DataFrame(index=indices, columns=columns)
+    mass["photons"] = np.bincount(y["event_n"])
+
     for i, j in combinations(range(n_y_max), 2):
         y_a, y_b = y_groups[i], y_groups[j]
 
@@ -58,7 +62,7 @@ def main(events_file, mass_file):
         m = np.sqrt(2 * np.abs(y_a["pt"] * y_b["pt"]) * (cosh_d_eta - cos_d_phi))
         mass[mass_col(i, j)] = m
 
-    mass.to_csv(mass_file, index=True, index_label="n_event")
+    mass.to_csv(mass_file, index=True, index_label="event")
 
 
 if __name__ == "__main__":
