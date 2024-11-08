@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 def main(
     inv_mass_file,
     start_m=100,
-    end_m=160,
+    end_m=180,
     bin_width=2,
     sb_fit_ndeg=32,
     b_fit_ndeg=4,
@@ -67,6 +67,9 @@ def main(
 
     s.set_ylabel(f"$Significance\\ (\\sigma)$")
     s.set_xlabel(f"${m}\\ (GeV)$")
+
+    # s.plot(x_resample, sig_resample)
+
     sb.legend(loc="upper right")
 
     plt.show()
