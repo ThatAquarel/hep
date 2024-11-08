@@ -1,3 +1,22 @@
+# Invariant Mass Calculator
+#
+# Computes masses for diphoton events
+#
+# Requirements:
+#    numpy
+#    pandas
+#
+# Command line arguemnts:
+#    -i input.dat
+#    -o output.csv
+#
+# Example:
+#    python a_inv_mass.py -i TenEvents.dat -o mass.csv
+#    python a_inv_mass.py -i studentsDataA/DiphotonsA.dat -o inv_mass_a.csv
+#
+# 2024/11/08   Alex Xia: Initial Code
+
+
 import argparse
 from itertools import combinations
 

@@ -1,3 +1,24 @@
+# Histogram Display for Higgs Diphoton Events
+#
+# Bins Masses of Diphoton Events and
+# Displays Higgs Mass
+#
+# Requirements:
+#    numpy
+#    pandas
+#    matplotlib
+#
+#    latex
+#
+# Command line arguemnts:
+#    -i inv_mass.csv
+#
+# Example to run:
+#    python b_mass_hist.py -i inv_mass_a.csv
+#
+# 2024/11/08   Alex Xia: Initial Code
+
+
 import argparse
 
 import numpy as np
