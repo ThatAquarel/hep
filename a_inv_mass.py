@@ -7,7 +7,12 @@ import pandas as pd
 
 def main(events_file, mass_file):
     with open(events_file, "r") as f:
-        header_rows = [i for i, l in enumerate(f) if l.startswith("#")]
+        header_rows = []
+        for i, l in enumerate(f):
+            if l.startswith("#"):
+                header_rows.append(i)
+            if len(header_rows) and (i - header_rows[-1]) > 5:
+                break
     events = pd.read_csv(events_file, sep="\\s+", skiprows=header_rows)
 
     (event_start,) = np.where(events["#"] == 0)
