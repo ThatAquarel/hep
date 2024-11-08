@@ -8,7 +8,7 @@ import pandas as pd
 def main(events_file, mass_file):
     with open(events_file, "r") as f:
         header_rows = [i for i, l in enumerate(f) if l.startswith("#")]
-    events = pd.read_csv(events_file, sep="\s+", skiprows=header_rows)
+    events = pd.read_csv(events_file, sep="\\s+", skiprows=header_rows)
 
     (event_start,) = np.where(events["#"] == 0)
 
@@ -53,7 +53,7 @@ def main(events_file, mass_file):
         m = np.sqrt(2 * np.abs(y_a["pt"] * y_b["pt"]) * (cosh_d_eta - cos_d_phi))
         mass[mass_col(i, j)] = m
 
-    mass.to_csv(mass_file, index=False)
+    mass.to_csv(mass_file, index=True, index_label="n_event")
 
 
 if __name__ == "__main__":
