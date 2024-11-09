@@ -1,21 +1,20 @@
 # Invariant Mass Calculator
-#
-# Computes masses for diphoton events
+#    Computes masses for diphoton events
+#    https://github.com/ThatAquarel/hep
 #
 # Requirements:
 #    numpy
 #    pandas
 #
-# Command line arguemnts:
-#    -i input.dat
-#    -o output.csv
-#
 # Example:
-#    python a_inv_mass.py -i TenEvents.dat -o mass.csv
-#    python a_inv_mass.py -i studentsDataA/DiphotonsA.dat -o inv_mass_a.csv
+#    With events file TenEvents.dat, ouput invariant masses as mass.csv:
+#    >> python a_inv_mass.py -i TenEvents.dat -o mass.csv
+#
+#    With events file DiphotonsA.dat, ouput invariant masses as inv_mass_a.csv:
+#    >> python a_inv_mass.py -i studentsDataA/DiphotonsA.dat -o inv_mass_a.csv
 #
 # Modifications:
-#    2024/11/08   Alex Xia: Initial Code, Author
+#    2024/11/08   Alex Xia:     Initial Code, Author
 #
 
 import argparse
@@ -25,7 +24,17 @@ import numpy as np
 import pandas as pd
 
 
-def main(events_file, mass_file):
+def main(
+    events_file,
+    mass_file,
+):
+    """
+    Computes masses for diphoton events
+
+    :param events_file:     Input events file in .dat format
+    :param mass_file:       Output calculated masses in .csv
+    """
+
     # identify rows of header
     with open(events_file, "r") as f:
         header_rows = []
