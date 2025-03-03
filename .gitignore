@@ -1,7 +1,7 @@
 *.lck
 *.kicad_prl
 *.zip
-fp*
+fp-*
 **/gerber/
 *.bak
 *sym-lib-table
