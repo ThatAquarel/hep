@@ -5,3 +5,4 @@ fp-*
 **/gerber/
 *.bak
 *sym-lib-table
+*.pyc
