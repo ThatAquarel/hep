@@ -1,0 +1,17 @@
+# Assign parallel input data lines
+set_io D[0] 1
+set_io D[1] 2
+set_io D[2] 3
+set_io D[3] 4
+set_io D[4] 7
+set_io D[5] 8
+set_io D[6] 9
+set_io D[7] 10
+
+# Assign control signals
+set_io RST 11
+set_io CLK 12
+set_io LOAD 19
+
+# Assign serial output
+set_io Q 20

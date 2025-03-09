@@ -1,0 +1,3 @@
+set_io A 38   # Connect input A to pin 1
+set_io B 39  # Connect input B to pin 10
+set_io Y 41  # Connect output Y to pin 11
