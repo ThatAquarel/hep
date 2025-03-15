@@ -2,7 +2,7 @@
 	(version 20231120)
 	(generator "eeschema")
 	(generator_version "8.0")
-	(uuid "5305b06c-9e78-4fb8-90cd-e5996edf077c")
+	(uuid "c4719268-2dae-4316-ba36-06865ea9676f")
 	(paper "A4")
 	(lib_symbols
 		(symbol "Device:C"
@@ -1311,6 +1311,16 @@
 	)
 	(wire
 		(pts
+			(xy 217.17 45.72) (xy 217.17 52.07)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "08ca83bc-8cd0-4954-a3bd-ec9f407477a6")
+	)
+	(wire
+		(pts
 			(xy 60.96 115.57) (xy 58.42 115.57)
 		)
 		(stroke
@@ -1651,6 +1661,16 @@
 	)
 	(wire
 		(pts
+			(xy 217.17 59.69) (xy 217.17 68.58)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "326fc77a-711d-4e82-9ef0-8a672575107b")
+	)
+	(wire
+		(pts
 			(xy 58.42 173.99) (xy 58.42 177.8)
 		)
 		(stroke
@@ -1961,6 +1981,16 @@
 	)
 	(wire
 		(pts
+			(xy 259.08 45.72) (xy 259.08 52.07)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "63d2f7e9-ee80-491e-a4ac-7441d1cbf6e5")
+	)
+	(wire
+		(pts
 			(xy 232.41 46.99) (xy 232.41 52.07)
 		)
 		(stroke
@@ -2071,6 +2101,16 @@
 	)
 	(wire
 		(pts
+			(xy 259.08 111.76) (xy 259.08 120.65)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "76219a2c-dc04-4cb5-83f4-b4216e4485c9")
+	)
+	(wire
+		(pts
 			(xy 106.68 35.56) (xy 116.84 35.56)
 		)
 		(stroke
@@ -2118,6 +2158,16 @@
 			(type default)
 		)
 		(uuid "80190cd6-b02c-4fcb-820c-6dd3d73a429a")
+	)
+	(wire
+		(pts
+			(xy 259.08 97.79) (xy 259.08 104.14)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "81e76c69-3bfc-48e6-8446-254ec234c84b")
 	)
 	(wire
 		(pts
@@ -2188,6 +2238,16 @@
 			(type default)
 		)
 		(uuid "8b1fcdd7-e12a-4eb5-85fe-e405e4aedeed")
+	)
+	(wire
+		(pts
+			(xy 259.08 59.69) (xy 259.08 68.58)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8c886a93-3096-40bb-8bdc-f5a2072be4f9")
 	)
 	(wire
 		(pts
@@ -2328,6 +2388,16 @@
 			(type default)
 		)
 		(uuid "a1e820dc-48d0-4ffa-9722-73517c3a1e81")
+	)
+	(wire
+		(pts
+			(xy 217.17 111.76) (xy 217.17 120.65)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a4091c75-83ee-48c6-8acb-b71ec2081f0e")
 	)
 	(wire
 		(pts
@@ -2991,6 +3061,16 @@
 	)
 	(wire
 		(pts
+			(xy 217.17 97.79) (xy 217.17 104.14)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f5a76e02-fd47-4eee-8402-4514d4a49663")
+	)
+	(wire
+		(pts
 			(xy 105.41 85.09) (xy 105.41 87.63)
 		)
 		(stroke
@@ -3184,6 +3264,75 @@
 		(uuid "e3f46374-8a23-4ae7-b3ab-40fe5a629fcf")
 	)
 	(symbol
+		(lib_id "Device:C")
+		(at 217.17 107.95 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "0182c01d-84b1-46f4-af9e-5d8399cf78ea")
+		(property "Reference" "C49"
+			(at 217.424 103.124 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "10n"
+			(at 217.424 105.664 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
+			(at 218.1352 111.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 217.17 107.95 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 217.17 107.95 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "54b3155f-5a5d-465d-86b7-e3d688d3f34c")
+		)
+		(pin "2"
+			(uuid "5d4dad68-5cbd-499c-9d18-be55f740e62b")
+		)
+		(instances
+			(project "trigger"
+				(path "/78398317-4708-4f0b-8983-0fbb7308b4de/c212c276-23e3-4d16-ac65-14c6438f62a0"
+					(reference "C49")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:+5V")
 		(at 227.33 45.72 0)
 		(unit 1)
@@ -3274,7 +3423,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 120.65 118.618 90)
 			(effects
 				(font
@@ -3341,7 +3490,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 120.65 77.978 90)
 			(effects
 				(font
@@ -3378,6 +3527,71 @@
 			(project "trigger"
 				(path "/78398317-4708-4f0b-8983-0fbb7308b4de/c212c276-23e3-4d16-ac65-14c6438f62a0"
 					(reference "R24")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 217.17 68.58 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "08ae7dd5-b9ae-450c-96c5-ad9b13cd0cae")
+		(property "Reference" "#PWR081"
+			(at 217.17 74.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 217.17 73.914 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 217.17 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 217.17 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 217.17 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "3fee9e84-cf55-4a27-8339-1862dcc006aa")
+		)
+		(instances
+			(project "trigger"
+				(path "/78398317-4708-4f0b-8983-0fbb7308b4de/c212c276-23e3-4d16-ac65-14c6438f62a0"
+					(reference "#PWR081")
 					(unit 1)
 				)
 			)
@@ -3539,7 +3753,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 102.87 115.062 90)
 			(effects
 				(font
@@ -3737,7 +3951,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 102.87 74.422 90)
 			(effects
 				(font
@@ -4256,6 +4470,75 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:C")
+		(at 259.08 107.95 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "2c4ad86a-a4b5-4d73-9673-92d442266f54")
+		(property "Reference" "C50"
+			(at 259.334 103.124 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "10n"
+			(at 259.334 105.664 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
+			(at 260.0452 111.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 259.08 107.95 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 259.08 107.95 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "9d7c9ce1-adef-4bd7-a357-74d8e6a4b5cf")
+		)
+		(pin "2"
+			(uuid "10ac85e1-ba96-43c0-a8ac-ec21ce206e7e")
+		)
+		(instances
+			(project "trigger"
+				(path "/78398317-4708-4f0b-8983-0fbb7308b4de/c212c276-23e3-4d16-ac65-14c6438f62a0"
+					(reference "C50")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:+5V")
 		(at 113.03 153.67 0)
 		(unit 1)
@@ -4322,6 +4605,137 @@
 		)
 	)
 	(symbol
+		(lib_id "power:GND")
+		(at 217.17 120.65 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "326a9571-fd85-428e-a789-2c31b52fc703")
+		(property "Reference" "#PWR085"
+			(at 217.17 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 217.17 125.984 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 217.17 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 217.17 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 217.17 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "425b6f60-2f32-4167-8a7b-21b609fc7ead")
+		)
+		(instances
+			(project "trigger"
+				(path "/78398317-4708-4f0b-8983-0fbb7308b4de/c212c276-23e3-4d16-ac65-14c6438f62a0"
+					(reference "#PWR085")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+5V")
+		(at 259.08 45.72 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "328005f7-3364-4e8c-b8ed-f9f9e08c2adb")
+		(property "Reference" "#PWR082"
+			(at 259.08 49.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3.8V"
+			(at 259.08 40.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 259.08 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 259.08 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+5V\""
+			(at 259.08 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "5df94165-40be-4e7b-91e5-030e9b4e4f37")
+		)
+		(instances
+			(project "trigger"
+				(path "/78398317-4708-4f0b-8983-0fbb7308b4de/c212c276-23e3-4d16-ac65-14c6438f62a0"
+					(reference "#PWR082")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:R")
 		(at 74.93 91.44 180)
 		(unit 1)
@@ -4346,7 +4760,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 76.708 91.44 90)
 			(effects
 				(font
@@ -4611,6 +5025,75 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:C")
+		(at 217.17 55.88 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "44d6d779-1dbd-425a-a63c-509dcd301625")
+		(property "Reference" "C47"
+			(at 217.424 51.054 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "10n"
+			(at 217.424 53.594 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
+			(at 218.1352 59.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 217.17 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 217.17 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "e8697394-6382-419a-a52b-0f0a42853446")
+		)
+		(pin "2"
+			(uuid "7c135dd0-4153-4bc9-af76-dcefbd08c8ed")
+		)
+		(instances
+			(project "trigger"
+				(path "/78398317-4708-4f0b-8983-0fbb7308b4de/c212c276-23e3-4d16-ac65-14c6438f62a0"
+					(reference "C47")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:GND")
 		(at 185.42 68.58 0)
 		(unit 1)
@@ -4670,6 +5153,72 @@
 			(project "trigger"
 				(path "/78398317-4708-4f0b-8983-0fbb7308b4de/c212c276-23e3-4d16-ac65-14c6438f62a0"
 					(reference "#PWR050")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+5V")
+		(at 259.08 97.79 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "51fdbc47-b7f1-4373-859b-fc23b5d6f60b")
+		(property "Reference" "#PWR086"
+			(at 259.08 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3.8V"
+			(at 259.08 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 259.08 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 259.08 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+5V\""
+			(at 259.08 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "7a7d3032-5f4f-47d1-b9f3-bc8f0819615a")
+		)
+		(instances
+			(project "trigger"
+				(path "/78398317-4708-4f0b-8983-0fbb7308b4de/c212c276-23e3-4d16-ac65-14c6438f62a0"
+					(reference "#PWR086")
 					(unit 1)
 				)
 			)
@@ -4836,7 +5385,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 196.5452 111.76 0)
 			(effects
 				(font
@@ -4948,6 +5497,75 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:C")
+		(at 259.08 55.88 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "5f2b300b-0801-47a2-98a2-72a168b3066b")
+		(property "Reference" "C48"
+			(at 259.334 51.054 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "10n"
+			(at 259.334 53.594 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
+			(at 260.0452 59.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 259.08 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 259.08 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "ea477f3d-1294-4ad9-8d90-78fbea5b1ce3")
+		)
+		(pin "2"
+			(uuid "dcd7989c-10e1-4b4b-bb84-cf5993a11e13")
+		)
+		(instances
+			(project "trigger"
+				(path "/78398317-4708-4f0b-8983-0fbb7308b4de/c212c276-23e3-4d16-ac65-14c6438f62a0"
+					(reference "C48")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:R")
 		(at 81.28 44.45 90)
 		(unit 1)
@@ -4972,7 +5590,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 81.28 46.228 90)
 			(effects
 				(font
@@ -5131,7 +5749,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 238.4552 59.69 0)
 			(effects
 				(font
@@ -5264,7 +5882,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 81.28 168.148 90)
 			(effects
 				(font
@@ -5479,7 +6097,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 76.708 50.8 90)
 			(effects
 				(font
@@ -6310,7 +6928,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "0.1u"
+		(property "Value" "10n"
 			(at 250.444 105.664 0)
 			(effects
 				(font
@@ -6455,7 +7073,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 76.708 172.72 90)
 			(effects
 				(font
@@ -6492,6 +7110,137 @@
 			(project "trigger"
 				(path "/78398317-4708-4f0b-8983-0fbb7308b4de/c212c276-23e3-4d16-ac65-14c6438f62a0"
 					(reference "R34")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 259.08 68.58 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "9e0e8bc5-4f68-4c36-a130-09ca224ea5f6")
+		(property "Reference" "#PWR083"
+			(at 259.08 74.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 259.08 73.914 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 259.08 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 259.08 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 259.08 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "592b5324-0c3a-42b4-a09c-164af75eebf9")
+		)
+		(instances
+			(project "trigger"
+				(path "/78398317-4708-4f0b-8983-0fbb7308b4de/c212c276-23e3-4d16-ac65-14c6438f62a0"
+					(reference "#PWR083")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+5V")
+		(at 217.17 97.79 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "a5d13d75-1b9f-41f5-9aa0-29b42446cc91")
+		(property "Reference" "#PWR084"
+			(at 217.17 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3.8V"
+			(at 217.17 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 217.17 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 217.17 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+5V\""
+			(at 217.17 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "2e349e59-31a4-4eb5-b2e7-2c7935ada500")
+		)
+		(instances
+			(project "trigger"
+				(path "/78398317-4708-4f0b-8983-0fbb7308b4de/c212c276-23e3-4d16-ac65-14c6438f62a0"
+					(reference "#PWR084")
 					(unit 1)
 				)
 			)
@@ -6581,7 +7330,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "0.1u"
+		(property "Value" "10n"
 			(at 250.444 53.594 0)
 			(effects
 				(font
@@ -7069,7 +7818,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 76.708 132.08 90)
 			(effects
 				(font
@@ -7245,6 +7994,72 @@
 		)
 	)
 	(symbol
+		(lib_id "power:+5V")
+		(at 217.17 45.72 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "c6036a68-70e1-41ec-9ccc-935083196ef2")
+		(property "Reference" "#PWR080"
+			(at 217.17 49.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3.8V"
+			(at 217.17 40.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 217.17 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 217.17 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+5V\""
+			(at 217.17 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "862b7adc-7301-4118-8292-47d299ac6fe2")
+		)
+		(instances
+			(project "trigger"
+				(path "/78398317-4708-4f0b-8983-0fbb7308b4de/c212c276-23e3-4d16-ac65-14c6438f62a0"
+					(reference "#PWR080")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:R")
 		(at 102.87 157.48 270)
 		(unit 1)
@@ -7269,7 +8084,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 102.87 155.702 90)
 			(effects
 				(font
@@ -7541,7 +8356,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "0.1u"
+		(property "Value" "10n"
 			(at 208.534 53.594 0)
 			(effects
 				(font
@@ -7619,7 +8434,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 238.4552 111.76 0)
 			(effects
 				(font
@@ -7686,7 +8501,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 81.28 127.508 90)
 			(effects
 				(font
@@ -8086,7 +8901,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 120.65 37.338 90)
 			(effects
 				(font
@@ -8219,7 +9034,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 81.28 86.868 90)
 			(effects
 				(font
@@ -8262,6 +9077,71 @@
 		)
 	)
 	(symbol
+		(lib_id "power:GND")
+		(at 259.08 120.65 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "e53f38d0-9d77-4c1f-a5bc-4b14bfcf31bf")
+		(property "Reference" "#PWR087"
+			(at 259.08 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 259.08 125.984 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 259.08 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 259.08 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 259.08 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "1f999d15-936b-4742-9838-1cb3bc1e19a7")
+		)
+		(instances
+			(project "trigger"
+				(path "/78398317-4708-4f0b-8983-0fbb7308b4de/c212c276-23e3-4d16-ac65-14c6438f62a0"
+					(reference "#PWR087")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:C")
 		(at 208.28 107.95 0)
 		(unit 1)
@@ -8279,7 +9159,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "0.1u"
+		(property "Value" "10n"
 			(at 208.534 105.664 0)
 			(effects
 				(font
@@ -8421,7 +9301,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 102.87 33.782 90)
 			(effects
 				(font
@@ -8756,7 +9636,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 196.5452 59.69 0)
 			(effects
 				(font
@@ -8823,7 +9703,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 120.65 159.258 90)
 			(effects
 				(font
