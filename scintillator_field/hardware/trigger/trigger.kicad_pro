@@ -578,6 +578,18 @@
     [
       "78398317-4708-4f0b-8983-0fbb7308b4de",
       "Root"
+    ],
+    [
+      "d35be3d6-850d-4c08-9532-c009428717ae",
+      "power"
+    ],
+    [
+      "26ad56c3-db1b-42a2-8169-d939e117eb4b",
+      "sensors"
+    ],
+    [
+      "c212c276-23e3-4d16-ac65-14c6438f62a0",
+      "amplifiers"
     ]
   ],
   "text_variables": {}

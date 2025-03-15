@@ -4979,6 +4979,160 @@
 			)
 		)
 	)
+	(sheet
+		(at 68.58 22.86)
+		(size 43.18 29.21)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "26ad56c3-db1b-42a2-8169-d939e117eb4b")
+		(property "Sheetname" "sensors"
+			(at 68.58 22.1484 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "sensors.kicad_sch"
+			(at 68.58 52.6546 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "A3" input
+			(at 111.76 41.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "d81547d2-76d0-4706-8387-97eba71c6197")
+		)
+		(pin "A4" input
+			(at 111.76 44.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "95139141-0ab9-4540-b744-7ed108f22c8e")
+		)
+		(pin "A1" input
+			(at 111.76 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "d1bc7ff0-a68a-4b60-8375-fe8894a38dde")
+		)
+		(pin "A2" input
+			(at 111.76 39.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "8db3bf84-5b21-491e-8451-113bef921121")
+		)
+		(instances
+			(project "trigger"
+				(path "/78398317-4708-4f0b-8983-0fbb7308b4de"
+					(page "3")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 154.94 29.21)
+		(size 31.75 20.32)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "c212c276-23e3-4d16-ac65-14c6438f62a0")
+		(property "Sheetname" "amplifiers"
+			(at 154.94 28.4984 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "amplifiers.kicad_sch"
+			(at 154.94 50.1146 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "trigger"
+				(path "/78398317-4708-4f0b-8983-0fbb7308b4de"
+					(page "4")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 26.67 31.75)
+		(size 31.75 29.21)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "d35be3d6-850d-4c08-9532-c009428717ae")
+		(property "Sheetname" "power"
+			(at 26.67 31.0384 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "power.kicad_sch"
+			(at 26.67 61.5446 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "trigger"
+				(path "/78398317-4708-4f0b-8983-0fbb7308b4de"
+					(page "2")
+				)
+			)
+		)
+	)
 	(sheet_instances
 		(path "/"
 			(page "1")
