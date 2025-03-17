@@ -27,8 +27,8 @@ class Window:
         self.width, self.height = 1924, 1028
         self.aspect_ratio = self.width/self.height
 
-        self.angle_x, self.angle_y, self.angle_z = 109, -177, 90
-        self.pan_x, self.pan_y, self.pan_z = 0.0488, -1.72, 0
+        self.angle_x, self.angle_y, self.angle_z = 0, 0, 90
+        self.pan_x, self.pan_y, self.pan_z = 0, 0, 0
 
         self.last_x, self.last_y = 0, 0
         self.zoom = 5
