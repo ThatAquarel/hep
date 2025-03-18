@@ -27,8 +27,8 @@ VERTEX = """
 #version 330 core
 
 // vertex buffer object data
-layout(location = 0) in vec3 position;
-layout(location = 1) in vec3 color;
+in vec3 position;
+in vec3 color;
 
 // transformation matrix constants
 uniform mat4 world_transform;
@@ -53,6 +53,7 @@ void main() {
 
 
 def create_vao(
+    shader,
     data,
     v_ptr=3,
     c_ptr=3,
@@ -93,7 +94,8 @@ def create_vao(
     # see joule/graphics/shaders/vertex.glsl
     # matches with:
     #   layout(location = 0) in vec3 position;
-    glEnableVertexAttribArray(0)
+    position = glGetAttribLocation(shader, "position")
+    glEnableVertexAttribArray(position)
 
     # color pointer offset in bytes
     # color right after vertex position
@@ -104,7 +106,8 @@ def create_vao(
     # see joule/graphics/shaders/vertex.glsl
     # matches with:
     #   layout(location = 1) in vec3 color;
-    glEnableVertexAttribArray(1)
+    color = glGetAttribLocation(shader, "color")
+    glEnableVertexAttribArray(color)
 
     # unbind VAO and VBO
     # to not have issues later on...
@@ -255,7 +258,7 @@ class ShaderRenderer:
         f_shader = self._load_shader_source(FRAGMENT, GL_FRAGMENT_SHADER)
 
         # return combined OpenGL shader pipeline
-        return compileProgram(v_shader, f_shader)
+        return compileProgram(v_shader, f_shader, validate=False)
 
     def _uniform_float(self, name, value):
         """
@@ -678,8 +681,6 @@ class App(CameraOrbitControls, ShaderRenderer):
         Main rendering loop for application
         """
 
-        self.render_setup()
-
         # Define the 8 vertices of the unit cube
         vertices = np.array(
             [
@@ -716,7 +717,8 @@ class App(CameraOrbitControls, ShaderRenderer):
         color = np.random.rand(len(cube_vertices), 3)
         cube = np.hstack((cube_vertices, color)).astype(np.float32)
 
-        vao = create_vao(cube)
+        self.render_setup()
+        vao = create_vao(self._shader, cube)
 
         # main rendering loop until user quits
         while not self.window_should_close():
