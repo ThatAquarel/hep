@@ -2348,6 +2348,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C496552"
+			(at 231.14 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "c9eea9da-e1cd-4427-8fc2-5153169b186e")
 		)
@@ -2472,6 +2481,15 @@
 			)
 		)
 		(property "Description" "Generic connector, double row, 02x03, top/bottom pin numbering scheme (row 1: 1...pins_per_row, row2: pins_per_row+1 ... num_pins), script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 180.34 63.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" ""
 			(at 180.34 63.5 0)
 			(effects
 				(font
@@ -2691,6 +2709,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" ""
+			(at 175.26 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "76055e41-b3f0-4655-aa36-895fdb344c1f")
 		)
@@ -2837,6 +2864,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" ""
+			(at 114.3 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "dd1ebdf8-8d21-4674-a240-4db2a571422c")
 		)
@@ -2962,6 +2998,15 @@
 			)
 		)
 		(property "Description" "small coaxial connector (BNC, SMA, SMB, SMC, Cinch/RCA, LEMO, ...)"
+			(at 195.58 87.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C496552"
 			(at 195.58 87.63 0)
 			(effects
 				(font
@@ -3169,6 +3214,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C496552"
+			(at 182.88 87.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "5163355e-a624-431d-b263-2bf9e6f46365")
 		)
@@ -3229,6 +3283,15 @@
 			)
 		)
 		(property "Description" "Generic connector, double row, 02x03, top/bottom pin numbering scheme (row 1: 1...pins_per_row, row2: pins_per_row+1 ... num_pins), script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 214.63 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" ""
 			(at 214.63 134.62 0)
 			(effects
 				(font
@@ -3382,6 +3445,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" ""
+			(at 91.44 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "dd1ebdf8-8d21-4674-a240-4db2a571422c")
 		)
@@ -3441,6 +3513,15 @@
 			)
 		)
 		(property "Description" "small coaxial connector (BNC, SMA, SMB, SMC, Cinch/RCA, LEMO, ...)"
+			(at 176.53 87.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C496552"
 			(at 176.53 87.63 0)
 			(effects
 				(font
@@ -3509,6 +3590,15 @@
 			)
 		)
 		(property "Description" "test point"
+			(at 68.58 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" ""
 			(at 68.58 135.89 0)
 			(effects
 				(font
@@ -3715,6 +3805,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C496552"
+			(at 189.23 87.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "5163355e-a624-431d-b263-2bf9e6f46365")
 		)
@@ -3775,6 +3874,15 @@
 			)
 		)
 		(property "Description" "test point"
+			(at 80.01 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" ""
 			(at 80.01 135.89 0)
 			(effects
 				(font
@@ -4238,6 +4346,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" ""
+			(at 102.87 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "dd1ebdf8-8d21-4674-a240-4db2a571422c")
 		)
@@ -4491,6 +4608,15 @@
 			)
 		)
 		(property "Description" "Generic connector, double row, 02x03, top/bottom pin numbering scheme (row 1: 1...pins_per_row, row2: pins_per_row+1 ... num_pins), script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 194.31 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" ""
 			(at 194.31 134.62 0)
 			(effects
 				(font
