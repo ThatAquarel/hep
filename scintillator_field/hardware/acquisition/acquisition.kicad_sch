@@ -1,0 +1,165 @@
+(kicad_sch
+	(version 20231120)
+	(generator "eeschema")
+	(generator_version "8.0")
+	(uuid "dd68efff-541d-4422-8da3-c773bf0d34e4")
+	(paper "A4")
+	(lib_symbols)
+	(sheet
+		(at 81.28 50.8)
+		(size 27.94 25.4)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "43606ba9-db25-4204-a607-4cef3b61eed8")
+		(property "Sheetname" "fpga"
+			(at 81.28 50.0884 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "fpga.kicad_sch"
+			(at 81.28 76.7846 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "acquisition"
+				(path "/dd68efff-541d-4422-8da3-c773bf0d34e4"
+					(page "3")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 31.75 31.75)
+		(size 22.86 31.75)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "65d4fd7f-2645-4091-837d-f182e9d01f47")
+		(property "Sheetname" "power"
+			(at 31.75 31.0384 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "power.kicad_sch"
+			(at 31.75 64.0846 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "acquisition"
+				(path "/dd68efff-541d-4422-8da3-c773bf0d34e4"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 134.62 68.58)
+		(size 24.13 12.7)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "e362985d-3b75-447e-80a3-ec19c2eab485")
+		(property "Sheetname" "mcu"
+			(at 134.62 67.8684 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "mcu.kicad_sch"
+			(at 134.62 81.8646 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "acquisition"
+				(path "/dd68efff-541d-4422-8da3-c773bf0d34e4"
+					(page "4")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 191.77 80.01)
+		(size 21.59 20.32)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "f76c2850-ca27-4f79-829c-63afd77354af")
+		(property "Sheetname" "shifter"
+			(at 191.77 79.2984 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "shifter.kicad_sch"
+			(at 191.77 100.9146 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "acquisition"
+				(path "/dd68efff-541d-4422-8da3-c773bf0d34e4"
+					(page "5")
+				)
+			)
+		)
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+)
