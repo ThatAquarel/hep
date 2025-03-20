@@ -6781,7 +6781,7 @@
 				)
 			)
 		)
-		(property "Value" "5p"
+		(property "Value" "3p"
 			(at 66.04 51.308 0)
 			(effects
 				(font
@@ -6816,7 +6816,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C1573"
+		(property "LCSC" "C1564"
 			(at 71.12 50.8 0)
 			(effects
 				(font
@@ -7890,7 +7890,7 @@
 				)
 			)
 		)
-		(property "Value" "5p"
+		(property "Value" "3p"
 			(at 66.04 173.228 0)
 			(effects
 				(font
@@ -7925,7 +7925,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C1573"
+		(property "LCSC" "C1564"
 			(at 71.12 172.72 0)
 			(effects
 				(font
@@ -8174,7 +8174,7 @@
 				)
 			)
 		)
-		(property "Value" "5p"
+		(property "Value" "3p"
 			(at 66.04 132.588 0)
 			(effects
 				(font
@@ -8209,7 +8209,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C1573"
+		(property "LCSC" "C1564"
 			(at 71.12 132.08 0)
 			(effects
 				(font
@@ -8612,7 +8612,7 @@
 				)
 			)
 		)
-		(property "Value" "5p"
+		(property "Value" "3p"
 			(at 66.04 91.948 0)
 			(effects
 				(font
@@ -8647,7 +8647,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C1573"
+		(property "LCSC" "C1564"
 			(at 71.12 91.44 0)
 			(effects
 				(font
