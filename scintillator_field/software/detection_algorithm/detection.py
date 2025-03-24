@@ -191,7 +191,7 @@ def draw_bounds(level_pair, previous_bounds):
 
     
 
-def main(scintillators):
+def detect_side_view(scintillators):
     '''
     Executes detection for 1 path
     :param path: List of scintillators that were activated according to input type (see document docstring above)
@@ -206,12 +206,26 @@ def main(scintillators):
 
     return best_bounds
 
+def scintillators_to_bounds(scintillators):
+    '''
+    :param scintillators: tuple containing two lists, one for each side view
+    :return bounds: tuple containing two lists each containing the points that bound the muon path
+    '''
+    x_view = scintillators[0]
+    y_view = scintillators[1]
+
+    x_bounds = detect_side_view(x_view)
+    y_bounds = detect_side_view(y_view)
+
+    return (x_bounds, y_bounds)
 
 
-if __name__ == '__main__':
-    scintillators = [(1, 0), (0, 1), (1, 0), (0, 1), (1, 0), (0, 1)]
-    best_path = main(scintillators)
-    print(f'The path is bounded by {best_path}')
+# if __name__ == '__main__':
+
+
+    # scintillators = [(1, 0), (0, 1), (1, 0), (0, 1), (1, 0), (0, 1)]
+    # best_path = detect_side_view(scintillators)
+    # print(f'The path is bounded by {best_path}')
 
 
     # Example test cases: scintillators = [(1, 0), (1, 0), (1, 0), (1, 0), (1, 0), (0, 1)] ---> Pass
