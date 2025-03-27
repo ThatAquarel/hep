@@ -27,11 +27,19 @@ class Window:
         self.width, self.height = 1924, 1028
         self.aspect_ratio = self.width/self.height
 
-        self.angle_x, self.angle_y, self.angle_z = 0, 0, 90
+        self.angle_x, self.angle_y, self.angle_z = 0, 0, 45
         self.pan_x, self.pan_y, self.pan_z = 0, 0, 0
 
         self.last_x, self.last_y = 0, 0
         self.zoom = 5
+        
+
+
+        self.angle_x, self.angle_y, self.angle_z = 67.3, -73.1, 45
+        self.pan_x, self.pan_y, self.pan_z = -2.63, -0.89, 0
+        self.zoom = 14.1
+
+
         self.pan_sensitivity = 0.001
         self.angle_sensitivity = 0.01
 
@@ -79,10 +87,11 @@ class Window:
         glfw.set_window_size_callback(window, self.window_callbacks)
     
     def window_callbacks(self, window, width, height):
-        self.width, self.height = width, height
-        self.zoom = self.zoom*self.aspect_ratio*self.height/self.width
-        self.aspect_ratio = width/height
-        glViewport(0, 0, width, height)
+        if not (width==0 or height==0):
+            self.width, self.height = width, height
+            self.zoom = self.zoom*self.aspect_ratio*self.height/self.width
+            self.aspect_ratio = width/height
+            glViewport(0, 0, width, height)
 
     def scroll_callbacks(self, window, xoffset, yoffset):
         if (self.zoom-0.24*yoffset != 0) and not ((self.zoom-0.24*yoffset > -0.1) & (self.zoom-0.24*yoffset < 0.1)):

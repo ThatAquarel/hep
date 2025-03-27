@@ -35,7 +35,7 @@ class ImguiStuff:
         imgui.text(f'{window.angle_x:.3g}, {window.angle_y:.3g}, {window.angle_z:.3g} : angles x, y, z')
         imgui.text(f'{window.pan_x:.3g}, {window.pan_y:.3g}, {window.pan_z:.3g} : pan x, y, z')
         imgui.text(f'{window.zoom:.3g} : zoom level')
-        imgui.text(f'{window.aspect_ratio:.3g} : aspect ration')
+        imgui.text(f'{window.aspect_ratio:.3g} : aspect ratio')
 
         imgui.end()
 
