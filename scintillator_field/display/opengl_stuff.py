@@ -11,7 +11,7 @@ class OpenGLStuff:
         # class initialisation, nothing goes here
         pass
 
-    def make_quads(self, base_x, x_increment, base_y, y_increment, base_z, z_change, colour):
+    def make_quads(self, base_x, x_increment, base_y, y_increment, base_z, z_change, colour, opacity):
 
         '''
         one base has changing basepoints and x_increment of rod width
@@ -19,14 +19,14 @@ class OpenGLStuff:
         z starts from box base z and add box z increment
         '''
 
-        p1 = np.array([base_x,             base_y,             base_z,          colour[0], colour[1], colour[2], 1]) # base_point + (0,    0,    0)    # BFL
-        p2 = np.array([base_x+x_increment, base_y,             base_z,          colour[0], colour[1], colour[2], 1]) # base_point + (xlen, 0,    0)    # BFR
-        p3 = np.array([base_x,             base_y+y_increment, base_z,          colour[0], colour[1], colour[2], 1]) # base_point + (0,    ylen, 0)    # BBL
-        p4 = np.array([base_x+x_increment, base_y+y_increment, base_z,          colour[0], colour[1], colour[2], 1]) # base_point + (xlen, ylen, 0)    # BBR
-        p5 = np.array([base_x,             base_y,             base_z+z_change, colour[0], colour[1], colour[2], 1]) # base_point + (0,    0,    zlen) # TFL
-        p6 = np.array([base_x+x_increment, base_y,             base_z+z_change, colour[0], colour[1], colour[2], 1]) # base_point + (xlen, 0,    zlen) # TFR
-        p7 = np.array([base_x,             base_y+y_increment, base_z+z_change, colour[0], colour[1], colour[2], 1]) # base_point + (0,    ylen, zlen) # TBL
-        p8 = np.array([base_x+x_increment, base_y+y_increment, base_z+z_change, colour[0], colour[1], colour[2], 1]) # base_point + (xlen, ylen, zlen) # TBR
+        p1 = np.array([base_x,             base_y,             base_z,          colour[0], colour[1], colour[2], opacity]) # base_point + (0,    0,    0)    # BFL
+        p2 = np.array([base_x+x_increment, base_y,             base_z,          colour[0], colour[1], colour[2], opacity]) # base_point + (xlen, 0,    0)    # BFR
+        p3 = np.array([base_x,             base_y+y_increment, base_z,          colour[0], colour[1], colour[2], opacity]) # base_point + (0,    ylen, 0)    # BBL
+        p4 = np.array([base_x+x_increment, base_y+y_increment, base_z,          colour[0], colour[1], colour[2], opacity]) # base_point + (xlen, ylen, 0)    # BBR
+        p5 = np.array([base_x,             base_y,             base_z+z_change, colour[0], colour[1], colour[2], opacity]) # base_point + (0,    0,    zlen) # TFL
+        p6 = np.array([base_x+x_increment, base_y,             base_z+z_change, colour[0], colour[1], colour[2], opacity]) # base_point + (xlen, 0,    zlen) # TFR
+        p7 = np.array([base_x,             base_y+y_increment, base_z+z_change, colour[0], colour[1], colour[2], opacity]) # base_point + (0,    ylen, zlen) # TBL
+        p8 = np.array([base_x+x_increment, base_y+y_increment, base_z+z_change, colour[0], colour[1], colour[2], opacity]) # base_point + (xlen, ylen, zlen) # TBR
 
         qf = np.array([p1, p2, p6, p5]).astype(np.float32) # quad front
         qb = np.array([p3, p4, p8, p7]).astype(np.float32) # quad back
@@ -46,8 +46,12 @@ class OpenGLStuff:
         initial_x, initial_y, initial_z = 0, 0, 0
         square_side_len = 8
 
-        width_per_one = 3
-        dead_space = 2
+        width_per_one = 1
+        dead_space = 1 # 2
+
+        c1 = [1, 0.75, 0.75] # red
+        c2 = [0.75, 1, 0.75] # green
+        alpha = 0.8
 
         all_data = []
 
@@ -65,7 +69,7 @@ class OpenGLStuff:
 
                 z_start = base_z
 
-                colour = [1, 0, 0] if rod%2==0 else [0, 1, 0]
+                colour = c1 if rod%2==0 else c2
 
                 all_data.extend(
                     self.make_quads(
@@ -76,6 +80,7 @@ class OpenGLStuff:
                         base_z      = z_start,                   # initial z of box
                         z_change    = z_change,                  # z depth of box
                         colour      = colour,                    # colour
+                        opacity     = alpha,                     # opacity
                     )
                 )
 
@@ -88,7 +93,7 @@ class OpenGLStuff:
 
                 z_start = base_z+width_per_one+dead_space
                 
-                colour = [1, 0, 0] if rod%2==0 else [0, 1, 0]
+                colour = c1 if rod%2==0 else c2
 
                 all_data.extend(
                     self.make_quads(
@@ -99,6 +104,65 @@ class OpenGLStuff:
                         base_z      = z_start,                   # initial z of box
                         z_change    = z_change,                  # z depth of box
                         colour      = colour,                    # colour
+                        opacity     = alpha,                     # opacity
+                    )
+                )
+
+
+
+
+        space_below = 8
+
+        for double in range(num_doubles):
+            z_change = width_per_one
+            base_x, base_y, base_z = initial_x, initial_y, initial_z - space_below - double*(2*width_per_one+2*dead_space)
+
+            num_rods = 2**(double+1)
+
+            "xy"
+            x_basepoints = np.linspace(base_x, base_x+square_side_len, num_rods, endpoint=False)
+            dist_between_x_basepoints = x_basepoints[1]-x_basepoints[0]
+
+            for rod, x in enumerate(x_basepoints):
+
+                z_start = base_z
+
+                colour = c1 if rod%2==0 else c2
+
+                all_data.extend(
+                    self.make_quads(
+                        base_x      = x,                         # individual x per basepoint
+                        x_increment = dist_between_x_basepoints, # rod width
+                        base_y      = base_y,                    # box base y
+                        y_increment = square_side_len,           # length of square
+                        base_z      = z_start,                   # initial z of box
+                        z_change    = z_change,                  # z depth of box
+                        colour      = colour,                    # colour
+                        opacity     = alpha,                     # opacity
+                    )
+                )
+
+
+            "yx"
+            y_basepoints = np.linspace(base_y, base_y+square_side_len, num_rods, endpoint=False)
+            dist_between_y_basepoints = x_basepoints[1]-x_basepoints[0]
+
+            for rod, y in enumerate(y_basepoints):
+
+                z_start = base_z+width_per_one+dead_space
+                
+                colour = c1 if rod%2==0 else c2
+
+                all_data.extend(
+                    self.make_quads(
+                        base_x      = base_x,                    # box base x
+                        x_increment = square_side_len,           # length of square
+                        base_y      = y,                         # individual x per basepoint
+                        y_increment = dist_between_y_basepoints, # rod width
+                        base_z      = z_start,                   # initial z of box
+                        z_change    = z_change,                  # z depth of box
+                        colour      = colour,                    # colour
+                        opacity     = alpha,                     # opacity
                     )
                 )
 
