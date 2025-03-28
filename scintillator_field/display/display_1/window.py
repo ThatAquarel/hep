@@ -10,7 +10,6 @@ from imgui.integrations.glfw import GlfwRenderer
 import numpy as np
 
 from imgui_stuff import *
-from vbo_stuff import *
 from opengl_stuff import *
 
 import time
@@ -179,7 +178,7 @@ class Window:
 
             self.update_camera()
 
-            opengl_stuff_for_window.per_render_loop()
+            opengl_stuff_for_window.per_render_loop(self)
 
             self.imgui_stuff.imgui_box(dt, self, opengl_stuff_for_window)
             self.imgui_stuff.render_box()

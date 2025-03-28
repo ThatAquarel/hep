@@ -3,7 +3,8 @@ from OpenGL.GLU import *
 
 import numpy as np
 
-from vbo_stuff import *
+from vbo_vao_stuff import *
+from shaders.shaders import *
 
 
 class OpenGLStuff:
@@ -28,14 +29,78 @@ class OpenGLStuff:
         p7 = np.array([base_x,             base_y+y_increment, base_z+z_change, colour[0], colour[1], colour[2], opacity]) # base_point + (0,    ylen, zlen) # TBL
         p8 = np.array([base_x+x_increment, base_y+y_increment, base_z+z_change, colour[0], colour[1], colour[2], opacity]) # base_point + (xlen, ylen, zlen) # TBR
 
-        qf = np.array([p1, p2, p6, p5]).astype(np.float32) # quad front
-        qb = np.array([p3, p4, p8, p7]).astype(np.float32) # quad back
-        ql = np.array([p1, p3, p7, p5]).astype(np.float32) # quad left
-        qr = np.array([p2, p4, p8, p6]).astype(np.float32) # quad right
-        qB = np.array([p1, p3, p4, p2]).astype(np.float32) # quad bottom
-        qT = np.array([p5, p7, p8, p6]).astype(np.float32) # quad top
+        # # front face
+        # tf1 = np.array([p1, p2, p5]).astype(np.float32)
+        # tf2 = np.array([p2, p5, p6]).astype(np.float32)
+# 
+        # # back face
+        # tb1 = np.array([p3, p4, p7]).astype(np.float32)
+        # tb2 = np.array([p4, p7, p8]).astype(np.float32)
+# 
+        # # left face
+        # tl1 = np.array([p1, p3, p5]).astype(np.float32)
+        # tl2 = np.array([p3, p5, p7]).astype(np.float32)
+# 
+        # # right face
+        # tr1 = np.array([p2, p4, p6]).astype(np.float32)
+        # tr2 = np.array([p4, p6, p8]).astype(np.float32)
+# 
+        # # bottom face
+        # tB1 = np.array([p1, p2, p3]).astype(np.float32)
+        # tB2 = np.array([p2, p3, p4]).astype(np.float32)
+# 
+        # # top face
+        # tT1 = np.array([p5, p6, p7]).astype(np.float32)
+        # tT2 = np.array([p6, p7, p8]).astype(np.float32)
 
-        return (qf, qb, ql, qr, qB, qT)
+        # front face
+        tf1 = [p1, p2, p5]
+        tf2 = [p2, p5, p6]
+
+        # back face
+        tb1 = [p3, p4, p7]
+        tb2 = [p4, p7, p8]
+        
+        # left face
+        tl1 = [p1, p3, p5]
+        tl2 = [p3, p5, p7]
+
+        # right face
+        tr1 = [p2, p4, p6]
+        tr2 = [p4, p6, p8]
+
+        # bottom face
+        tB1 = [p1, p2, p3]
+        tB2 = [p2, p3, p4]
+
+        # top face
+        tT1 = [p5, p6, p7]
+        tT2 = [p6, p7, p8]
+
+        # quads
+        #qf = np.array([p1, p2, p6, p5]).astype(np.float32) # quad front
+        #qb = np.array([p3, p4, p8, p7]).astype(np.float32) # quad back
+        #ql = np.array([p1, p3, p7, p5]).astype(np.float32) # quad left
+        #qr = np.array([p2, p4, p8, p6]).astype(np.float32) # quad right
+        #qB = np.array([p1, p3, p4, p2]).astype(np.float32) # quad bottom
+        #qT = np.array([p5, p7, p8, p6]).astype(np.float32) # quad top
+
+        all_t = []
+
+        all_t.extend(tf1)
+        all_t.extend(tf2)
+        all_t.extend(tb1)
+        all_t.extend(tb2)
+        all_t.extend(tl1)
+        all_t.extend(tl2)
+        all_t.extend(tr1)
+        all_t.extend(tr2)
+        all_t.extend(tB1)
+        all_t.extend(tB2)
+        all_t.extend(tT1)
+        all_t.extend(tT2)
+
+        return all_t
 
 
     def setup(self):
@@ -167,20 +232,30 @@ class OpenGLStuff:
                 )
 
 
-        all_vbo = []
-        for quad in all_data:
-            all_vbo.append(make_vbo(quad))
+        #all_vbo = []
+        #for quad in all_data:
+        #    all_vbo.append(make_vbo(quad))
 
         self.all_data = np.array(all_data).astype(np.float32)
-        self.all_vbo = np.array(all_vbo)
+        print(self.all_data.shape)
+        #self.all_vbo = np.array(all_vbo)
 
+        self.vao = make_vao_vbo(self.all_data)[0]
+
+        self.shader_program = make_shaders()
 
         pass
 
-    def per_render_loop(self):
+    def per_render_loop(self, window):
         # draw on-loop actions
 
-        for d, v in zip(self.all_data, self.all_vbo):
-            draw(d, v, GL_QUADS)
+        glUseProgram(self.shader_program)
+
+        make_uniforms(self.shader_program, window)
+
+        draw_vao(self.vao, GL_TRIANGLES, self.all_data.shape[0])
+
+        #for d, v in zip(self.all_data, self.all_vbo):
+        #    draw(d, v, GL_TRIANGLES)
 
         pass
