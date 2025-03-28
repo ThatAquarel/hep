@@ -4,7 +4,7 @@ from OpenGL.GL import *
 def create_vao(
     data,
     v_ptr=3,
-    c_ptr=3,
+    c_ptr=4,
     n_ptr=3,
     return_vbo=False,
     store_normals=False,
@@ -50,7 +50,7 @@ def create_vao(
     # color right after vertex position
     c_offset = v_ptr * data.itemsize
     # set color pointer position
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, ctypes.c_void_p(c_offset))
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, stride, ctypes.c_void_p(c_offset))
     # enable at pointer of index 1
     # see joule/graphics/shaders/vertex.glsl
     # matches with:

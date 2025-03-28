@@ -21,7 +21,7 @@ class trajectory:
         colours = []
         if r:
             for i in range(100):
-                colours.append([random.randint(1,256)/256,random.randint(1,256)/256,random.randint(1,256)/256])
+                colours.append([random.randint(1,256)/256,random.randint(1,256)/256,random.randint(1,256)/256,1])
             return colours
         else:
             colours = [
@@ -51,7 +51,7 @@ class trajectory:
         self.n = len(vertices)
 
         # Preallocate data buffer for position, color, and normals
-        self.data = np.ones((len(vertices), 9), dtype=np.float32)
+        self.data = np.ones((len(vertices), 10), dtype=np.float32)
         self.data[:, :3] = vertices  # Position
 
         #colour
@@ -60,10 +60,11 @@ class trajectory:
         else:
             colour_num = dataset_num
 
-        self.data[:, 3:6] = self.colours[colour_num]
+        self.data[:, 3:7] = self.colours[colour_num]
 
         #Set normals
-        self.data[:, 6:9] = vertices  
+        self.data[:, 7:10
+        ] = vertices  
 
         # Build VAO and VBO
         self.vao, self.vbo = create_vao(self.data, return_vbo=True, store_normals=True)
