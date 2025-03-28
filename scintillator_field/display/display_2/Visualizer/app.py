@@ -16,6 +16,7 @@ from graphics.shader_renderer import ShaderRenderer
 import graphics.elements.cube
 import graphics.elements.square
 import graphics.elements.trajectory
+import graphics.elements.fan
 import graphics.elements.axes
 
 import test
@@ -59,6 +60,8 @@ class App(CameraOrbitControls, ShaderRenderer):
         self.trajectory = graphics.elements.trajectory.trajectory(scale = self.scale)
 
         self.axes = graphics.elements.axes.Axes(self.scale,self.scale)
+
+        self.fan = graphics.elements.fan.Fan(scale = self.scale)
 
 
         self.pt_selected = None
@@ -197,7 +200,9 @@ class App(CameraOrbitControls, ShaderRenderer):
         #draw elements
         self.plane.draw(self.pt_selected)
         self.square.draw(self.ui.dataset_active)
-        self.trajectory.draw(self.ui.dataset_active)
+        self.fan.draw(self.ui.dataset_active)
+        
+        #self.trajectory.draw(self.ui.dataset_active)
 
         
 

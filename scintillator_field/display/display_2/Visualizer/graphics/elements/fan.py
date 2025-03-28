@@ -7,14 +7,14 @@ from graphics.vbo import create_vao, draw_vao, update_vbo
 
 
 
-class square:
+class Fan:
     def __init__(self, scale=1.0):
         self.scale = scale
         
     def manage_data(self,dataset_num):
         #vertices = self.interpret_data(test.data[dataset_num])
 
-        vertices = self.interpret_data(test.data[dataset_num])
+        vertices = self.interpret_data(test.data_f[dataset_num])
         
         self.n = len(vertices)
 
@@ -69,13 +69,24 @@ class square:
 
     def interpret_data(self,data):
         vertices = []
-        for cube in data:
-            x1 = cube[0][0]
-            x2 = cube[2][0]
-            y1 = cube[1][1]
-            y2 = cube[0][1]
-            z1 = cube[4][2] / 64
-            z2 = cube[0][2] / 64
+
+        
+
+
+        for pair in data:
+            
+            scale = 1
+            dx = abs(pair[1][0] - pair[0][0])
+            dy = abs(pair[1][1] - pair[0][1])
+            dz = abs(pair[1][2] - pair[0][2])
+
+
+            x1 = pair[1][0] - dx * scale
+            x2 = pair[1][0] + dx * scale
+            y1 = pair[1][1] - dy * scale
+            y2 = pair[1][1] + dy * scale
+            z1 = (pair[1][2]- dz * scale) / 64
+            z2 = (pair[1][2] + dz * scale) / 64 
 
             # Front face
             vertices.append([x2, y1, z1])
@@ -122,6 +133,7 @@ class square:
 
         vertices = np.array(vertices, dtype = np.float32)
         return vertices
+
 
     def _draw_square(self):
         """

@@ -13,7 +13,7 @@ uniform float specular_strength;
 uniform float specular_reflection;
 
 // parameters passed from vertex shader
-in vec3 vertex_color;
+in vec4 vertex_color;
 in vec3 vertex_normal;
 in vec3 vertex_frag_pos;
 
@@ -60,9 +60,11 @@ void main() {
     vec3 specular = specular_strength * specular_component * light_color;  
     
     // compose all lighting
-    vec3 combined = (ambient + diffuse + specular) * vertex_color;
+    vec3 combined = (ambient + diffuse + specular) * vertex_color.rgb;
     // resulting color
-     fragColor = vec4(combined, 1.0);
+    //fragColor = vec4(combined, 1.0);
 
-    //fragColor = vec4(vertex_color, 1.0);
+
+    //vec4(combined, vertex_color.a)
+    fragColor = vertex_color, vertex_color.a;
 }

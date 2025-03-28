@@ -2,7 +2,7 @@
 
 // vertex buffer object data
 layout(location = 0) in vec3 position;
-layout(location = 1) in vec3 color;
+layout(location = 1) in vec4 color;
 layout(location = 2) in vec3 normal;
 
 // transformation matrix constants
@@ -11,7 +11,7 @@ uniform mat4 cam_projection;
 uniform mat4 cam_transform;
 
 // parameters passed to fragment shader
-out vec3 vertex_color;
+out vec4 vertex_color;
 out vec3 vertex_normal;
 out vec3 vertex_frag_pos;
 
