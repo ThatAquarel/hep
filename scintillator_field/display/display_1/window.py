@@ -24,6 +24,7 @@ class Window:
         self.render_distance = 1024
         
         self.width, self.height = 1924, 1028
+        #self.width, self.height = 750, 500
         self.aspect_ratio = self.width/self.height
 
         self.angle_x, self.angle_y, self.angle_z = 0, 0, 45
@@ -65,7 +66,10 @@ class Window:
             self.width, self.height = width, height
             self.zoom = self.zoom*self.aspect_ratio*self.height/self.width
             self.aspect_ratio = width/height
+
             glViewport(0, 0, width, height)
+            # will be changed to double viewport later
+
 
     def scroll_callbacks(self, window, xoffset, yoffset):
         if (self.zoom-0.24*yoffset != 0) and not ((self.zoom-0.24*yoffset > -0.1) & (self.zoom-0.24*yoffset < 0.1)):
@@ -123,6 +127,10 @@ class Window:
         appname = type(self).__name__
         window = self.build_window(appname)
         
+        # glViewport(0, 0, self.width, self.height)
+        # will be changed to double viewport later
+
+
         self.imgui_stuff.initiate_imgui(window, appname)
 
         
