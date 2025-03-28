@@ -14,7 +14,6 @@ Current output type : For the moment 2 lines creating
 
 UPCOMING CHANGES :
 - Write code in a class to permit scailability
-- Allow input for both side views and output the bounds for each side view
 - Take advantage of (1, 1) type levels
 - Efficiency review, current code is O(n), but all cases could be simulated and stored for lookup
 
@@ -48,6 +47,22 @@ def find_intersection(line1, line2):
 
     return (x, y)
 
+def hull_coordinates(x_view, z_view):
+    '''
+    Returns the 8 points that bound the rectangular prism (which is extended up in the rendering)
+    '''
+    x_left_bound = x_view[0]
+    x_right_bound = x_view[1]
+    z_left_bound = z_view[0]
+    z_right_bound = z_view[1]
+
+    # Match correspongind bounds (x, z, y), 
+    # the y value does not matter since the prism is being extended, 1 is used for upper points, -1 for lower points
+    bounding_points = [(x_left_bound[0], z_left_bound[0], 1), (x_left_bound[0], z_left_bound[2], 1), (x_left_bound[2], z_left_bound[0], 1),
+                       (x_left_bound[2], z_left_bound[2], 1), (x_left_bound[1], z_left_bound[1], -1), (x_left_bound[1], z_left_bound[3], -1),
+                       (x_left_bound[3], z_left_bound[1], -1), (x_left_bound[3], z_left_bound[3], -1)]
+    
+    return bounding_points
 
 def group_corresponding_levels(levels):
     '''
@@ -212,12 +227,14 @@ def scintillators_to_bounds(scintillators):
     :return bounds: tuple containing two lists each containing the points that bound the muon path
     '''
     x_view = scintillators[0]
-    y_view = scintillators[1]
+    z_view = scintillators[1]
 
     x_bounds = detect_side_view(x_view)
-    y_bounds = detect_side_view(y_view)
+    z_bounds = detect_side_view(z_view)
 
-    return (x_bounds, y_bounds)
+    hull_bounds = hull_coordinates(x_view, z_view)
+
+    return hull_bounds
 
 
 # if __name__ == '__main__':
