@@ -40,11 +40,15 @@ def update_perspective_values():
     global half_gap_size
     global inter_level_gap
     global gap_line
+    global level_count
     upper_side_views = [(0, n)] # (start, end) coordinates for each level 
     lower_side_views = [(0, n)]
 
     # Account for extra x plates
     half_gap_size += inter_level_gap
+
+    # Update level count
+    level_count = 1
 
 
 # Functions
@@ -70,17 +74,21 @@ def find_points_on_line(line, target_y):
     x1, y1 = line[0]
     x2, y2 = line[1]
 
-    # Calculate the slope (m)
-    m = (y2 - y1) / (x2 - x1)
-    
     # Find the x-coordinate for the given target y-coordinate
     def find_x_for_y(y):
         # Using the line equation: y - y1 = m(x - x1) -> solving for x
         return x1 + (y - y1) / m
     
-    # Find the x-coordinates for the target_y and -target_y
-    x_pos = find_x_for_y(target_y)
-    x_neg = find_x_for_y(-target_y)
+    if x1 != x2: # Avoid division by zero
+        # Calculate the slope (m)
+        m = (y2 - y1) / (x2 - x1)
+
+        # Find the x-coordinates for the target_y and -target_y
+        x_pos = find_x_for_y(target_y)
+        x_neg = find_x_for_y(-target_y)
+    else : # If vertical line
+        x_pos = x1
+        x_neg = x2
     
     # Return the points
     return (x_pos, x_neg)
@@ -102,6 +110,8 @@ def hull_coordinates(x_bound, z_bound):
     z_right_bound = z_bound[1]
 
     # Recalculate bounds for another y value
+    print('X left bound')
+    print(x_left_bound)
     x_left_bound = find_points_on_line(x_left_bound, highest_point)
     x_right_bound = find_points_on_line(x_right_bound, highest_point)
     z_left_bound = find_points_on_line(z_left_bound, highest_point)
@@ -288,6 +298,8 @@ def scintillators_to_bounds(scintillators):
     z_view = scintillators[1]
 
     x_bounds = detect_side_view(x_view)
+    print('X bounds ')
+    print(x_bounds)
     update_perspective_values()
     z_bounds = detect_side_view(z_view)
 
@@ -298,7 +310,8 @@ def scintillators_to_bounds(scintillators):
 
     return hull_bounds, fan_out_lines
 
-
+data = [[(1,0), (1,0), (1,0), (1,0), (1,0), (1,0), (1,0), (1,0)], [(1,0), (1,0), (1,0), (1,0), (1,0), (1,0), (1,0), (1,0)]]
+print(scintillators_to_bounds(data))
 # if __name__ == '__main__':
 
 
