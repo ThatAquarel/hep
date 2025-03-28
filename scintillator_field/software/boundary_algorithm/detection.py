@@ -23,12 +23,28 @@ UPCOMING CHANGES :
 level_count = 1
 n = 2*1 # Sideview length of scintillator in unit x
 
+
+# These values are used for x perspective
 upper_side_views = [(0, n)] # (start, end) coordinates for each level 
 lower_side_views = [(0, n)]
 half_gap_size = 5 # In unit x
 plate_thickness = 1 # In unit x
-inter_level_gap = 1 # In unit x
+inter_level_gap = 2*1 + plate_thickness # In unit x, level gap*2 + y_plate thickness
 gap_line = 0
+highest_point = half_gap_size + 5*inter_level_gap + 6*plate_thickness # Values custom set to this detector
+lowest_point = -highest_point
+
+def update_perspective_values():
+    global upper_side_views
+    global lower_side_views
+    global half_gap_size
+    global inter_level_gap
+    global gap_line
+    upper_side_views = [(0, n)] # (start, end) coordinates for each level 
+    lower_side_views = [(0, n)]
+
+    # Account for extra x plates
+    half_gap_size += inter_level_gap
 
 
 # Functions
@@ -47,22 +63,60 @@ def find_intersection(line1, line2):
 
     return (x, y)
 
-def hull_coordinates(x_view, z_view):
+def find_points_on_line(line, target_y):
+    '''
+    Takes in a line and computes 2 points on the line for the line coordinate.
+    '''
+    x1, y1 = line[0]
+    x2, y2 = line[1]
+
+    # Calculate the slope (m)
+    m = (y2 - y1) / (x2 - x1)
+    
+    # Find the x-coordinate for the given target y-coordinate
+    def find_x_for_y(y):
+        # Using the line equation: y - y1 = m(x - x1) -> solving for x
+        return x1 + (y - y1) / m
+    
+    # Find the x-coordinates for the target_y and -target_y
+    x_pos = find_x_for_y(target_y)
+    x_neg = find_x_for_y(-target_y)
+    
+    # Return the points
+    return (x_pos, x_neg)
+
+
+
+
+def hull_coordinates(x_bound, z_bound):
     '''
     Returns the 8 points that bound the rectangular prism (which is extended up in the rendering)
+    [((0, 10), (0.25, -9)), ((0.25, 9), (0.5 -10))]
     '''
-    x_left_bound = x_view[0]
-    x_right_bound = x_view[1]
-    z_left_bound = z_view[0]
-    z_right_bound = z_view[1]
+    global highest_point
+    global lowest_point
 
-    # Match correspongind bounds (x, z, y), 
-    # the y value does not matter since the prism is being extended, 1 is used for upper points, -1 for lower points
-    bounding_points = [(x_left_bound[0], z_left_bound[0], 1), (x_left_bound[0], z_left_bound[2], 1), (x_left_bound[2], z_left_bound[0], 1),
-                       (x_left_bound[2], z_left_bound[2], 1), (x_left_bound[1], z_left_bound[1], -1), (x_left_bound[1], z_left_bound[3], -1),
-                       (x_left_bound[3], z_left_bound[1], -1), (x_left_bound[3], z_left_bound[3], -1)]
+    x_left_bound = x_bound[0]
+    x_right_bound = x_bound[1]
+    z_left_bound = z_bound[0]
+    z_right_bound = z_bound[1]
+
+    # Recalculate bounds for another y value
+    x_left_bound = find_points_on_line(x_left_bound, highest_point)
+    x_right_bound = find_points_on_line(x_right_bound, highest_point)
+    z_left_bound = find_points_on_line(z_left_bound, highest_point)
+    z_right_bound = find_points_on_line(z_right_bound, highest_point)
+
+    # Match correspongind bounds (x, z, y) 
+    bounding_points = [(x_left_bound[0], z_right_bound[0], highest_point), (x_left_bound[0], z_left_bound[0], highest_point),
+                       (x_right_bound[0], z_right_bound[0], highest_point), (x_right_bound[0], z_left_bound[0], highest_point),
+                       (x_left_bound[1], z_right_bound[1], lowest_point), (x_left_bound[1], z_left_bound[1], lowest_point),
+                       (x_right_bound[1], z_right_bound[1], lowest_point), (x_right_bound[1], z_left_bound[1], lowest_point)]
     
-    return bounding_points
+    fan_out_points = [(bounding_points[0], bounding_points[-1]), (bounding_points[1], bounding_points[-2]),
+                      (bounding_points[2], bounding_points[-3]), (bounding_points[3], bounding_points[-4])]
+    
+    return bounding_points, fan_out_points
 
 def group_corresponding_levels(levels):
     '''
@@ -116,7 +170,7 @@ def draw_bounds(level_pair, previous_bounds):
     elif upper_level == (1, 1):
         pass # Implement later
     else :
-        return 'Muon exited'
+        return None
 
     # Adjust lower side view points
     if lower_level == (1, 0):
@@ -126,7 +180,7 @@ def draw_bounds(level_pair, previous_bounds):
     elif lower_level == (1, 1):
         pass # Implement later
     else :
-        return 'Muon exited'
+        return None
         
     
     # Increase counters
@@ -218,8 +272,12 @@ def detect_side_view(scintillators):
     for level_pair in corresponding_levels:
 
         best_bounds = draw_bounds(level_pair, best_bounds)
+        if best_bounds == None:
+            return None
+
 
     return best_bounds
+
 
 def scintillators_to_bounds(scintillators):
     '''
@@ -230,11 +288,15 @@ def scintillators_to_bounds(scintillators):
     z_view = scintillators[1]
 
     x_bounds = detect_side_view(x_view)
+    update_perspective_values()
     z_bounds = detect_side_view(z_view)
 
-    hull_bounds = hull_coordinates(x_view, z_view)
+    if x_bounds == None or z_bounds == None:
+        return None
 
-    return hull_bounds
+    hull_bounds, fan_out_lines = hull_coordinates(x_bounds, z_bounds)
+
+    return hull_bounds, fan_out_lines
 
 
 # if __name__ == '__main__':
