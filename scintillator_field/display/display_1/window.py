@@ -44,31 +44,6 @@ class Window:
 
         self.panning, self.angling = False, False
 
-    
-    def update_camera(self):
-
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        glOrtho(
-            -self.aspect_ratio * self.zoom,
-            self.aspect_ratio * self.zoom,
-            -self.zoom,
-            self.zoom,
-            -self.render_distance,
-            self.render_distance,
-        )
-        glMatrixMode(GL_MODELVIEW)
-        glLoadIdentity()
-        glTranslatef(self.pan_x, self.pan_y, self.pan_z)
-        matrix = np.array((
-            [self.angle_x, 1.0, 0.0, 0.0],
-            [self.angle_y, 0.0, 1.0, 0.0],
-            [self.angle_z, 0.0, 0.0, 1.0],
-            ))
-        for i in matrix:
-            glRotatef(i[0], i[1], i[2], i[3])
-
-
     def build_window(self, window_name):
         
         window = glfw.create_window(self.width, self.height, window_name, None, None)
@@ -175,8 +150,6 @@ class Window:
         while not self.done:
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-
-            self.update_camera()
 
             opengl_stuff_for_window.per_render_loop(self)
 

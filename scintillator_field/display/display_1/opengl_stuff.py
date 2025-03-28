@@ -237,7 +237,6 @@ class OpenGLStuff:
         #    all_vbo.append(make_vbo(quad))
 
         self.all_data = np.array(all_data).astype(np.float32)
-        print(self.all_data.shape)
         #self.all_vbo = np.array(all_vbo)
 
         self.vao = make_vao_vbo(self.all_data)[0]
