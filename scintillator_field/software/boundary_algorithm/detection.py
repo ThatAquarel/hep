@@ -110,8 +110,6 @@ def hull_coordinates(x_bound, z_bound):
     z_right_bound = z_bound[1]
 
     # Recalculate bounds for another y value
-    print('X left bound')
-    print(x_left_bound)
     x_left_bound = find_points_on_line(x_left_bound, highest_point)
     x_right_bound = find_points_on_line(x_right_bound, highest_point)
     z_left_bound = find_points_on_line(z_left_bound, highest_point)
@@ -298,8 +296,6 @@ def scintillators_to_bounds(scintillators):
     z_view = scintillators[1]
 
     x_bounds = detect_side_view(x_view)
-    print('X bounds ')
-    print(x_bounds)
     update_perspective_values()
     z_bounds = detect_side_view(z_view)
 
@@ -310,8 +306,6 @@ def scintillators_to_bounds(scintillators):
 
     return hull_bounds, fan_out_lines
 
-data = [[(1,0), (1,0), (1,0), (1,0), (1,0), (1,0), (1,0), (1,0)], [(1,0), (1,0), (1,0), (1,0), (1,0), (1,0), (1,0), (1,0)]]
-print(scintillators_to_bounds(data))
 # if __name__ == '__main__':
 
 
