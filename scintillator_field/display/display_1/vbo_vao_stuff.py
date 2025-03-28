@@ -6,7 +6,8 @@ import numpy as np
 
 def make_vao_vbo(data):
     n_per_vertice = 3
-    n_per_colour = 4
+    n_per_colour = 3
+    n_opacity = 1
     data_items_per_point = len(data[0])
     data_stride = data_items_per_point*data.itemsize
 
@@ -21,6 +22,9 @@ def make_vao_vbo(data):
 
     glEnableVertexAttribArray(1)
     glVertexAttribPointer(1, n_per_colour, GL_FLOAT, GL_FALSE, data_stride, ctypes.c_void_p(n_per_vertice * data.itemsize))
+    
+    glEnableVertexAttribArray(2)
+    glVertexAttribPointer(2, n_opacity, GL_FLOAT, GL_FALSE, data_stride, ctypes.c_void_p((n_per_vertice+n_per_colour) * data.itemsize))
     
     glBindBuffer(GL_ARRAY_BUFFER, 0)
     glBindVertexArray(0)

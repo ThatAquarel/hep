@@ -3,6 +3,7 @@ from OpenGL.GLU import *
 from OpenGL.GL.shaders import compileShader, compileProgram
 
 import os
+import sys
 
 import numpy as np
 
@@ -90,8 +91,9 @@ def translation_rotation_scale_matrix(t=(0, 0, 0), r=(0, 0, 0), s=(1, 1, 1)):
 
 def make_shaders():
 
+
     this_file_path = os.path.abspath(__file__)
-    lst_f_path = this_file_path.split("\\")
+    lst_f_path = this_file_path.split(os.sep)
 
     vertex_path = lst_f_path.copy()
     fragment_path = lst_f_path.copy()
@@ -99,8 +101,8 @@ def make_shaders():
     vertex_path[-1] = "vertex_shader.glsl"
     fragment_path[-1] = "fragment_shader.glsl"
 
-    vertex_path = "\\".join(vertex_path)
-    fragment_path = "\\".join(fragment_path)
+    vertex_path   = os.sep.join(vertex_path)
+    fragment_path = os.sep.join(fragment_path)
 
     with open(vertex_path, "r") as f:
         vertex_shader_text = f.read()
