@@ -70,12 +70,12 @@ class square:
     def interpret_data(self,data):
         vertices = []
         for cube in data:
-            x1 = cube[0][0]
-            x2 = cube[2][0]
-            y1 = cube[1][1]
-            y2 = cube[0][1]
-            z1 = cube[4][2] / 64
-            z2 = cube[0][2] / 64
+            x1 = cube[0][0][0]
+            x2 = cube[0][2][0]
+            y1 = cube[0][1][1]
+            y2 = cube[0][0][1]
+            z1 = cube[0][4][2] / 128
+            z2 = cube[0][0][2] / 128
 
             # Front face
             vertices.append([x2, y1, z1])
