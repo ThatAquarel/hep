@@ -1,11 +1,50 @@
 \documentclass[12pt]{article}
-\usepackage{graphicx} % Required for inserting images
-\usepackage{amsmath, amssymb, gensymb} % Required for advanced formula formatting
-\usepackage{float} % Required to force figure position
+\usepackage{graphicx}   % Required for inserting images.
+\usepackage{amsmath, amssymb, gensymb}  % Required for advanced formula formatting.
+\usepackage{float}  % Required to force figure position.
+\usepackage{authblk}    % Required for authors and affiliation formatting.
+\usepackage{multicol}   % Required for making document two-column.
+\usepackage{lipsum} % Temporary package for blind text.
+
+\title{Calibrating a three-dimensional scintillator-based muon detector}
+
+
+\author{Tian Yi Xia}
+\author{Aljoscha Ziegler}
+\author{Leandro Perez Moran}
+\author{Evan Parasol}
+\author{Andy Yu}
+\author{Milo Belarbi}
+\author{[Placeholder]}  % The list of authors is not complete
+
+\affil{Dawson College, Canada}
+\date{April 10, 2025}   
 
 
 \begin{document}
 
+\maketitle
 
+\begin{multicols}{2}
+
+\section{Introduction}
+\input{sections/introduction}
+
+\section{Design}
+\input{sections/design}
+
+\section{Results}
+\input{sections/results}
+
+\section{Experiment}
+\input{sections/experiment}
+
+\section{Community outreach}
+\input{sections/community_outreach}
+
+\end{multicols}
+
+% Section: Acknowledgements
+\input{acknowledgements}
 
 \end{document}
