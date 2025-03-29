@@ -312,15 +312,15 @@ def scintillators_to_bounds(scintillators):
 
 data_all = []
 data1 = [[(1,0), (1,0), (1,0), (1,0), (1,0), (1,0)], [(1,0), (1,0), (1,0), (1,0), (1,0), (1,0)]]
-data2 = [[(0,1), (0,1), (0,1), (0,1), (0,1), (0,1)], [(0,1), (0,1), (0,1), (0,1), (0,1), (0,1)]]
-data_all.append(scintillators_to_bounds(data1)[0])
-data_all.append(scintillators_to_bounds(data2)[0])
+#data2 = [[(0,1), (0,1), (0,1), (0,1), (0,1), (0,1)], [(0,1), (0,1), (0,1), (0,1), (0,1), (0,1)]]
+data_all.append(scintillators_to_bounds(data1))
+#data_all.append(scintillators_to_bounds(data2))
 data = []
 data.append(data_all)
 
 data_f =[]
 data_f.append(scintillators_to_bounds(data1)[1])
-data_f.append(scintillators_to_bounds(data2)[1])
+#data_f.append(scintillators_to_bounds(data2)[1])
 
 #[data] = dataset
 
