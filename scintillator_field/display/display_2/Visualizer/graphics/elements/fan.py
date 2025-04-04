@@ -70,7 +70,7 @@ class Fan:
         dy = (pair[0][1] - pair[1][1]) * scale
         dz = (pair[0][2] - pair[1][2]) * scale
 
-        return pair[0][0] + dx, pair[0][1] + dy, (pair[0][2] + dz)/128
+        return [pair[0][0] + dx, pair[0][1] + dy, (pair[0][2] + dz)/128]
 
     def interpret_data(self,data):
         vertices = []
@@ -138,8 +138,76 @@ class Fan:
             # vertices.append(p6)
             # vertices.append(p7)
             # vertices.append(p8)
+            
+        
+            #coords
+            p1 = [cube[0][4][0],cube[0][4][1],cube[0][4][2]]
+            p2 = [cube[0][5][0],cube[0][5][1],cube[0][5][2]]
+            p3 = [cube[0][6][0],cube[0][6][1],cube[0][6][2]]
+            p4 = [cube[0][7][0],cube[0][7][1],cube[0][7][2]]
+
+
+            #tuple to list
+            p5 = self.fanned_coords((cube[1][3][1],cube[1][3][0]))
+            p6 = self.fanned_coords((cube[1][2][1],cube[1][2][0]))
+            p7 = self.fanned_coords((cube[1][1][1],cube[1][1][0]))
+            p8 = self.fanned_coords((cube[1][0][1],cube[1][0][0]))
+
+            
+            #scale z
+            p1[2] = p1[2]/128
+            p2[2] = p2[2]/128
+            p3[2] = p3[2]/128
+            p4[2] = p4[2]/128
+            
+
+            # Front face
+            vertices.append(p5)
+            vertices.append(p1)
+            vertices.append(p7)
+            vertices.append(p1)
+            vertices.append(p7)
+            vertices.append(p3)
+            # Back face
+            vertices.append(p6)
+            vertices.append(p2)
+            vertices.append(p8)
+            vertices.append(p2)
+            vertices.append(p8)
+            vertices.append(p4)
+            # Left face
+            vertices.append(p5)
+            vertices.append(p1)
+            vertices.append(p6)
+            vertices.append(p1)
+            vertices.append(p6)
+            vertices.append(p2)
+            # Right face
+            vertices.append(p7)
+            vertices.append(p3)
+            vertices.append(p8)
+            vertices.append(p3)
+            vertices.append(p8)
+            vertices.append(p4)
+
+            # # Top face
+            # vertices.append(p1)
+            # vertices.append(p2)
+            # vertices.append(p3)
+            # vertices.append(p2)
+            # vertices.append(p3)
+            # vertices.append(p4)
+            # # Bottom face
+            # vertices.append(p5)
+            # vertices.append(p6)
+            # vertices.append(p7)
+            # vertices.append(p6)
+            # vertices.append(p7)
+            # vertices.append(p8)
 
         vertices = np.array(vertices, dtype = np.float32)
+
+
         return vertices
 
 
@@ -147,8 +215,7 @@ class Fan:
         """
         Draw a square
         """
-        data = np.copy(self.data)
-        update_vbo(self.vbo, data)
+        update_vbo(self.vbo, self.data)
         draw_vao(self.vao, GL_TRIANGLES, self.n)
 
 

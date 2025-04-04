@@ -1,0 +1,104 @@
+app.py
+    -This is the file where you run the code. 
+    -All of the draw functions(including the gui) are called here. 
+        There's a rendering_loop function which calls the on_render_frame.
+        The on_render_frame function calls the draw function in each class found in the elements folder.
+    -All of the input functions can also be found here.
+        processes mouse clicks to be used for display
+
+
+
+test.py
+    -This is where all of the data points come from. 
+    -The algorithm designed by Aljoscha gives out vertices for drawing objects
+
+arduino.py
+    -Code to retrieve data from the arduino chip
+
+graphics
+
+    shaders
+        -vertex.glsl, fragment.glsl
+
+
+
+    orbit_controls.py
+        -camera matrices, controls etc
+
+
+
+    parameter_interface.py
+        -imgui
+        -user interface
+        -toggles some variable in app.py to update the display
+            e.g. self.show_axes, self.dataset_active
+            pt_selected comes from app.py
+        -test passes some info into the class to display
+            (in particular, test.data)
+
+
+        
+    shader_renderer.py
+        -"Shader Renderer: Accelerates via GPU lighting computations
+        and rendering of frames, and sets up the drawing context
+        necessary for OpenGL to function"
+
+    
+    vbo.py
+        -functions from this file is used to draw
+        -create_vao, draw_vao and update_vbo are called in every file in the folder "elements"
+            -each file in elements first computes the first set of data and calls create_vao
+            -in each rendering loop, the draw function inside the element calls update_vbo and draw_vao for the display
+
+
+
+    elements
+        -All of these classes are created in app.py(__init__ function)
+        -there is a draw function in each of the classes in each elements file
+            -it draws the object provided the vertices of the triangles
+            -the draw function is called in the on_render_frame function in app.py
+
+
+
+
+        axes.py
+            -toggles the x-y-z axes 
+            -for the convenience of testing
+        
+
+        fan.py
+            -creates the fanning for each data point
+
+
+
+        plane.py
+            -creates the scintillator rods
+
+        
+        square.py
+            -creates the datapoint cubes
+
+       
+        trajectory.py
+            -connects consecutive data points together to show a trajectory
+
+
+        cube.py
+            -template sort of thing
+            -no longer in use
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+test(me).py and test_data.py
+Outdated
+For testing in previous versions of the code

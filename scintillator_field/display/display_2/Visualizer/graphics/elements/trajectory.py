@@ -96,8 +96,7 @@ class trajectory:
         """
         Draw lines for each render coordinate generated
         """
-        data = np.copy(self.data)
-        update_vbo(self.vbo, data)
+        update_vbo(self.vbo, self.data)
         draw_vao(self.vao, GL_LINES, self.n)
 
 

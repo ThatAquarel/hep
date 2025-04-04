@@ -274,9 +274,9 @@ class Plane:
         """
         Draw the planes
         """
-        data = np.copy(self.data)
+        
         #self.set_colour(pt_selected)
-        update_vbo(self.vbo, data)
+        update_vbo(self.vbo, self.data)
         draw_vao(self.vao, GL_TRIANGLES, self.n)
 
     # def set_color(self, new_color):

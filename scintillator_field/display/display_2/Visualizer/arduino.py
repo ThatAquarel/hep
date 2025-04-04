@@ -59,7 +59,7 @@ def bin_to_list(bin):
 for _ in range(12):
     packet = recv_packet(ser)
     x =  bin_to_list(packet >> 12)
-    y = bin_to_list(packet & 2048)
+    y = bin_to_list(packet & 4095)
     print([x,y])
 
 

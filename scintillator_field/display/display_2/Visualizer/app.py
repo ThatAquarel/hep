@@ -198,9 +198,10 @@ class App(CameraOrbitControls, ShaderRenderer):
         
 
         #draw elements
-        self.plane.draw(self.pt_selected)
         self.square.draw(self.ui.dataset_active)
         self.fan.draw(self.ui.dataset_active)
+        self.plane.draw(self.pt_selected)
+        
         
         #self.trajectory.draw(self.ui.dataset_active)
 

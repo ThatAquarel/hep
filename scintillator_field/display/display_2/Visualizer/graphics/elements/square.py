@@ -70,12 +70,12 @@ class square:
     def interpret_data(self,data):
         vertices = []
         for cube in data:
-            x1 = cube[0][0][0]
-            x2 = cube[0][2][0]
-            y1 = cube[0][1][1]
-            y2 = cube[0][0][1]
-            z1 = cube[0][4][2] / 128
-            z2 = cube[0][0][2] / 128
+            x1 = (cube[0][0][0] -60)/60
+            x2 = (cube[0][2][0]  -60)/60
+            y1 = cube[0][1][1]/60
+            y2 = cube[0][0][1]/60
+            z1 = cube[0][4][2] / 256
+            z2 = cube[0][0][2] / 256
 
             # Front face
             vertices.append([x2, y1, z1])
@@ -127,8 +127,8 @@ class square:
         """
         Draw a square
         """
-        data = np.copy(self.data)
-        update_vbo(self.vbo, data)
+
+        update_vbo(self.vbo, self.data)
         draw_vao(self.vao, GL_TRIANGLES, self.n)
 
 
