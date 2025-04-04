@@ -2,20 +2,21 @@
 
 Algorithm that takes in which scintillators lit up and returns a convex hull to bound the muon path
 
-Input type: Top be decided. 
-Current input type : List containing tuples representing the activation states of each level from top to bottom
+Input type : List containing tuples representing the activation states of each level from top to bottom
                      (0, 1) means every second scintillator lights up
                      (1, 0) means every first scintillator lights up
                      (1, 1) All the scintillator lit up
                      (0, 0) No scintillator lit up
+            -- > See display software, contains a function that converts the 32 bit number 
+                 that the detector outputs to the above formatting
 
-Output type: To confirm with Evan.
+Output type: Prism vertices and 2 points per fan out line
 Current output type : For the moment 2 lines creating 
 
-UPCOMING CHANGES :
-- Write code in a class to permit scailability
+UPCOMING CHANGES : (In order of importance)
 - Take advantage of (1, 1) type levels
-- Efficiency review, current code is O(n), but all cases could be simulated and stored for lookup
+- Write code in a class to permit scailability
+- Efficiency review, current code is O(n), but all cases could be simulated and stored for lookup for O(log(n))
 
 '''   
 
@@ -176,7 +177,9 @@ def draw_bounds(level_pair, previous_bounds):
     elif upper_level == (0, 1):
         upper_side_views.append((upper_side_views[level_count-1][1]-interval, upper_side_views[level_count-1][1]))
     elif upper_level == (1, 1):
-        pass # Implement later
+        # An implementation of this case will be made later to take full advantage of this unique situation
+        return previous_bounds
+        
     else :
         return None
 
@@ -186,7 +189,9 @@ def draw_bounds(level_pair, previous_bounds):
     elif lower_level == (0, 1):
         lower_side_views.append((lower_side_views[level_count-1][1]-interval, lower_side_views[level_count-1][1]))
     elif lower_level == (1, 1):
-        pass # Implement later
+        # An implementation of this case will be made later to take full advantage of this unique situation
+        return previous_bounds
+        
     else :
         return None
         
@@ -261,7 +266,6 @@ def draw_bounds(level_pair, previous_bounds):
             # print('detector line intersection lower right')
             right_bound = (right_bound[0], lower_level_points[1])
 
-
     return [left_bound, right_bound]
 
     
@@ -282,8 +286,7 @@ def detect_side_view(scintillators):
         best_bounds = draw_bounds(level_pair, best_bounds)
         if best_bounds == None:
             return None
-
-
+        
     return best_bounds
 
 
@@ -306,8 +309,8 @@ def scintillators_to_bounds(scintillators):
 
     return hull_bounds, fan_out_lines
 
-# if __name__ == '__main__':
 
+# Testing data
 
     # scintillators = [(1, 0), (0, 1), (1, 0), (0, 1), (1, 0), (0, 1)]
     # best_path = detect_side_view(scintillators)
