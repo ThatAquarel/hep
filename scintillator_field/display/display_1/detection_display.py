@@ -1,6 +1,7 @@
 import numpy as np
 
-from vbo_vao_stuff import *
+from scintillator_field.display.display_1.vbo_vao_stuff import *
+from scintillator_field.software.boundary_algorithm.detection import *
 
 class DetectionHulls:
     def __init__(self):
@@ -64,10 +65,10 @@ class DetectionHulls:
         all_t.extend(tl2)
         all_t.extend(tr1)
         all_t.extend(tr2)
-        all_t.extend(tB1) # hiding these 4 faces allows for seeing through convex hull
-        all_t.extend(tB2) # hiding these 4 faces allows for seeing through convex hull
-        all_t.extend(tT1) # hiding these 4 faces allows for seeing through convex hull
-        all_t.extend(tT2) # hiding these 4 faces allows for seeing through convex hull
+        #all_t.extend(tB1) # hiding these 4 faces allows for seeing through convex hull
+        #all_t.extend(tB2) # hiding these 4 faces allows for seeing through convex hull
+        #all_t.extend(tT1) # hiding these 4 faces allows for seeing through convex hull
+        #all_t.extend(tT2) # hiding these 4 faces allows for seeing through convex hull
 
         return all_t
     
@@ -84,15 +85,20 @@ class DetectionHulls:
             vec_p1_p2 = vec(line[0], line[1])
             unit_vec = vec_p1_p2/np.linalg.norm(vec_p1_p2)
             line_vectors.append(5*unit_vec) # vec from p0 to p1
+
         
-        scaled_p0 = -line_vectors[0]+hull_bounds[0]
-        scaled_p1 = -line_vectors[1]+hull_bounds[1]
-        scaled_p2 = -line_vectors[2]+hull_bounds[2]
-        scaled_p3 = -line_vectors[3]+hull_bounds[3]
-        scaled_p4 =  line_vectors[3]+hull_bounds[4]
-        scaled_p5 =  line_vectors[2]+hull_bounds[5]
-        scaled_p6 =  line_vectors[1]+hull_bounds[6]
-        scaled_p7 =  line_vectors[0]+hull_bounds[7]
+        scaled_p0 = line_vectors[0]+hull_bounds[0]
+        scaled_p1 = line_vectors[1]+hull_bounds[1]
+        scaled_p2 = line_vectors[2]+hull_bounds[2]
+        scaled_p3 = line_vectors[3]+hull_bounds[3]
+        scaled_p4 = -line_vectors[3]+hull_bounds[4]
+        scaled_p5 = -line_vectors[2]+hull_bounds[5]
+        scaled_p6 = -line_vectors[1]+hull_bounds[6]
+        scaled_p7 = -line_vectors[0]+hull_bounds[7]
+
+        print(hull_bounds[0], line_vectors[0], scaled_p0)
+        print(hull_bounds[7], line_vectors[0], scaled_p7)
+        print()
 
         scaled_hull_bounds = [scaled_p0, scaled_p1,
                               scaled_p2, scaled_p3,
@@ -120,12 +126,58 @@ class DetectionHulls:
         fan_out = [(1, 8), (2, 7), (3, 6), (4, 5)]
         '''
 
+        
 
-        # TEST DATA
-        p1, p2, p3, p4 = (5, 3, 7), (5, 5, 7), (7, 3, 7), (7, 5, 7)
-        p5, p6, p7, p8 = (5, 3, 4), (5, 5, 4), (7, 3, 4), (7, 5, 4)
-        hull_bounds =[p1, p2, p3, p4, p5, p6, p7, p8]
-        fan_out = [(p1, p8), (p2, p7), (p3, p6), (p4, p5)]
+        #scintillators = [
+        #    [
+        #        (0,1),
+        #        (0,1),
+        #        (0,1),
+        #        (1,1),
+        #        (0,1),
+        #        (1,1),
+        #    ],
+        #    [
+        #        (0,1),
+        #        (1,0),
+        #        (0,0),
+        #        (0,1),
+        #        (1,1),
+        #        (1,0),
+        #    ],
+        #]
+        #
+        #a = scintillators_to_bounds(scintillators)
+        #print(a)
+
+        scintillators = [
+            [
+                (0,1),
+                (0,1),
+                (0,1),
+                (0,1),
+                (0,1),
+                (0,1),
+            ],
+            [
+                (0,1),
+                (0,1),
+                (0,1),
+                (0,1),
+                (0,1),
+                (0,1),
+            ],
+        ]
+        hull_bounds, fan_out = scintillators_to_bounds(scintillators)
+
+
+        # # TEST DATA
+        # p1, p2, p3, p4 = (1, 3,   7), (1, 4,   7), (3, 3,   7), (3, 4,   7)
+        # p5, p6, p7, p8 = (1, 3, -14), (1, 4, -14), (3, 3, -14), (3, 4, -14)
+        # #p1, p2, p3, p4 = (5, 3, 7), (5, 5, 7), (7, 3, 7), (7, 5, 7)
+        # #p5, p6, p7, p8 = (5, 3, 4), (5, 5, 4), (7, 3, 4), (7, 5, 4)
+        # hull_bounds =[p1, p2, p3, p4, p5, p6, p7, p8]
+        # fan_out = [(p1, p8), (p2, p7), (p3, p6), (p4, p5)]
 
 
 
@@ -161,6 +213,9 @@ class DetectionHulls:
         fan_out = [(1, 8), (2, 7), (3, 6), (4, 5)]
         '''
 
+        hull_colour = [0.5, 0, 0.5]
+        hull_opacity = 0.8
+
         p1, p2, p3, p4, p5, p6, p7, p8 = self.make_points_from_xyz(
                 low_x   = hull_bounds[0][0],
                 high_x  = hull_bounds[3][0],
@@ -168,8 +223,8 @@ class DetectionHulls:
                 high_y  = hull_bounds[3][1],
                 low_z   = hull_bounds[4][2],
                 high_z  = hull_bounds[3][2],
-                colour  = [0.5, 0, 0.5],
-                opacity = 0.8,
+                colour  = hull_colour,
+                opacity = hull_opacity,
             )
         hull_prism_triangles = self.make_prism_triangles(
             p1, p2, p3, p4, p5, p6, p7, p8
@@ -178,25 +233,25 @@ class DetectionHulls:
         scaled_hull_bounds, scaled_fan_out = self.scale_points(hull_bounds, fan_out, scale_factor=2)
         
         top_triangle_fans = self.make_prism_triangles(
-            p1 = self.vec3_to_vec7(       hull_bounds[0], [0.5, 0, 0.5], 0.8),
-            p2 = self.vec3_to_vec7(       hull_bounds[2], [0.5, 0, 0.5], 0.8),
-            p3 = self.vec3_to_vec7(       hull_bounds[1], [0.5, 0, 0.5], 0.8),
-            p4 = self.vec3_to_vec7(       hull_bounds[3], [0.5, 0, 0.5], 0.8),
-            p5 = self.vec3_to_vec7(scaled_hull_bounds[0], [0.5, 0, 0.5], 0.8),
-            p6 = self.vec3_to_vec7(scaled_hull_bounds[2], [0.5, 0, 0.5], 0.8),
-            p7 = self.vec3_to_vec7(scaled_hull_bounds[1], [0.5, 0, 0.5], 0.8),
-            p8 = self.vec3_to_vec7(scaled_hull_bounds[3], [0.5, 0, 0.5], 0.8),
+            p1 = self.vec3_to_vec7(       hull_bounds[0], hull_colour, hull_opacity),
+            p2 = self.vec3_to_vec7(       hull_bounds[2], hull_colour, hull_opacity),
+            p3 = self.vec3_to_vec7(       hull_bounds[1], hull_colour, hull_opacity),
+            p4 = self.vec3_to_vec7(       hull_bounds[3], hull_colour, hull_opacity),
+            p5 = self.vec3_to_vec7(scaled_hull_bounds[0], hull_colour, hull_opacity),
+            p6 = self.vec3_to_vec7(scaled_hull_bounds[2], hull_colour, hull_opacity),
+            p7 = self.vec3_to_vec7(scaled_hull_bounds[1], hull_colour, hull_opacity),
+            p8 = self.vec3_to_vec7(scaled_hull_bounds[3], hull_colour, hull_opacity),
         )
 
         bottom_triangle_fans = self.make_prism_triangles(
-            p1 = self.vec3_to_vec7(scaled_hull_bounds[4], [0.5, 0, 0.5], 0.8),
-            p2 = self.vec3_to_vec7(scaled_hull_bounds[6], [0.5, 0, 0.5], 0.8),
-            p3 = self.vec3_to_vec7(scaled_hull_bounds[5], [0.5, 0, 0.5], 0.8),
-            p4 = self.vec3_to_vec7(scaled_hull_bounds[7], [0.5, 0, 0.5], 0.8),
-            p5 = self.vec3_to_vec7(       hull_bounds[4], [0.5, 0, 0.5], 0.8),
-            p6 = self.vec3_to_vec7(       hull_bounds[6], [0.5, 0, 0.5], 0.8),
-            p7 = self.vec3_to_vec7(       hull_bounds[5], [0.5, 0, 0.5], 0.8),
-            p8 = self.vec3_to_vec7(       hull_bounds[7], [0.5, 0, 0.5], 0.8),
+            p1 = self.vec3_to_vec7(scaled_hull_bounds[4], hull_colour, hull_opacity),
+            p2 = self.vec3_to_vec7(scaled_hull_bounds[6], hull_colour, hull_opacity),
+            p3 = self.vec3_to_vec7(scaled_hull_bounds[5], hull_colour, hull_opacity),
+            p4 = self.vec3_to_vec7(scaled_hull_bounds[7], hull_colour, hull_opacity),
+            p5 = self.vec3_to_vec7(       hull_bounds[4], hull_colour, hull_opacity),
+            p6 = self.vec3_to_vec7(       hull_bounds[6], hull_colour, hull_opacity),
+            p7 = self.vec3_to_vec7(       hull_bounds[5], hull_colour, hull_opacity),
+            p8 = self.vec3_to_vec7(       hull_bounds[7], hull_colour, hull_opacity),
         )
 
         hull_data = []

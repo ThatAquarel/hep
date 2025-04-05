@@ -9,8 +9,8 @@ from imgui.integrations.glfw import GlfwRenderer
 
 import numpy as np
 
-from scintillator_field.display.display_1.imgui_stuff import *
-from scintillator_field.display.display_1.opengl_stuff import *
+from imgui_stuff import *
+from opengl_stuff import *
 
 import time
 
@@ -24,7 +24,7 @@ class Window:
         self.render_distance = 1024
         
         self.width, self.height = 1924, 1028
-        #self.width, self.height = 750, 500
+        self.width, self.height = 1000, 750
         self.aspect_ratio = self.width/self.height
 
         self.angle_x, self.angle_y, self.angle_z = 0, 0, 45
@@ -67,7 +67,7 @@ class Window:
             self.zoom = self.zoom*self.aspect_ratio*self.height/self.width
             self.aspect_ratio = width/height
 
-            glViewport(0, 0, width, height)
+            glViewport(width//2, 0, width, height)
             # will be changed to double viewport later
 
 
@@ -125,13 +125,13 @@ class Window:
         self.imgui_stuff = ImguiStuff()
 
         appname = type(self).__name__
-        self.window = self.build_window(appname)
+        window = self.build_window(appname)
         
-        # glViewport(0, 0, self.width, self.height)
+        glViewport(self.width//2, 0, self.width, self.height)
         # will be changed to double viewport later
 
 
-        self.imgui_stuff.initiate_imgui(self.window, appname)
+        self.imgui_stuff.initiate_imgui(window, appname)
 
         
         glClearColor(0.5, 0.5, 0.5, 1)
@@ -145,32 +145,38 @@ class Window:
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glEnable(GL_BLEND)
 
-        self.opengl_stuff_for_window = OpenGLStuff()
-        self.opengl_stuff_for_window.setup()
+        opengl_stuff_for_window = OpenGLStuff()
+        opengl_stuff_for_window.setup()
 
 
-        self.dt = 0
-        self.current = time.time()
+        dt = 0
+        current = time.time()
 
         self.done = False
         self.paused = False
 
         while not self.done:
-            self.render_loop()
 
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-    def render_loop(self):
+            glViewport()
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+            evans_render()
 
-        self.opengl_stuff_for_window.per_render_loop(self)
+            opengl_stuff_for_window.per_render_loop(self)
 
-        self.imgui_stuff.imgui_box(self.dt, self, self.opengl_stuff_for_window)
-        self.imgui_stuff.render_box()
+            self.imgui_stuff.imgui_box(dt, self, opengl_stuff_for_window)
+            self.imgui_stuff.render_box()
 
-        end = time.time()
-        if end-self.current !=0:
-            self.dt = end-self.current
-        self.current = end
-        glfw.swap_buffers(self.window)
-        glfw.poll_events()
+            end = time.time()
+            if end-current !=0:
+                dt = end-current
+            current = end
+            glfw.swap_buffers(window)
+            glfw.poll_events()
+
+    def evans_render():
+        ...
+
+    def andys_render():
+        ...
