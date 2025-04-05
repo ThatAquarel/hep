@@ -1,7 +1,7 @@
 import numpy as np
 
 
-from vbo_vao_stuff import *
+from scintillator_field.display.display_1.vbo_vao_stuff import *
 
 
 class ScintillatorStructure:
@@ -13,7 +13,7 @@ class ScintillatorStructure:
                         z_i              =               0,
                         square_side_len  =               8, # 120 mm
                         width_per_one    =               1, # 9mm
-                        dead_space       =               0, # 22 mm
+                        dead_space       =               0.2, # 22 mm
                         c1               = [1, 0.75, 0.75],
                         c2               = [0.75, 1, 0.75],
                         alpha            =             0.8,
@@ -249,7 +249,7 @@ class ScintillatorStructure:
                 allz.extend((z_start, z_start+z_change))
 
         allz = np.array([allz])
-        print(np.max(allz), np.min(allz))
+        # print(np.max(allz), np.min(allz))
         self.all_data = np.array(all_data).astype(np.float32)
 
 

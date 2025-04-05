@@ -3,13 +3,11 @@ from OpenGL.GLU import *
 
 import numpy as np
 
-from vbo_vao_stuff import *
-from shaders.shaders import *
+from scintillator_field.display.display_1.vbo_vao_stuff import *
+from scintillator_field.display.display_1.shaders.shaders import *
 
-from scintillator_blocks import *
-from detection_display import *
-
-from detection_533pm_2025_03_28 import *
+from scintillator_field.display.display_1.scintillator_blocks import *
+from scintillator_field.display.display_1.detection_display import *
 
 
 class OpenGLStuff:
