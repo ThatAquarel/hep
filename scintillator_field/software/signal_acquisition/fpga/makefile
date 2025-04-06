@@ -11,5 +11,8 @@ flash:
 	@dd if=latching_register.bin of=padding.bin conv=notrunc
 	@flashrom -p serprog:dev=/dev/ttyACM0:4000000 -w padding.bin -c W25Q16.V
 
+verify:
+	@flashrom -p serprog:dev=/dev/ttyACM0:4000000 -v padding.bin -c W25Q16.V
+
 clean:
 	@rm latching_register.asc latching_register.bin latching_register.json padding.bin
