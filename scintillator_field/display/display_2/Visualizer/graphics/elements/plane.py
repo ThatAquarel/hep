@@ -11,7 +11,7 @@ class Plane:
 
         self.scale = scale
 
-        self.number_of_layers = 10
+        self.number_of_layers = 6
         
         #generate the vertices
         self.vertices = self.generate_plane_vertices(self.scale)
@@ -191,8 +191,8 @@ class Plane:
             x = -1
             y = -1
         else:
-            x = pt_selected[0] + 128
-            y = pt_selected[1] + 128
+            x = pt_selected[2] >> 12
+            y = pt_selected[2] & 4095
         
         
         # for i in range(len(self.vertices)//36):
@@ -229,7 +229,7 @@ class Plane:
 
 
             for i in range(number_of_strips):
-                reverse_number = round(2** ((15-layer)//2),0)
+                reverse_number = round(2** ((13-layer)//2),0)
 
                 k = 0
                 for j in range(layer + 1):
@@ -275,7 +275,7 @@ class Plane:
         Draw the planes
         """
         
-        #self.set_colour(pt_selected)
+        self.set_colour(pt_selected)
         update_vbo(self.vbo, self.data)
         draw_vao(self.vao, GL_TRIANGLES, self.n)
 

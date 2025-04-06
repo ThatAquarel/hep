@@ -23,7 +23,10 @@ class Fan:
         self.data[:, :3] = vertices  # Position
 
         #colour
-        self.data[:, 3:7] = [1,0,0,1]
+        self.data[:, 3:7] = [1,0,0,0.3]
+        # self.data[0:72, 3:7] = [0,1,0,1]  
+        # self.data[-72:-1, 3:7] = [0,0,1,1]
+        # self.data[-1, 3:7] = [0,0,1,1]
 
         # Normals (approximated)
         self.data[:, 7:10] = vertices  
@@ -65,7 +68,7 @@ class Fan:
     #     return coords
 
     def fanned_coords(self,pair):
-        scale = 1
+        scale = 5
         dx = (pair[0][0] - pair[1][0]) * scale
         dy = (pair[0][1] - pair[1][1]) * scale
         dz = (pair[0][2] - pair[1][2]) * scale

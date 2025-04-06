@@ -56,11 +56,16 @@ def bin_to_list(bin):
     
     return list
 
+def interpret_raw_data(bin):
+    x = bin >> 12   #first 12 nums
+    y = bin & 4095
+
+    return [bin_to_list(x),bin_to_list(y)]
+
 for _ in range(12):
     packet = recv_packet(ser)
-    x =  bin_to_list(packet >> 12)
-    y = bin_to_list(packet & 4095)
-    print([x,y])
+    
+    print(interpret_raw_data(packet))
 
 
 
