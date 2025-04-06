@@ -2,9 +2,9 @@ module top (
     input wire clk,           // Clock input for synchronization
     output wire clk_copy,
     output wire locked,
-    input wire [7:0] S,       // Set inputs (one per bit)
+    input wire [23:0] S,       // Set inputs (one per bit)
     input wire rst_n,         // Global active-low reset (clears all latches)
-    output reg [7:0] Q        // Non-inverting outputs
+    output reg [23:0] Q        // Non-inverting outputs
 );
 
 pll pll_inst (
@@ -16,7 +16,7 @@ pll pll_inst (
 // assign clk_copy = clk;
 
 // Synchronizer registers for each bit (two-stage for each input)
-reg [7:0] sync1, sync2; // sync1 and sync2 for each S[i]
+reg [23:0] sync1, sync2; // sync1 and sync2 for each S[i]
 integer i;
 
 always @(posedge clk_copy or negedge rst_n) begin
@@ -30,7 +30,7 @@ always @(posedge clk_copy or negedge rst_n) begin
         sync2 <= sync1;     // Second stage synchronizer
 
         // Latch the output based on the synchronized input
-        for (i = 0; i < 8; i = i + 1) begin
+        for (i = 0; i < 24; i = i + 1) begin
             if (sync2[i])   // Set output high if synchronized S[i] is asserted
                 Q[i] <= 1'b1;
             // If sync2[i] is low, hold the previous state (Q[i] stays the same)

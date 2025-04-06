@@ -2935,6 +2935,44 @@
 		)
 	)
 	(sheet
+		(at 143.51 104.14)
+		(size 31.75 26.67)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "cab29164-b14f-4461-826a-7491fc7384ab")
+		(property "Sheetname" "test"
+			(at 143.51 103.4284 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "untitled.kicad_sch"
+			(at 143.51 131.3946 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "acquisition"
+				(path "/dd68efff-541d-4422-8da3-c773bf0d34e4"
+					(page "6")
+				)
+			)
+		)
+	)
+	(sheet
 		(at 110.49 43.18)
 		(size 24.13 12.7)
 		(fields_autoplaced yes)
