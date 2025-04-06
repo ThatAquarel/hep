@@ -1,24 +1,72 @@
 # Assign parallel input data lines
-set_io S[0] 38
-set_io S[1] 39
-set_io S[2] 41
-set_io S[3] 42
-set_io S[4] 43
-set_io S[5] 44
-set_io S[6] 45
-set_io S[7] 47
 
-set_io Q[0] 113
-set_io Q[1] 115
-set_io Q[2] 117
-set_io Q[3] 119
-set_io Q[4] 121
-set_io Q[5] 128
-set_io Q[6] 134
-set_io Q[7] 136
+# shifter set 1
+set_io S[23] 139
+set_io S[22] 144
+set_io S[21] 143
+set_io S[20] 142
+set_io S[19] 141
+set_io S[18] 64
+set_io S[17] 63
+set_io S[16] 62
+
+# shifter set 2
+set_io S[15] 61
+set_io S[14] 60
+set_io S[13] 58
+set_io S[12] 56
+set_io S[11] 52
+set_io S[10] 50
+set_io S[9] 138 # 49 blocked for PLL
+set_io S[8] 48
+
+# shifter set 3
+set_io S[7] 47
+set_io S[6] 45
+set_io S[5] 39
+set_io S[4] 44
+set_io S[3] 43
+set_io S[2] 42
+set_io S[1] 41
+set_io S[0] 38
+
+
+
+# LED set 1
+set_io Q[23] 112
+set_io Q[22] 107
+set_io Q[21] 106
+set_io Q[20] 105
+set_io Q[19] 102
+set_io Q[18] 101
+
+# LED set 2
+set_io Q[17] 99
+set_io Q[16] 98
+set_io Q[15] 97
+set_io Q[14] 96
+set_io Q[13] 95
+set_io Q[12] 94
+
+# LED set 3
+set_io Q[11] 93
+set_io Q[10] 91
+set_io Q[9] 90
+set_io Q[8] 88
+set_io Q[7] 87
+set_io Q[6] 81
+
+# LED set 4
+set_io Q[5] 80
+set_io Q[4] 79
+set_io Q[3] 78
+set_io Q[2] 76
+set_io Q[1] 75
+set_io Q[0] 74
+
 
 # Assign control signals
-set_io rst_n 37
+set_io rst_n 33
 set_io clk 73
-set_io clk_copy 112
-set_io locked 74
+set_io clk_copy 34
+set_io locked 114
