@@ -10,7 +10,6 @@ from imgui.integrations.glfw import GlfwRenderer
 import numpy as np
 
 from imgui_stuff import *
-from vbo_stuff import *
 from opengl_stuff import *
 
 import time
@@ -25,42 +24,26 @@ class Window:
         self.render_distance = 1024
         
         self.width, self.height = 1924, 1028
+        self.width, self.height = 1000, 750
         self.aspect_ratio = self.width/self.height
 
-        self.angle_x, self.angle_y, self.angle_z = 0, 0, 90
+        self.angle_x, self.angle_y, self.angle_z = 0, 0, 45
         self.pan_x, self.pan_y, self.pan_z = 0, 0, 0
 
         self.last_x, self.last_y = 0, 0
         self.zoom = 5
+        
+
+
+        self.angle_x, self.angle_y, self.angle_z = 67.3, -73.1, 45
+        self.pan_x, self.pan_y, self.pan_z = -2.63, -0.89, 0
+        self.zoom = 14.1
+
+
         self.pan_sensitivity = 0.001
         self.angle_sensitivity = 0.01
 
         self.panning, self.angling = False, False
-
-    
-    def update_camera(self):
-
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        glOrtho(
-            -self.aspect_ratio * self.zoom,
-            self.aspect_ratio * self.zoom,
-            -self.zoom,
-            self.zoom,
-            -self.render_distance,
-            self.render_distance,
-        )
-        glMatrixMode(GL_MODELVIEW)
-        glLoadIdentity()
-        glTranslatef(self.pan_x, self.pan_y, self.pan_z)
-        matrix = np.array((
-            [self.angle_x, 1.0, 0.0, 0.0],
-            [self.angle_y, 0.0, 1.0, 0.0],
-            [self.angle_z, 0.0, 0.0, 1.0],
-            ))
-        for i in matrix:
-            glRotatef(i[0], i[1], i[2], i[3])
-
 
     def build_window(self, window_name):
         
@@ -79,10 +62,14 @@ class Window:
         glfw.set_window_size_callback(window, self.window_callbacks)
     
     def window_callbacks(self, window, width, height):
-        self.width, self.height = width, height
-        self.zoom = self.zoom*self.aspect_ratio*self.height/self.width
-        self.aspect_ratio = width/height
-        glViewport(0, 0, width, height)
+        if not (width==0 or height==0):
+            self.width, self.height = width, height
+            self.zoom = self.zoom*self.aspect_ratio*self.height/self.width
+            self.aspect_ratio = width/height
+
+            glViewport(width//2, 0, width, height)
+            # will be changed to double viewport later
+
 
     def scroll_callbacks(self, window, xoffset, yoffset):
         if (self.zoom-0.24*yoffset != 0) and not ((self.zoom-0.24*yoffset > -0.1) & (self.zoom-0.24*yoffset < 0.1)):
@@ -140,6 +127,10 @@ class Window:
         appname = type(self).__name__
         window = self.build_window(appname)
         
+        glViewport(self.width//2, 0, self.width, self.height)
+        # will be changed to double viewport later
+
+
         self.imgui_stuff.initiate_imgui(window, appname)
 
         
@@ -168,9 +159,11 @@ class Window:
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-            self.update_camera()
+            glViewport()
 
-            opengl_stuff_for_window.per_render_loop()
+            evans_render()
+
+            opengl_stuff_for_window.per_render_loop(self)
 
             self.imgui_stuff.imgui_box(dt, self, opengl_stuff_for_window)
             self.imgui_stuff.render_box()
@@ -181,3 +174,9 @@ class Window:
             current = end
             glfw.swap_buffers(window)
             glfw.poll_events()
+
+    def evans_render():
+        ...
+
+    def andys_render():
+        ...
