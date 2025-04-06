@@ -69,11 +69,12 @@ class Fan:
 
     def fanned_coords(self,pair):
         scale = 5
+        z_scale = 128
         dx = (pair[0][0] - pair[1][0]) * scale
         dy = (pair[0][1] - pair[1][1]) * scale
         dz = (pair[0][2] - pair[1][2]) * scale
 
-        return [pair[0][0] + dx, pair[0][1] + dy, (pair[0][2] + dz)/128]
+        return [pair[0][0] + dx, pair[0][1] + dy, (pair[0][2] + dz)]
 
     def interpret_data(self,data):
         vertices = []
@@ -91,11 +92,11 @@ class Fan:
             p7 = [cube[0][2][0],cube[0][2][1],cube[0][2][2]]
             p8 = [cube[0][3][0],cube[0][3][1],cube[0][3][2]]
             
-            #scale z
-            p5[2] = p5[2]/128
-            p6[2] = p6[2]/128
-            p7[2] = p7[2]/128
-            p8[2] = p8[2]/128
+            # #scale z
+            # p5[2] = p5[2]/128
+            # p6[2] = p6[2]/128
+            # p7[2] = p7[2]/128
+            # p8[2] = p8[2]/128
             
 
             # Front face
@@ -157,11 +158,11 @@ class Fan:
             p8 = self.fanned_coords((cube[1][0][1],cube[1][0][0]))
 
             
-            #scale z
-            p1[2] = p1[2]/128
-            p2[2] = p2[2]/128
-            p3[2] = p3[2]/128
-            p4[2] = p4[2]/128
+            # #scale z
+            # p1[2] = p1[2]/128
+            # p2[2] = p2[2]/128
+            # p3[2] = p3[2]/128
+            # p4[2] = p4[2]/128
             
 
             # Front face

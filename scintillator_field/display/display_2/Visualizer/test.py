@@ -1,4 +1,4 @@
-import arduino
+#import arduino
 
 '''
 
@@ -300,6 +300,7 @@ def scintillators_to_bounds(binary):
     :return bounds: tuple containing two lists each containing the points that bound the muon path
     '''
     scintillators = interpret_raw_data(binary)
+
     x_view = scintillators[0]
     z_view = scintillators[1]
 
@@ -315,10 +316,28 @@ def scintillators_to_bounds(binary):
         #coordinate transformation
     hull_bounds = transform_coordinates(hull_bounds)
     fan_out_lines = transform_coordinates_fanned(fan_out_lines)
-    return hull_bounds, fan_out_lines, binary
+    
+    bin6 = bit8(binary)
+    return hull_bounds, fan_out_lines, bin6
 
 
 #Raw data to normal data
+def bit8(var):
+    bit8 = 0
+    for i in range(0, 6):
+
+        new = (var >> 2 * i)&3
+
+        if  new == 2:
+
+            bit8 += 2**i
+
+        elif new != 1:
+
+            return False
+        
+    return bit8
+
 def bin_to_list(bin):
     bit = 12      
     list = []
@@ -352,7 +371,7 @@ def transform_coordinates(data):
     n = 2      #scale
     translate_x = n - 0.25
     translate_y = n - 0.25
-    z_scale = 1
+    z_scale = 128
 
     list = []
     for coordinates in data:
@@ -386,10 +405,10 @@ def update_data():
 
 
 data_all = []
-data1 = interpret_raw_data(0b101010101010101010101010)
-data2 = interpret_raw_data(0b010101010101010101010101)
+# data1 = interpret_raw_data(0b101010101010101010101010)
+# data2 = interpret_raw_data(0b010101010101010101010101)
 
-data_all.append(scintillators_to_bounds(0b101010101010101010101010))
+data_all.append(scintillators_to_bounds(0b101010101010101010101010))    #problem with 0b100110101010101010101010
 data_all.append(scintillators_to_bounds(0b010101010101010101010101))
 
 
