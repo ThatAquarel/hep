@@ -147,8 +147,8 @@ class ParameterInterface:
 
             imgui.text(f"Dataset #{set_number}")
             imgui.text(f"Point #{point}")
-            imgui.text(f"Coordinates: ({pt_selected[0]},{pt_selected[1]})")
-            imgui.text(f"Coordinates in Binary(+128): ({bin(pt_selected[0]+128)},{bin(pt_selected[1]+128)})")
+            imgui.text(f"Coordinates: ({pt_selected[0]})")
+            imgui.text(f"Coordinates in Binary:{bin(pt_selected[2])}")
             
 
         

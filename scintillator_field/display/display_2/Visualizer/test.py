@@ -1,3 +1,5 @@
+import arduino
+
 '''
 
 Algorithm that takes in which scintillators lit up and returns a convex hull to bound the muon path
@@ -290,11 +292,14 @@ def detect_side_view(scintillators):
     return best_bounds
 
 
-def scintillators_to_bounds(scintillators):
+###############################
+
+def scintillators_to_bounds(binary):
     '''
     :param scintillators: tuple containing two lists, one for each side view
     :return bounds: tuple containing two lists each containing the points that bound the muon path
     '''
+    scintillators = interpret_raw_data(binary)
     x_view = scintillators[0]
     z_view = scintillators[1]
 
@@ -306,16 +311,91 @@ def scintillators_to_bounds(scintillators):
         return None
 
     hull_bounds, fan_out_lines = hull_coordinates(x_bounds, z_bounds)
+    
+        #coordinate transformation
+    hull_bounds = transform_coordinates(hull_bounds)
+    fan_out_lines = transform_coordinates_fanned(fan_out_lines)
+    return hull_bounds, fan_out_lines, binary
 
-    return hull_bounds, fan_out_lines
+
+#Raw data to normal data
+def bin_to_list(bin):
+    bit = 12      
+    list = []
+    for i in range(bit//2):
+
+        first_two  = (bin >> ((bit-2) - 2 * i)) & 3
+
+        if first_two == 2:
+
+            list.append((1,0))
+
+        elif first_two == 1:
+
+            list.append((0,1))
+        
+        else:
+            return False    #error
+    
+    return list
+
+def interpret_raw_data(bin):
+    x = bin >> 12   #first 12 nums
+    y = bin & 4095
+
+    return [bin_to_list(x),bin_to_list(y)]
+
+
+
+#transforming coordinates
+def transform_coordinates(data):
+    n = 2      #scale
+    translate_x = n - 0.25
+    translate_y = n - 0.25
+    z_scale = 1
+
+    list = []
+    for coordinates in data:
+        x = (coordinates[0] + translate_x) / n
+        y = (coordinates[1] + translate_y) / n
+        z = coordinates[2] / z_scale
+        list.append((x,y,z))
+
+    return list
+
+def transform_coordinates_fanned(data):
+    list = []
+    for pair in data:
+        list.append(transform_coordinates(pair))
+
+    return list
+
+#run this loop to call arduino to update data
+def update_data():
+    global data
+
+    add_data = []
+    packet = arduino.recv_packet(arduino.ser)
+
+    add_data.append(scintillators_to_bounds(packet))    #This creates a new dataset (check description)
+
+    data.append(add_data)
+
+
+#test.data -> datasets -> cubes -> vertices or fan -> coords -> xyz values
+
 
 data_all = []
-data1 = [[(1,0), (1,0), (1,0), (1,0), (1,0), (1,0)], [(1,0), (1,0), (1,0), (1,0), (1,0), (1,0)]]
-#data2 = [[(0,1), (0,1), (0,1), (0,1), (0,1), (0,1)], [(0,1), (0,1), (0,1), (0,1), (0,1), (0,1)]]
-data_all.append(scintillators_to_bounds(data1))
-#data_all.append(scintillators_to_bounds(data2))
+data1 = interpret_raw_data(0b101010101010101010101010)
+data2 = interpret_raw_data(0b010101010101010101010101)
+
+data_all.append(scintillators_to_bounds(0b101010101010101010101010))
+data_all.append(scintillators_to_bounds(0b010101010101010101010101))
+
+
 data = []
 data.append(data_all)
+
 
 
 #[data] = dataset

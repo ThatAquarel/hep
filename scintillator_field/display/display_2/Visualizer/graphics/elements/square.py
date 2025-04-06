@@ -23,10 +23,10 @@ class square:
         self.data[:, :3] = vertices  # Position
 
         #colour
-        self.data[:, 3:7] = [1,0,0,1]
-        self.data[0:36, 3:7] = [0,1,0,1]  
-        self.data[-36:-1, 3:7] = [0,0,1,1]
-        self.data[-1, 3:7] = [0,0,1,1]
+        self.data[:, 3:7] = [1,0,0,0.3]
+        # self.data[0:36, 3:7] = [0,1,0,1]  
+        # self.data[-36:-1, 3:7] = [0,0,1,1]
+        # self.data[-1, 3:7] = [0,0,1,1]
 
         # Normals (approximated)
         self.data[:, 7:10] = vertices  
@@ -70,12 +70,12 @@ class square:
     def interpret_data(self,data):
         vertices = []
         for cube in data:
-            x1 = (cube[0][0][0] -60)/60
-            x2 = (cube[0][2][0]  -60)/60
-            y1 = cube[0][1][1]/60
-            y2 = cube[0][0][1]/60
-            z1 = cube[0][4][2] / 256
-            z2 = cube[0][0][2] / 256
+            x1 = cube[0][0][0]
+            x2 = cube[0][2][0]
+            y1 = cube[0][1][1]
+            y2 = cube[0][0][1]
+            z1 = cube[0][4][2]
+            z2 = cube[0][0][2]
 
             # Front face
             vertices.append([x2, y1, z1])
