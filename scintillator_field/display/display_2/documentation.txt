@@ -20,7 +20,7 @@ test.py
         test.data
             |_ datasets
                 |
-                |_ cubes/prisms/points(whatever you want to call it)
+                |_ prisms/points(whatever you want to call it)
                     |
                     |_ vertices
                     |    |

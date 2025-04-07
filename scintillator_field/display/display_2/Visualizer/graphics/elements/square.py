@@ -70,55 +70,45 @@ class square:
     def interpret_data(self,data):
         vertices = []
         for cube in data:
-            x1 = cube[0][0][0]
-            x2 = cube[0][2][0]
-            y1 = cube[0][1][1]
-            y2 = cube[0][0][1]
-            z1 = cube[0][4][2]
-            z2 = cube[0][0][2]
+
+
+            p1 = cube[0][0]
+            p2 = cube[0][1]
+            p3 = cube[0][2]
+            p4 = cube[0][3]
+            p5 = cube[0][4]
+            p6 = cube[0][5]
+            p7 = cube[0][6]
+            p8 = cube[0][7]
 
             # Front face
-            vertices.append([x2, y1, z1])
-            vertices.append([x1, y1, z1])
-            vertices.append([x1, y2, z1])
-            vertices.append([x2, y1, z1])
-            vertices.append([x1, y2, z1])
-            vertices.append([x2, y2, z1])
+            vertices.append(p5)
+            vertices.append(p1)
+            vertices.append(p7)
+            vertices.append(p1)
+            vertices.append(p7)
+            vertices.append(p3)
             # Back face
-            vertices.append([x2, y1, z2])
-            vertices.append([x2, y2, z2])
-            vertices.append([x1, y2, z2])
-            vertices.append([x2, y1, z2])
-            vertices.append([x1, y2, z2])
-            vertices.append([x1, y1, z2])
+            vertices.append(p6)
+            vertices.append(p2)
+            vertices.append(p8)
+            vertices.append(p2)
+            vertices.append(p8)
+            vertices.append(p4)
             # Left face
-            vertices.append([x2, y1, z2])
-            vertices.append([x2, y1, z1])
-            vertices.append([x2, y2, z1])
-            vertices.append([x2, y1, z2])
-            vertices.append([x2, y2, z1])
-            vertices.append([x2, y2, z2])
+            vertices.append(p5)
+            vertices.append(p1)
+            vertices.append(p6)
+            vertices.append(p1)
+            vertices.append(p6)
+            vertices.append(p2)
             # Right face
-            vertices.append([x1, y1, z2])
-            vertices.append([x1, y2, z2])
-            vertices.append([x1, y2, z1])
-            vertices.append([x1, y1, z2])
-            vertices.append([x1, y2, z1])
-            vertices.append([x1, y1, z1])
-            # Top face
-            vertices.append([x2, y2, z2])
-            vertices.append([x2, y2, z1])
-            vertices.append([x1, y2, z1])
-            vertices.append([x2, y2, z2])
-            vertices.append([x1, y2, z1])
-            vertices.append([x1, y2, z2])
-            # Bottom face
-            vertices.append([x2, y1, z2])
-            vertices.append([x1, y1, z2])
-            vertices.append([x1, y1, z1])
-            vertices.append([x2, y1, z2])
-            vertices.append([x1, y1, z1])
-            vertices.append([x2, y1, z1])
+            vertices.append(p7)
+            vertices.append(p3)
+            vertices.append(p8)
+            vertices.append(p3)
+            vertices.append(p8)
+            vertices.append(p4)
 
         vertices = np.array(vertices, dtype = np.float32)
         return vertices

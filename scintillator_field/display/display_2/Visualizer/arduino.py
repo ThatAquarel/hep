@@ -62,6 +62,8 @@ def interpret_raw_data(bin):
 
     return [bin_to_list(x),bin_to_list(y)]
 
+
+
 for _ in range(12):
     packet = recv_packet(ser)
     
