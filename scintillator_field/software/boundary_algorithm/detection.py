@@ -28,11 +28,12 @@ n = 2*1 # Sideview length of scintillator in unit x
 # These values are used for x perspective
 upper_side_views = [(0, n)] # (start, end) coordinates for each level 
 lower_side_views = [(0, n)]
-half_gap_size = 5 # In unit x
-plate_thickness = 1 # In unit x
-inter_level_gap = 2*1 + plate_thickness # In unit x, level gap*2 + y_plate thickness
+half_gap_size = 0.5 # In unit x
+plate_thickness = 0.1 # In unit x
+intra_level_gap = 0 #Actual physical gap between each level, in unit x
+inter_level_gap = plate_thickness + intra_level_gap # Adjusted inter level gap for computation 
 gap_line = 0
-highest_point = half_gap_size + 5*inter_level_gap + 6*plate_thickness # Values custom set to this detector
+highest_point = half_gap_size + 5*intra_level_gap + 6*plate_thickness # Values custom set to this detector
 lowest_point = -highest_point
 
 def update_perspective_values():
@@ -295,12 +296,18 @@ def scintillators_to_bounds(scintillators):
     :param scintillators: tuple containing two lists, one for each side view
     :return bounds: tuple containing two lists each containing the points that bound the muon path
     '''
+    global n
+
     x_view = scintillators[0]
     z_view = scintillators[1]
 
     x_bounds = detect_side_view(x_view)
     update_perspective_values()
     z_bounds = detect_side_view(z_view)
+
+    # Transform z-bounds to correct coordinate system
+    for i in range(2):
+        z_bounds[i] = ((n - z_bounds[i][0][0], z_bounds[i][0][1]), (n - z_bounds[i][1][0], z_bounds[i][1][1]))
 
     if x_bounds == None or z_bounds == None:
         return None
@@ -309,6 +316,10 @@ def scintillators_to_bounds(scintillators):
 
     return hull_bounds, fan_out_lines
 
+scintillators = [[(0, 1), (0, 1), (0, 1), (0, 1), (0, 1), (0, 1)],[(0, 1), (0, 1), (0, 1), (0, 1), (0, 1), (0, 1)]]
+scintillator_2 = [[(1, 0), (1, 0), (1, 0), (1, 0), (1, 0), (1, 0)], [(1, 0), (1, 0), (1, 0), (1, 0), (1, 0), (1, 0)]]
+hull_bounds, _ = scintillators_to_bounds(scintillator_2)
+print(hull_bounds)
 
 # Testing data
 
