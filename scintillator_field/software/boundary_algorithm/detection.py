@@ -18,23 +18,29 @@ UPCOMING CHANGES : (In order of importance)
 - Write code in a class to permit scailability
 - Efficiency review, current code is O(n), but all cases could be simulated and stored for lookup for O(log(n))
 
+Unit x is mm
 '''   
 
 # Global variables
 level_count = 1
-n = 2*1 # Sideview length of scintillator in unit x
+n = 2*6 # Sideview length of scintillator in unit x
 
 
 # These values are used for x perspective
 upper_side_views = [(0, n)] # (start, end) coordinates for each level 
 lower_side_views = [(0, n)]
-half_gap_size = 0.5 # In unit x
-plate_thickness = 0.1 # In unit x
-intra_level_gap = 0 #Actual physical gap between each level, in unit x
+
+plate_thickness = 10 # In unit x
+intra_level_gap = 2 #Actual physical gap between each level, in unit x
 inter_level_gap = plate_thickness + intra_level_gap # Adjusted inter level gap for computation 
+
+half_gap_size =  162/2# In unit x
+top_half_gap = half_gap_size + plate_thickness + intra_level_gap
+bottom_half_gap = half_gap_size
 gap_line = 0
 highest_point = half_gap_size + 5*intra_level_gap + 6*plate_thickness # Values custom set to this detector
 lowest_point = -highest_point
+
 
 def update_perspective_values():
     global upper_side_views
@@ -43,11 +49,14 @@ def update_perspective_values():
     global inter_level_gap
     global gap_line
     global level_count
+    global top_half_gap
+    global bottom_half_gap
+
     upper_side_views = [(0, n)] # (start, end) coordinates for each level 
     lower_side_views = [(0, n)]
 
-    # Account for extra x plates
-    half_gap_size += inter_level_gap
+    top_half_gap = half_gap_size
+    bottom_half_gap = half_gap_size + plate_thickness + intra_level_gap
 
     # Update level count
     level_count = 1
@@ -68,6 +77,7 @@ def find_intersection(line1, line2):
     y = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / denominator
 
     return (x, y)
+
 
 def find_points_on_line(line, target_y):
     '''
@@ -161,6 +171,8 @@ def draw_bounds(level_pair, previous_bounds):
     global plate_thickness
     global inter_level_gap
     global gap_line
+    global top_half_gap
+    global bottom_half_gap
     # Default point (0, n)
     # Ajusted point (side_view[level_count-1][0], side_view[level_count-1][1])
 
@@ -201,21 +213,22 @@ def draw_bounds(level_pair, previous_bounds):
     level_count += 1
 
     # Set coordinate points for the rod on each level 
-    upper_level_points.extend([(upper_side_views[level_count-1][0], half_gap_size + plate_thickness*(level_count-2) + inter_level_gap*(level_count-2)), # Lower left point
-                                  (upper_side_views[level_count-1][1], half_gap_size + plate_thickness*(level_count-2) + inter_level_gap*(level_count-2)), # Lower right point
-                                  (upper_side_views[level_count-1][0], half_gap_size + plate_thickness*(level_count-1) + inter_level_gap*(level_count-2)), # Upper left point
-                                  (upper_side_views[level_count-1][1], half_gap_size + plate_thickness*(level_count-1) + inter_level_gap*(level_count-2))]) # Upper right point
+    upper_level_points.extend([(upper_side_views[level_count-1][0], top_half_gap + plate_thickness*(level_count-2) + inter_level_gap*(level_count-2)), # Lower left point
+                                  (upper_side_views[level_count-1][1], top_half_gap + plate_thickness*(level_count-2) + inter_level_gap*(level_count-2)), # Lower right point
+                                  (upper_side_views[level_count-1][0], top_half_gap + plate_thickness*(level_count-1) + inter_level_gap*(level_count-2)), # Upper left point
+                                  (upper_side_views[level_count-1][1], top_half_gap + plate_thickness*(level_count-1) + inter_level_gap*(level_count-2))]) # Upper right point
     
-    lower_level_points.extend([(lower_side_views[level_count-1][0], -(half_gap_size + plate_thickness*(level_count-2) + inter_level_gap*(level_count-2))), # Upper left point
-                                  (lower_side_views[level_count-1][1], -(half_gap_size + plate_thickness*(level_count-2) + inter_level_gap*(level_count-2))), # Upper right point
-                                  (lower_side_views[level_count-1][0], -(half_gap_size + plate_thickness*(level_count-1) + inter_level_gap*(level_count-2))), # Lower left point
-                                  (lower_side_views[level_count-1][1], -(half_gap_size + plate_thickness*(level_count-1) + inter_level_gap*(level_count-2)))]) # Lower right point
+    lower_level_points.extend([(lower_side_views[level_count-1][0], -(bottom_half_gap + plate_thickness*(level_count-2) + inter_level_gap*(level_count-2))), # Upper left point
+                                  (lower_side_views[level_count-1][1], -(bottom_half_gap + plate_thickness*(level_count-2) + inter_level_gap*(level_count-2))), # Upper right point
+                                  (lower_side_views[level_count-1][0], -(bottom_half_gap + plate_thickness*(level_count-1) + inter_level_gap*(level_count-2))), # Lower left point
+                                  (lower_side_views[level_count-1][1], -(bottom_half_gap + plate_thickness*(level_count-1) + inter_level_gap*(level_count-2)))]) # Lower right point
 
 
-    # Create level lines
-    line_y = half_gap_size + (inter_level_gap+plate_thickness)*(level_count-2)
-    upper_line = ((0, line_y), (1, line_y))
-    lower_line = ((0, -line_y), (1, -line_y))
+    # Create level lines $ DPONT FORGET THIS
+    upper_line_y = top_half_gap + (inter_level_gap+plate_thickness)*(level_count-2)
+    lower_line_y = bottom_half_gap + (inter_level_gap+plate_thickness)*(level_count-2)
+    upper_line = ((0, upper_line_y), (1, upper_line_y))
+    lower_line = ((0, -lower_line_y), (1, -lower_line_y))
 
     # Create new potential lines
     left_bound = (upper_level_points[2], lower_level_points[2])
@@ -305,12 +318,15 @@ def scintillators_to_bounds(scintillators):
     update_perspective_values()
     z_bounds = detect_side_view(z_view)
 
+    if x_bounds == None or z_bounds == None:
+        return None
+    
     # Transform z-bounds to correct coordinate system
     for i in range(2):
         z_bounds[i] = ((n - z_bounds[i][0][0], z_bounds[i][0][1]), (n - z_bounds[i][1][0], z_bounds[i][1][1]))
 
-    if x_bounds == None or z_bounds == None:
-        return None
+    print(f' xbounds {x_bounds}')
+    print(f' zbounds {z_bounds}')
 
     hull_bounds, fan_out_lines = hull_coordinates(x_bounds, z_bounds)
 
