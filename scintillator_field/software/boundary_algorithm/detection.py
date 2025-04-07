@@ -23,14 +23,14 @@ Unit x is mm
 
 # Global variables
 level_count = 1
-n = 2*6 # Sideview length of scintillator in unit x
+n = 2*60 # Sideview length of scintillator in unit x
 
 
 # These values are used for x perspective
 upper_side_views = [(0, n)] # (start, end) coordinates for each level 
 lower_side_views = [(0, n)]
 
-plate_thickness = 10 # In unit x
+plate_thickness = 100 # In unit x
 intra_level_gap = 2 #Actual physical gap between each level, in unit x
 inter_level_gap = plate_thickness + intra_level_gap # Adjusted inter level gap for computation 
 
