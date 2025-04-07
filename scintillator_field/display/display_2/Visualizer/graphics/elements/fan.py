@@ -68,7 +68,7 @@ class Fan:
     #     return coords
 
     def fanned_coords(self,pair):
-        scale = 5
+        scale = 3
         z_scale = 128
         dx = (pair[0][0] - pair[1][0]) * scale
         dy = (pair[0][1] - pair[1][1]) * scale
@@ -143,7 +143,7 @@ class Fan:
             # vertices.append(p7)
             # vertices.append(p8)
             
-        
+            
             #coords
             p1 = [cube[0][4][0],cube[0][4][1],cube[0][4][2]]
             p2 = [cube[0][5][0],cube[0][5][1],cube[0][5][2]]
