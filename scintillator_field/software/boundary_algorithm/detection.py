@@ -224,7 +224,7 @@ def draw_bounds(level_pair, previous_bounds):
                                   (lower_side_views[level_count-1][1], -(bottom_half_gap + plate_thickness*(level_count-1) + inter_level_gap*(level_count-2)))]) # Lower right point
 
 
-    # Create level lines $ DPONT FORGET THIS
+    # Create level lines
     upper_line_y = top_half_gap + (inter_level_gap+plate_thickness)*(level_count-2)
     lower_line_y = bottom_half_gap + (inter_level_gap+plate_thickness)*(level_count-2)
     upper_line = ((0, upper_line_y), (1, upper_line_y))
@@ -325,17 +325,14 @@ def scintillators_to_bounds(scintillators):
     for i in range(2):
         z_bounds[i] = ((n - z_bounds[i][0][0], z_bounds[i][0][1]), (n - z_bounds[i][1][0], z_bounds[i][1][1]))
 
-    print(f' xbounds {x_bounds}')
-    print(f' zbounds {z_bounds}')
-
     hull_bounds, fan_out_lines = hull_coordinates(x_bounds, z_bounds)
 
     return hull_bounds, fan_out_lines
 
-scintillators = [[(0, 1), (0, 1), (0, 1), (0, 1), (0, 1), (0, 1)],[(0, 1), (0, 1), (0, 1), (0, 1), (0, 1), (0, 1)]]
+""" scintillators = [[(0, 1), (0, 1), (0, 1), (0, 1), (0, 1), (0, 1)],[(0, 1), (0, 1), (0, 1), (0, 1), (0, 1), (0, 1)]]
 scintillator_2 = [[(1, 0), (1, 0), (1, 0), (1, 0), (1, 0), (1, 0)], [(1, 0), (1, 0), (1, 0), (1, 0), (1, 0), (1, 0)]]
 hull_bounds, _ = scintillators_to_bounds(scintillator_2)
-print(hull_bounds)
+print(hull_bounds) """
 
 # Testing data
 
