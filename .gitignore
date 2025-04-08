@@ -6,3 +6,5 @@ fp-*
 *.bak
 *sym-lib-table
 *.pyc
+*.egg-info
+**/__MACOSX/
