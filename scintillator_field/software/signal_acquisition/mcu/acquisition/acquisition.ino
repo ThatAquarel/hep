@@ -1,4 +1,7 @@
-// #include <SPI.h>
+// serial communications
+// #define DEBUG
+#define START_FLAG 0x7E
+#define END_FLAG 0x7D
 
 // hardware interrupt
 #define TRIGGER 2
@@ -53,8 +56,19 @@ void loop() {
     
     digitalWrite(CS, HIGH); // Deselect FPGA
 
+#ifdef DEBUG
     Serial.print("TRIGGERED: 0x");
     Serial.println(value, HEX);
+#endif
+#ifndef DEBUG
+    Serial.write(0x00);
+    Serial.write(0x00);
+    Serial.write(START_FLAG);
+    Serial.write((uint8_t*)&value, 4);
+    Serial.write(END_FLAG);
+    Serial.write(0x00);
+    Serial.write(0x00);
+#endif
 
     triggered = false;
 
