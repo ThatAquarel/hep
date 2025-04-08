@@ -342,10 +342,10 @@ detection_algorithm = Detection()
 scintillators = [[(0, 1), (0, 1), (0, 1), (0, 1), (0, 1), (0, 1)],[(0, 1), (0, 1), (0, 1), (0, 1), (0, 1), (0, 1)]]
 scintillator_2 = [[(1, 0), (1, 0), (1, 0), (1, 0), (1, 0), (1, 0)], [(1, 0), (1, 0), (1, 0), (1, 0), (1, 0), (1, 0)]]
 hull_bounds, _ = detection_algorithm.scintillators_to_bounds(scintillator_2)
-print(hull_bounds)
+#print(hull_bounds)
 
 hull_bounds, _ = detection_algorithm.scintillators_to_bounds(scintillator_2)
-print(hull_bounds)
+#print(hull_bounds)
 
     # Testing data
 
