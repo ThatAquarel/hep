@@ -200,9 +200,11 @@ class DetectionHulls:
             if scintillators_from_arduino != None:
                 scintillators = scintillators_from_arduino
 
-            hull_bounds, fan_out = self.detection_algorithm.scintillators_to_bounds(scintillators)
-
-            hull_bounds = np.array(hull_bounds) - np.array([0, 0, 162/2])
+            bounds = self.detection_algorithm.scintillators_to_bounds(scintillators)
+            
+            if bounds != None:
+                hull_bounds, fan_out = bounds
+                hull_bounds = np.array(hull_bounds) - np.array([0, 0, 162/2])
 
             #for j, i in enumerate(hull_bounds):
             #    print(j, i)  
