@@ -3,9 +3,11 @@ import numpy as np
 from scintillator_field.display.display_1.vbo_vao_stuff import *
 from scintillator_field.software.boundary_algorithm.detection import *
 
+import time
+
 class DetectionHulls:
     def __init__(self):
-        pass
+        self.detection_algorithm = Detection()
 
     def make_points_from_xyz(self, low_x, high_x, low_y, high_y, low_z, high_z, colour, opacity):
         p1 = np.array([low_x,  low_y,  low_z,  colour[0], colour[1], colour[2], opacity]) # base_point + (0,    0,    0)    # BFL
@@ -72,7 +74,7 @@ class DetectionHulls:
 
         return all_t
     
-    def scale_points(self, hull_bounds, fan_out, scale_factor=2):
+    def scale_points(self, hull_bounds, fan_out):
         '''
         hull_bounds = [1, 2, 3, 4, 5, 6, 7, 8]
         fan_out = [(1, 8), (2, 7), (3, 6), (4, 5)]
@@ -84,7 +86,7 @@ class DetectionHulls:
         for line in fan_out:
             vec_p1_p2 = vec(line[0], line[1])
             unit_vec = vec_p1_p2/np.linalg.norm(vec_p1_p2)
-            line_vectors.append(5*unit_vec) # vec from p0 to p1
+            line_vectors.append(75*unit_vec) # vec from p0 to p1
 
         
         scaled_p0 = line_vectors[0]+hull_bounds[0]
@@ -96,9 +98,9 @@ class DetectionHulls:
         scaled_p6 = -line_vectors[1]+hull_bounds[6]
         scaled_p7 = -line_vectors[0]+hull_bounds[7]
 
-        print(hull_bounds[0], line_vectors[0], scaled_p0)
-        print(hull_bounds[7], line_vectors[0], scaled_p7)
-        print()
+        #print(hull_bounds[0], line_vectors[0], scaled_p0)
+        #print(hull_bounds[7], line_vectors[0], scaled_p7)
+        #print()
 
         scaled_hull_bounds = [scaled_p0, scaled_p1,
                               scaled_p2, scaled_p3,
@@ -116,74 +118,120 @@ class DetectionHulls:
         return scaled_hull_bounds, scaled_fan_out
 
 
-    def get_hull_returns(self):
-        # hull_bounds, fan_out = "do some stuff"
+    def get_hull_returns(self, window):
 
-        '''
-        hull_bounds = [1, 2, 3, 4, 5, 6, 7, 8]
-        == [TFL, TBL, TFR, TBR, BFL, BBL, BFR, BBR]
+        if time.time()-window.start_time < 1:
 
-        fan_out = [(1, 8), (2, 7), (3, 6), (4, 5)]
-        '''
+            # hull_bounds, fan_out = "do some stuff"
 
+            '''
+            hull_bounds = [1, 2, 3, 4, 5, 6, 7, 8]
+            == [TFL, TBL, TFR, TBR, BFL, BBL, BFR, BBR]
+
+            fan_out = [(1, 8), (2, 7), (3, 6), (4, 5)]
+            '''
+
+            
+
+            #scintillators = [
+            #    [
+            #        (0,1),
+            #        (0,1),
+            #        (1,0),
+            #        (1,0),
+            #        (0,1),
+            #        (0,1),
+            #    ],
+            #    [
+            #        (0,1),
+            #        (1,0),
+            #        (0,1),
+            #        (0,1),
+            #        (1,0),
+            #        (0,1),
+            #    ],
+            #]
+            #
+            #hull_bounds, fan_out = scintillators_to_bounds(scintillators)
+            #print()
+            ##for i in hull_bounds:
+            ##    print(i)      
+            ##print()#fan_out
+            ##print()
+            ##print("next")
+#
+            #scintillators = [
+            #    [
+            #        (1,1),
+            #        (1,1),
+            #        (1,1),
+            #        (0,1),
+            #        (1,0),
+            #        (1,0),
+            #    ],
+            #    [
+            #        (1,0),
+            #        (1,0),
+            #        (1,1),
+            #        (0,1),
+            #        (1,1),
+            #        (1,1),
+            #    ],
+            #]
+            scintillators = [
+                [
+                    (1,0),
+                    (0,1),
+                    (1,0),
+                    (0,1),
+                    (1,0),
+                    (0,1),
+                ],
+                [
+                    (1,0),
+                    (1,0),
+                    (1,0),
+                    (0,1),
+                    (1,0),
+                    (1,0),
+                ],
+            ]
+            hull_bounds, fan_out = self.detection_algorithm.scintillators_to_bounds(scintillators)
+
+            hull_bounds = np.array(hull_bounds) - np.array([0, 0, 162/2])
+
+            #for j, i in enumerate(hull_bounds):
+            #    print(j, i)  
+            #print()
+
+
+
+            # # TEST DATA
+            #   1    2    3    4
+            # [TFL, TBL, TFR, TBR, 
+            #  5    6    7    8
+            # BFL, BBL, BFR, BBR]
+            #p1, p2, p3, p4 = (3, 3,   6), (3, 5,   6), (6, 3,   6), (6, 5,   6)
+            #p5, p6, p7, p8 = (3, 6, -12), (3, 7, -12), (6, 6, -12), (6, 7, -12)
+            ##p1, p2, p3, p4 = (5, 3, 7), (5, 5, 7), (7, 3, 7), (7, 5, 7)
+            ##p5, p6, p7, p8 = (5, 3, 4), (5, 5, 4), (7, 3, 4), (7, 5, 4)
+            #hull_bounds =[p1, p2, p3, p4, p5, p6, p7, p8]
+            #fan_out = [(p1, p8), (p2, p7), (p3, p6), (p4, p5)]
+
+
+            #hull_bounds = [(0, 1.75, 1.1), (0, 2, 1.1), (0.25, 1.75, 1.1), (0.25, 2, 1.1), (0, 1.75, -1.1), (0, 2, -1.1), (0.25, 1.75, -1.1), (0.25, 2, -1.1)]
+
+
+            return np.array(hull_bounds).astype(np.float32), np.array(fan_out).astype(np.float32)
         
-
-        #scintillators = [
-        #    [
-        #        (0,1),
-        #        (0,1),
-        #        (0,1),
-        #        (1,1),
-        #        (0,1),
-        #        (1,1),
-        #    ],
-        #    [
-        #        (0,1),
-        #        (1,0),
-        #        (0,0),
-        #        (0,1),
-        #        (1,1),
-        #        (1,0),
-        #    ],
-        #]
-        #
-        #a = scintillators_to_bounds(scintillators)
-        #print(a)
-
-        scintillators = [
-            [
-                (0,1),
-                (0,1),
-                (0,1),
-                (0,1),
-                (0,1),
-                (0,1),
-            ],
-            [
-                (0,1),
-                (0,1),
-                (0,1),
-                (0,1),
-                (0,1),
-                (0,1),
-            ],
-        ]
-        hull_bounds, fan_out = scintillators_to_bounds(scintillators)
+        else:
+            try:
+                return self.hull_bounds, self.fan_out
+            except:
+                raise ValueError()
 
 
-        # # TEST DATA
-        # p1, p2, p3, p4 = (1, 3,   7), (1, 4,   7), (3, 3,   7), (3, 4,   7)
-        # p5, p6, p7, p8 = (1, 3, -14), (1, 4, -14), (3, 3, -14), (3, 4, -14)
-        # #p1, p2, p3, p4 = (5, 3, 7), (5, 5, 7), (7, 3, 7), (7, 5, 7)
-        # #p5, p6, p7, p8 = (5, 3, 4), (5, 5, 4), (7, 3, 4), (7, 5, 4)
-        # hull_bounds =[p1, p2, p3, p4, p5, p6, p7, p8]
-        # fan_out = [(p1, p8), (p2, p7), (p3, p6), (p4, p5)]
-
-
-
-        return np.array(hull_bounds).astype(np.float32), np.array(fan_out).astype(np.float32)
-
-    def create_hull_data(self):
+    def create_hull_data(self, window):
         '''
 
         works with actual values of structure
@@ -205,7 +253,7 @@ class DetectionHulls:
 
         '''
 
-        hull_bounds, fan_out = self.get_hull_returns()
+        self.hull_bounds, self.fan_out = self.get_hull_returns(window)
         '''
         hull_bounds = [1, 2, 3, 4, 5, 6, 7, 8]
         == [TFL, TBL, TFR, TBR, BFL, BBL, BFR, BBR]
@@ -215,28 +263,25 @@ class DetectionHulls:
 
         hull_colour = [0.5, 0, 0.5]
         hull_opacity = 0.8
-
-        p1, p2, p3, p4, p5, p6, p7, p8 = self.make_points_from_xyz(
-                low_x   = hull_bounds[0][0],
-                high_x  = hull_bounds[3][0],
-                low_y   = hull_bounds[4][1],
-                high_y  = hull_bounds[3][1],
-                low_z   = hull_bounds[4][2],
-                high_z  = hull_bounds[3][2],
-                colour  = hull_colour,
-                opacity = hull_opacity,
-            )
+        
         hull_prism_triangles = self.make_prism_triangles(
-            p1, p2, p3, p4, p5, p6, p7, p8
+            p1 = self.vec3_to_vec7(self.hull_bounds[0], hull_colour, hull_opacity),
+            p2 = self.vec3_to_vec7(self.hull_bounds[2], hull_colour, hull_opacity),
+            p3 = self.vec3_to_vec7(self.hull_bounds[1], hull_colour, hull_opacity),
+            p4 = self.vec3_to_vec7(self.hull_bounds[3], hull_colour, hull_opacity),
+            p5 = self.vec3_to_vec7(self.hull_bounds[4], hull_colour, hull_opacity),
+            p6 = self.vec3_to_vec7(self.hull_bounds[6], hull_colour, hull_opacity),
+            p7 = self.vec3_to_vec7(self.hull_bounds[5], hull_colour, hull_opacity),
+            p8 = self.vec3_to_vec7(self.hull_bounds[7], hull_colour, hull_opacity),
         )
 
-        scaled_hull_bounds, scaled_fan_out = self.scale_points(hull_bounds, fan_out, scale_factor=2)
+        scaled_hull_bounds, scaled_fan_out = self.scale_points(self.hull_bounds, self.fan_out)
         
         top_triangle_fans = self.make_prism_triangles(
-            p1 = self.vec3_to_vec7(       hull_bounds[0], hull_colour, hull_opacity),
-            p2 = self.vec3_to_vec7(       hull_bounds[2], hull_colour, hull_opacity),
-            p3 = self.vec3_to_vec7(       hull_bounds[1], hull_colour, hull_opacity),
-            p4 = self.vec3_to_vec7(       hull_bounds[3], hull_colour, hull_opacity),
+            p1 = self.vec3_to_vec7(  self.hull_bounds[0], hull_colour, hull_opacity),
+            p2 = self.vec3_to_vec7(  self.hull_bounds[2], hull_colour, hull_opacity),
+            p3 = self.vec3_to_vec7(  self.hull_bounds[1], hull_colour, hull_opacity),
+            p4 = self.vec3_to_vec7(  self.hull_bounds[3], hull_colour, hull_opacity),
             p5 = self.vec3_to_vec7(scaled_hull_bounds[0], hull_colour, hull_opacity),
             p6 = self.vec3_to_vec7(scaled_hull_bounds[2], hull_colour, hull_opacity),
             p7 = self.vec3_to_vec7(scaled_hull_bounds[1], hull_colour, hull_opacity),
@@ -248,10 +293,10 @@ class DetectionHulls:
             p2 = self.vec3_to_vec7(scaled_hull_bounds[6], hull_colour, hull_opacity),
             p3 = self.vec3_to_vec7(scaled_hull_bounds[5], hull_colour, hull_opacity),
             p4 = self.vec3_to_vec7(scaled_hull_bounds[7], hull_colour, hull_opacity),
-            p5 = self.vec3_to_vec7(       hull_bounds[4], hull_colour, hull_opacity),
-            p6 = self.vec3_to_vec7(       hull_bounds[6], hull_colour, hull_opacity),
-            p7 = self.vec3_to_vec7(       hull_bounds[5], hull_colour, hull_opacity),
-            p8 = self.vec3_to_vec7(       hull_bounds[7], hull_colour, hull_opacity),
+            p5 = self.vec3_to_vec7(  self.hull_bounds[4], hull_colour, hull_opacity),
+            p6 = self.vec3_to_vec7(  self.hull_bounds[6], hull_colour, hull_opacity),
+            p7 = self.vec3_to_vec7(  self.hull_bounds[5], hull_colour, hull_opacity),
+            p8 = self.vec3_to_vec7(  self.hull_bounds[7], hull_colour, hull_opacity),
         )
 
         hull_data = []

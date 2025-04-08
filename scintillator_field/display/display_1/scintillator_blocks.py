@@ -6,18 +6,31 @@ from scintillator_field.display.display_1.vbo_vao_stuff import *
 
 class ScintillatorStructure:
     def __init__(self):
+        #self.setup_structure(
+        #                num_doubles      =               3, # 3 each
+        #                x_i              =               0,
+        #                y_i              =               0,
+        #                z_i              =               0,
+        #                square_side_len  =               8, # 120 mm
+        #                width_per_one    =               1, # 10mm
+        #                dead_space       =               0.2, # 2 mm
+        #                c1               = [1, 0.75, 0.75],
+        #                c2               = [0.75, 1, 0.75],
+        #                alpha            =             0.8,
+        #                in_between_space =               8, # 162 mm
+        #                )
         self.setup_structure(
                         num_doubles      =               3, # 3 each
                         x_i              =               0,
                         y_i              =               0,
                         z_i              =               0,
-                        square_side_len  =               8, # 120 mm
-                        width_per_one    =               1, # 9mm
-                        dead_space       =               0.2, # 22 mm
+                        square_side_len  =               120, # mm
+                        width_per_one    =               10, # mm
+                        dead_space       =               2, # mm
                         c1               = [1, 0.75, 0.75],
                         c2               = [0.75, 1, 0.75],
                         alpha            =             0.8,
-                        in_between_space =               8, # 250 mm
+                        in_between_space =               162, # mm
                         )
         self.make_vao()
 
@@ -55,6 +68,17 @@ class ScintillatorStructure:
         p6 = np.array([high_x, low_y,  high_z, colour[0], colour[1], colour[2], opacity]) # base_point + (xlen, 0,    zlen) # TFR
         p7 = np.array([low_x,  high_y, high_z, colour[0], colour[1], colour[2], opacity]) # base_point + (0,    ylen, zlen) # TBL
         p8 = np.array([high_x, high_y, high_z, colour[0], colour[1], colour[2], opacity]) # base_point + (xlen, ylen, zlen) # TBR
+
+
+
+        p1 = np.array([low_x,  low_y,  low_z,  *colour, opacity]) # base_point + (0,    0,    0)    # BFL
+        p2 = np.array([high_x, low_y,  low_z,  *colour, opacity]) # base_point + (xlen, 0,    0)    # BFR
+        p3 = np.array([low_x,  high_y, low_z,  *colour, opacity]) # base_point + (0,    ylen, 0)    # BBL
+        p4 = np.array([high_x, high_y, low_z,  *colour, opacity]) # base_point + (xlen, ylen, 0)    # BBR
+        p5 = np.array([low_x,  low_y,  high_z, *colour, opacity]) # base_point + (0,    0,    zlen) # TFL
+        p6 = np.array([high_x, low_y,  high_z, *colour, opacity]) # base_point + (xlen, 0,    zlen) # TFR
+        p7 = np.array([low_x,  high_y, high_z, *colour, opacity]) # base_point + (0,    ylen, zlen) # TBL
+        p8 = np.array([high_x, high_y, high_z, *colour, opacity]) # base_point + (xlen, ylen, zlen) # TBR
 
 
         # front face
