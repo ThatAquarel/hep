@@ -230,12 +230,12 @@ class App(CameraOrbitControls, ShaderRenderer):
     def on_click(self, window):
         # get 3D click coordinates
         rh = self.get_right_handed()
-        self.x, self.y, _ = self.get_click_point(window, rh)
+        self.x, self.y, self.z = self.get_click_point(window, rh)
         
         self.x_pos = self.x / (self.scale/ 2)  #the 2 is n from aljoscha's algorithm
         self.y_pos = self.y / (self.scale/ 2)
 
-        print(self.x, self.y)
+        print(self.x, self.y, self.z)
         uncertainty = 0.25
         for i in range(len(test.data)):
             #To see if the mouse position matches 

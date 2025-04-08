@@ -39,7 +39,7 @@ class OpenGLStuff:
 
         are_hulls_detected = True
         if are_hulls_detected:
-            self.detected_hulls.create_hull_data()
+            self.detected_hulls.create_hull_data(window)
             self.detected_hulls.create_hull_vao()
             self.detected_hulls.draw_hull()
 

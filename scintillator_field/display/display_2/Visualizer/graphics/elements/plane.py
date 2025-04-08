@@ -43,6 +43,8 @@ class Plane:
         """
         Generate vertices for the plane
         """
+
+        #size = 2
         unit = size / 2
         
         vertices = []
@@ -51,13 +53,15 @@ class Plane:
 
         z_ratio = 0.1
 
+        layer_gap = size * z_ratio
+
         #Lower plane
         for layer in range(2,2+self.number_of_layers):
             number_of_strips = 2** (layer//2)
 
             strip_length = size / number_of_strips
-            z1 = layer * size * -z_ratio +  offset    #z
-            z2 = (layer + 1) * size * -z_ratio  + offset        #-z
+            z1 = (layer) * size * -z_ratio +  offset - layer_gap * (layer - 2) #z
+            z2 = (layer + 1) * size * -z_ratio  + offset - layer_gap * (layer - 2)        #-z
 
             for i in range(number_of_strips):
                 if layer % 2 == 1:   #axis = y
@@ -123,11 +127,11 @@ class Plane:
             number_of_strips = 2** (layer//2)
 
             strip_length = size / number_of_strips
-            z1 = layer * size * 0.1 + offset + middle_gap      #z
-            z2 = (layer + 1) * size * 0.1  + offset + middle_gap       #-z
+            z1 = layer * size * z_ratio - offset + middle_gap + layer_gap * (layer - 2)      #z
+            z2 = (layer + 1) * size * z_ratio  - offset + middle_gap + layer_gap * (layer - 2)       #-z
 
             for i in range(number_of_strips):
-                if layer % 2 == 0:   #axis = y
+                if layer % 2 == 0:   #axis = x
                     x1 = -unit       #s
                     x2 = unit      #-s
                     y1 = -unit + (i+1) * strip_length       #-s
@@ -191,84 +195,59 @@ class Plane:
             x = -1
             y = -1
         else:
-            x = pt_selected[2] >> 3
-            y = pt_selected[2] & 7
+
         
-        
-        # for i in range(len(self.vertices)//36):
-        #     layer = int((self.data[36 * i, 2] - 0.4)* (-10) /self.scale) -2
-
-            
-        #     if i % 2 == 1:
-        #         if x == -1:
-        #             self.data[36 * i : 36 * (i+1), 3:6] = [1,1,1]  # Color
-
-        #         elif x & (2 ** (layer//2)) == 1 and layer % 2 == 0:
-        #             self.data[36 * i : 36 * (i+1), 3:6] = [0,1,1]
-
-        #         # elif y & (2 ** (layer//2)) == 0 and layer % 2 == 1: 
-        #         #     self.data[36 * i : 36 * (i+1), 3:6] = [0,1,1]
-
-        #         else:
-        #             self.data[36 * i : 36 * (i+1), 3:6] = [1,1,1]  # Color
-        #     else:
-        #         if x == -1:
-        #             self.data[36 * i : 36 * (i+1), 3:6] =  [211/256,211/256,211/256]
-
-        #         elif x & (2 ** (layer//2)) == 0 and layer % 2 == 1:
-        #             self.data[36 * i : 36 * (i+1), 3:6] = [0,1,1]
-
-        #         # elif y & (2 ** (layer//2)) == 1 and and layer % 2 == 1: 
-        #         #     self.data[36 * i : 36 * (i+1), 3:6] = [0,1,1]
-
-        #         else:
-        #             self.data[36 * i : 36 * (i+1), 3:6] = [211/256,211/256,211/256]  # Color
-
-
-
         #In here 111111 means that all of the positives light up(more towards positive x or y)
         #000000 means that all of the negative(more towards the negative x or y)
 
         #More towards the positive has a white strip, more towards the negative has a gray strip
-        for up_or_top in range(2):  #ensures that both top and up layer are set
-            for layer in range(self.number_of_layers):
-                number_of_strips = 2 ** ((layer + 2)//2)    #calculate the number of strips per layer
+            for up_or_top in range(2):  #ensures that both top and up layer are set
+                if up_or_top == 0:
+                    x = (pt_selected[2] & 3584) >> 9
+                    y = (pt_selected[2] & 56) >> 3
+                else:
+                    x = (pt_selected[2] &448) >> 6
+                    y = pt_selected[2] & 7
+                    
+
+                for layer in range(self.number_of_layers):
+                    number_of_strips = 2 ** ((layer + 2)//2)    #calculate the number of strips per layer
 
 
-                for i in range(number_of_strips):
-                    reverse_number = 2** ((5-layer)//2)    #This means that the binary is read from left to right
+                    for i in range(number_of_strips):
+                        reverse_number = 2** ((5-layer)//2)    #This means that the binary is read from left to right
 
-                    k = 0 + 28 * up_or_top  #apply offset so when it comes to top, it correctly displays
-                    for j in range(layer + 1):  #Find the number of the strip we are on. This is counting by 2^x
-                        if j != 0:
-                            k += 2**((j+1)//2)
+                        k = 0 + 28 * up_or_top  #apply offset so when it comes to top, it correctly displays
+                        for j in range(layer + 1):  #Find the number of the strip we are on. This is counting by 2^x
+                            if j != 0:
+                                k += 2**((j+1)//2)
 
-                    k = (k + i) * 36    #+i since it is the number of the strip in that layer. 36 is for each prism has 36 vertices
+                        k = (k + i) * 36    #+i since it is the number of the strip in that layer. 36 is for each prism has 36 vertices
 
-                    if layer % 2 == 0:  #x - axis
-                        if i % 2 == 1:  #white strips
-                            if x & reverse_number != 0 and x != -1: #If x in that spot is 1
-                                
-                                self.data[k : k + 36, 3:6] = [1,1,0]    #light up
+                        if layer % 2 == 0:  #x - axis
+                            if i % 2 == 1:  #white strips
+                                if x & reverse_number != 0 and x != -1: #If x in that spot is 1
+                                    
+                                    self.data[k : k + 36, 3:6] = [1,1,0]    #light up
+                                else: 
+                                    self.data[k : k + 36, 3:6] = [1,1,1]    #default colour(white)
+                            else:   #second strip (grey)
+                                if x & reverse_number == 0: #If x in that spot is 0
+                                    self.data[k : k + 36, 3:6] = [1,1,0]    #light up
+                                else: 
+                                    self.data[k : k + 36, 3:6] = [211/256,211/256,211/256]  #default colour: gray
+                        else:
+                            if i % 2 == 1:  #white strips
+                                if y & reverse_number != 0 and y != -1: 
+                                    
+                                    self.data[k : k + 36, 3:6] = [1,1,0]
+                                else: 
+                                    self.data[k : k + 36, 3:6] = [1,1,1]
                             else: 
-                                self.data[k : k + 36, 3:6] = [1,1,1]    #default colour(white)
-                        else:   #second strip (grey)
-                            if x & reverse_number == 0: #If x in that spot is 0
-                                self.data[k : k + 36, 3:6] = [1,1,0]    #light up
-                            else: 
-                                self.data[k : k + 36, 3:6] = [211/256,211/256,211/256]  #default colour: gray
-                    else:
-                        if i % 2 == 1:  #white strips
-                            if y & reverse_number != 0 and y != -1: 
-                                
-                                self.data[k : k + 36, 3:6] = [1,1,0]
-                            else: 
-                                self.data[k : k + 36, 3:6] = [1,1,1]
-                        else: 
-                            if y & reverse_number == 0: 
-                                self.data[k : k + 36, 3:6] = [1,1,0]
-                            else: 
-                                self.data[k : k + 36, 3:6] = [211/256,211/256,211/256]
+                                if y & reverse_number == 0: 
+                                    self.data[k : k + 36, 3:6] = [1,1,0]
+                                else: 
+                                    self.data[k : k + 36, 3:6] = [211/256,211/256,211/256]
 
 
 

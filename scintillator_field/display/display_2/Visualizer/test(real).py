@@ -1,3 +1,5 @@
+#import arduino
+
 '''
 
 Algorithm that takes in which scintillators lit up and returns a convex hull to bound the muon path
@@ -18,29 +20,22 @@ UPCOMING CHANGES : (In order of importance)
 - Write code in a class to permit scailability
 - Efficiency review, current code is O(n), but all cases could be simulated and stored for lookup for O(log(n))
 
-Unit x is mm
 '''   
 
 # Global variables
 level_count = 1
-n = 2*6 # Sideview length of scintillator in unit x
+n = 2*1 # Sideview length of scintillator in unit x
 
 
 # These values are used for x perspective
 upper_side_views = [(0, n)] # (start, end) coordinates for each level 
 lower_side_views = [(0, n)]
-
-plate_thickness = 10 # In unit x
-intra_level_gap = 2 #Actual physical gap between each level, in unit x
-inter_level_gap = plate_thickness + intra_level_gap # Adjusted inter level gap for computation 
-
-half_gap_size =  162/2# In unit x
-top_half_gap = half_gap_size + plate_thickness + intra_level_gap
-bottom_half_gap = half_gap_size
+half_gap_size = 0.5 # In unit x
+plate_thickness = 0.2 # In unit x
+inter_level_gap = 0.2 #2*1 + plate_thickness # In unit x, level gap*2 + y_plate thickness
 gap_line = 0
-highest_point = half_gap_size + 5*intra_level_gap + 6*plate_thickness # Values custom set to this detector
+highest_point = half_gap_size + 5*inter_level_gap + 6*plate_thickness # Values custom set to this detector
 lowest_point = -highest_point
-
 
 def update_perspective_values():
     global upper_side_views
@@ -282,34 +277,16 @@ def draw_bounds(level_pair, previous_bounds):
 
     return [left_bound, right_bound]
 
-    
-
-    
-
-def detect_side_view(scintillators):
-    '''
-    Executes detection for 1 path
-    :param path: List of scintillators that were activated according to input type (see document docstring above)
-    :return bounds: List containing bounds (see output type above)
-    '''
-    corresponding_levels = group_corresponding_levels(scintillators)
-    best_bounds = [((0, 10), (0, -10)), ((n, 10), (n, -10))] # 2 points per best bounding line. 
-
-    for level_pair in corresponding_levels:
-
-        best_bounds = draw_bounds(level_pair, best_bounds)
-        if best_bounds == None:
-            return None
-        
-    return best_bounds
 
 
-def scintillators_to_bounds(scintillators):
+###############################
+
+def scintillators_to_bounds(binary):
     '''
     :param scintillators: tuple containing two lists, one for each side view
     :return bounds: tuple containing two lists each containing the points that bound the muon path
     '''
-    global n
+    scintillators = interpret_raw_data(binary)
 
     x_view = scintillators[0]
     z_view = scintillators[1]
@@ -320,31 +297,166 @@ def scintillators_to_bounds(scintillators):
 
     if x_bounds == None or z_bounds == None:
         return None
-    
-    # Transform z-bounds to correct coordinate system
-    for i in range(2):
-        z_bounds[i] = ((n - z_bounds[i][0][0], z_bounds[i][0][1]), (n - z_bounds[i][1][0], z_bounds[i][1][1]))
-
-    print(f' xbounds {x_bounds}')
-    print(f' zbounds {z_bounds}')
 
     hull_bounds, fan_out_lines = hull_coordinates(x_bounds, z_bounds)
+    
+    print(hull_bounds)
 
-    return hull_bounds, fan_out_lines
+        #coordinate transformation
+    hull_bounds = transform_coordinates(hull_bounds)
+    fan_out_lines = transform_coordinates_fanned(fan_out_lines)
 
-scintillators = [[(0, 1), (0, 1), (0, 1), (0, 1), (0, 1), (0, 1)],[(0, 1), (0, 1), (0, 1), (0, 1), (0, 1), (0, 1)]]
-scintillator_2 = [[(1, 0), (1, 0), (1, 0), (1, 0), (1, 0), (1, 0)], [(1, 0), (1, 0), (1, 0), (1, 0), (1, 0), (1, 0)]]
-hull_bounds, _ = scintillators_to_bounds(scintillator_2)
-print(hull_bounds)
+    
+    #condensed for clicking feature
+    bin6 = bit8(binary)
+
+    return hull_bounds, fan_out_lines, bin6
+
+
+#Raw data to normal data
+def bit8(var):
+    bit8 = 0
+    for i in range(0, 12):
+
+        new = (var >> 2 * i)&3
+
+        if  new == 2:
+
+            bit8 += 2**i
+
+        elif new != 1:
+
+            return False
+        
+    return bit8
+
+def bin_to_list(bin):
+    bit = 12      
+    list = []
+    for i in range(bit//2):
+
+        first_two  = (bin >> ((bit-2) - 2 * i)) & 3
+
+        if first_two == 2:
+
+            list.append((1,0))
+
+        elif first_two == 1:
+
+            list.append((0,1))
+
+        elif first_two == 3:
+
+            list.append((1,1))
+        
+        else:
+            return False    #error
+    
+    return list
+
+def interpret_raw_data(bin):
+    x = bin & 3355443   #& operator on 0b001100110011001100110011
+    y = bin & 13421772  #& operator on 0b110011001100110011001100
+
+    bit = 12
+    bitminus2 = bit - 2
+    list_x = []
+    list_y = []
+    for i in range(0, bit, 2):
+        last_two_x = (x >> (i * 2))
+        list_x.append(((last_two_x & 2) >> 1, last_two_x & 1))
+
+        last_two_x = (y >> (i * 2 + 2))
+        list_y.append(((last_two_x & 2) >> 1, last_two_x & 1))
+
+    return [list_x,list_y]
+
+
+
+#transforming coordinates
+def transform_coordinates(data):
+    global n      #scale
+    global half_gap_size
+    global inter_level_gap
+
+    translate_x = -n / 2
+    translate_y = -n / 2
+    z_scale = 1
+
+    list = []
+    for coordinates in data:
+        x = (coordinates[0] + translate_x) * -1
+        y = (coordinates[1] + translate_y) * -1
+        z = (coordinates[2] + half_gap_size - inter_level_gap) / z_scale
+        list.append((x,y,z))
+
+    return list
+
+def transform_coordinates_fanned(data):
+    list = []
+    for pair in data:
+        list.append(transform_coordinates(pair))
+
+    return list
+
+#run this loop to call arduino to update data
+def update_data():
+    global data
+
+    add_data = []
+    packet = arduino.recv_packet(arduino.ser)
+
+    add_data.append(scintillators_to_bounds(packet))    #This creates a new dataset (check description)
+
+    data.append(add_data)
+
+
+#test.data -> datasets -> cubes -> vertices or fan -> coords -> xyz values
+
 
 data_all = []
-data_all.append(scintillators_to_bounds(scintillator_2))
+# data1 = interpret_raw_data(0b101010101010101010101010)
+# data2 = interpret_raw_data(0b010101010101010101010101)
+
+data_all.append(scintillators_to_bounds(0b101010101010101010101010))    #problem with 0b100110101010101010101010
+data_all.append(scintillators_to_bounds(0b010101010101010101010101))
+
 
 data = []
 data.append(data_all)
 
 
-# Testing data
+
+
+# def coordinates(binary):
+#     scintillators = interpret_raw_data(binary&16773120)
+
+#     x = (bit8(scintillators[0]) -8) /8
+#     y = (bit8(scintillators[1]) - 8) /8
+#     z = 0
+
+#     dx = 0.0625
+#     dy = 0.0625
+#     dz = 0.0625
+
+#     p1 = (x + dx, y + dy,z + dz)
+#     p2 = (x + dx, y - dy,z + dz)
+#     p3 = (x - dx, y + dy,z + dz)
+#     p4 = (x - dx, y - dy,z + dz)
+#     p5 = (x + dx, y + dy,z - dz)
+#     p6 = (x + dx, y - dy,z - dz)
+#     p7 = (x - dx, y + dy,z - dz)
+#     p8 = (x - dx, y - dy,z - dz)
+
+#     bin6 = bit8(binary)
+#     return [p1,p2,p3,p4,p5,p6,p7,p8],[[p1,p8],[p2,p7],[p3,p6],[p4,p5]], bin6
+
+#[data] = dataset
+
+#print(scintillators_to_bounds(data))
+
+# if __name__ == '__main__':
+
 
     # scintillators = [(1, 0), (0, 1), (1, 0), (0, 1), (1, 0), (0, 1)]
     # best_path = detect_side_view(scintillators)
@@ -357,3 +469,8 @@ data.append(data_all)
                           # >> [((0.25, 10), (0.5, -7)), ((0.5, 7), (0.75, -10))]
     # [(1, 0), (0, 1), (1, 0), (0, 1), (1, 0), (0, 1)] ---> Pass
                           # >> [((0.5, 10), (1.25, -9)), ((0.75, 9), (1.5, -10)) 
+
+
+# scintillators = [(1, 0), (0, 1), (1, 0), (0, 1), (1, 0), (0, 1)]
+# best_path = detect_side_view(scintillators)
+# print(f'The path is bounded by {best_path}')
