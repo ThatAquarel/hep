@@ -118,126 +118,28 @@ class DetectionHulls:
         return scaled_hull_bounds, scaled_fan_out
 
 
-    def get_hull_returns(self, window, scintillators_from_arduino=None):
-
-        if time.time()-window.start_time < 1000:
-
-            # hull_bounds, fan_out = "do some stuff"
-
-            '''
-            hull_bounds = [1, 2, 3, 4, 5, 6, 7, 8]
-            == [TFL, TBL, TFR, TBR, BFL, BBL, BFR, BBR]
-
-            fan_out = [(1, 8), (2, 7), (3, 6), (4, 5)]
-            '''
-
-            
-
-            #scintillators = [
-            #    [
-            #        (0,1),
-            #        (0,1),
-            #        (1,0),
-            #        (1,0),
-            #        (0,1),
-            #        (0,1),
-            #    ],
-            #    [
-            #        (0,1),
-            #        (1,0),
-            #        (0,1),
-            #        (0,1),
-            #        (1,0),
-            #        (0,1),
-            #    ],
-            #]
-            #
-            #hull_bounds, fan_out = scintillators_to_bounds(scintillators)
-            #print()
-            ##for i in hull_bounds:
-            ##    print(i)      
-            ##print()#fan_out
-            ##print()
-            ##print("next")
-#
-            scintillators = [
-                [
-                    (1,0),
-                    (1,0),
-                    (1,0),
-                    (1,0),
-                    (1,0),
-                    (1,0),
-                ],
-                [
-                    (1,0),
-                    (1,0),
-                    (1,1),
-                    (1,0),
-                    (1,0),
-                    (1,0),
-                ],
-            ]
-            scintillators = [
-                [
-                    (1,0),
-                    (0,1),
-                    (1,0),
-                    (0,1),
-                    (1,0),
-                    (0,1),
-                ],
-                [
-                    (1,0),
-                    (1,0),
-                    (1,0),
-                    (0,1),
-                    (1,0),
-                    (1,0),
-                ],
-            ]
-
-            if scintillators_from_arduino != None:
-                scintillators = scintillators_from_arduino
-
-            bounds = self.detection_algorithm.scintillators_to_bounds(scintillators)
-            
-            if bounds != None:
-                hull_bounds, fan_out = bounds
-                hull_bounds = np.array(hull_bounds) - np.array([0, 0, 162/2])
-
-            #for j, i in enumerate(hull_bounds):
-            #    print(j, i)  
-            #print()
+    def get_hull_returns(self, scintillators_from_arduino):
 
 
+        # hull_bounds, fan_out = "do some stuff"
 
-            # # TEST DATA
-            #   1    2    3    4
-            # [TFL, TBL, TFR, TBR, 
-            #  5    6    7    8
-            # BFL, BBL, BFR, BBR]
-            #p1, p2, p3, p4 = (3, 3,   6), (3, 5,   6), (6, 3,   6), (6, 5,   6)
-            #p5, p6, p7, p8 = (3, 6, -12), (3, 7, -12), (6, 6, -12), (6, 7, -12)
-            ##p1, p2, p3, p4 = (5, 3, 7), (5, 5, 7), (7, 3, 7), (7, 5, 7)
-            ##p5, p6, p7, p8 = (5, 3, 4), (5, 5, 4), (7, 3, 4), (7, 5, 4)
-            #hull_bounds =[p1, p2, p3, p4, p5, p6, p7, p8]
-            #fan_out = [(p1, p8), (p2, p7), (p3, p6), (p4, p5)]
+        '''
+        hull_bounds = [1, 2, 3, 4, 5, 6, 7, 8]
+        == [TFL, TBL, TFR, TBR, BFL, BBL, BFR, BBR]
 
-
-            #hull_bounds = [(0, 1.75, 1.1), (0, 2, 1.1), (0.25, 1.75, 1.1), (0.25, 2, 1.1), (0, 1.75, -1.1), (0, 2, -1.1), (0.25, 1.75, -1.1), (0.25, 2, -1.1)]
-
-
-            return np.array(hull_bounds).astype(np.float32), np.array(fan_out).astype(np.float32)
+        fan_out = [(1, 8), (2, 7), (3, 6), (4, 5)]
+        '''
+        scintillators = scintillators_from_arduino
         
-        else:
-            try:
-                return self.hull_bounds, self.fan_out
-            except:
-                raise ValueError()
+        hull_bounds, fan_out = self.detection_algorithm.scintillators_to_bounds(scintillators)
+        hull_bounds = np.array(hull_bounds) - np.array([0, 0, 162/2])
 
 
-    def create_hull_data(self, window):
+        return np.array(hull_bounds).astype(np.float32), np.array(fan_out).astype(np.float32)
+    
+
+
+    def create_hull_data(self):
         '''
 
         works with actual values of structure
@@ -262,7 +164,7 @@ class DetectionHulls:
         if self.arduino.has_new_data():
             data = self.arduino.get_data_from_arduino()
             if self.arduino.is_valid_data(data):
-                self.hull_bounds, self.fan_out = self.get_hull_returns(window, self.arduino.scintillators)
+                self.hull_bounds, self.fan_out = self.get_hull_returns(self.arduino.scintillators)
 
                 #self.hull_bounds, self.fan_out = self.get_hull_returns(window)
                 '''
