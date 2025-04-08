@@ -16,7 +16,6 @@ from graphics.shader_renderer import ShaderRenderer
 import graphics.elements.cube
 import graphics.elements.square
 import graphics.elements.trajectory
-import graphics.elements.fan
 import graphics.elements.axes
 
 import test
@@ -48,9 +47,10 @@ class App(CameraOrbitControls, ShaderRenderer):
             self.window,
         )
 
-        self.scale = 12
+        self.scale = 2.0
 
         #setup elements
+        initial_color = np.array([1.0, 1.0, 1.0])  # Red color
         self.plane = graphics.elements.plane.Plane(scale = self.scale)
 
 
@@ -59,8 +59,6 @@ class App(CameraOrbitControls, ShaderRenderer):
         self.trajectory = graphics.elements.trajectory.trajectory(scale = self.scale)
 
         self.axes = graphics.elements.axes.Axes(self.scale,self.scale)
-
-        self.fan = graphics.elements.fan.Fan(scale = self.scale)
 
 
         self.pt_selected = None
@@ -197,20 +195,14 @@ class App(CameraOrbitControls, ShaderRenderer):
         
 
         #draw elements
+        self.plane.draw(self.pt_selected)
         self.square.draw(self.ui.dataset_active)
-        self.fan.draw(self.ui.dataset_active)
+        self.trajectory.draw(self.ui.dataset_active)
+
+        
 
         if self.ui.show_axes:
             self.axes.draw()
-            
-        self.plane.draw(self.pt_selected)
-        
-        
-        #self.trajectory.draw(self.ui.dataset_active)
-
-        
-
-
 
         # shader: update lighting
         self.set_lighting_uniforms(
@@ -230,19 +222,18 @@ class App(CameraOrbitControls, ShaderRenderer):
     def on_click(self, window):
         # get 3D click coordinates
         rh = self.get_right_handed()
-        self.x, self.y, self.z = self.get_click_point(window, rh)
+        self.x, self.y, _ = self.get_click_point(window, rh)
         
-        self.x_pos = self.x / (self.scale/ 2)  #the 2 is n from aljoscha's algorithm
-        self.y_pos = self.y / (self.scale/ 2)
+        self.x_pos = self.x / (self.scale/256)
+        self.y_pos = self.y / (self.scale/256)
 
-        print(self.x, self.y, self.z)
-        uncertainty = 0.25
+        uncertainty = 5
         for i in range(len(test.data)):
             #To see if the mouse position matches 
             if self.ui.dataset_active[i]:
-                for pt in range(len(test.data[i])):     #test.data -> datasets -> cubes -> vertices or fan -> coords -> xyz values
-                    if (test.data[i][pt][0][0][0] <= (self.x_pos + uncertainty)) and (test.data[i][pt][0][0][0] >= (self.x_pos - uncertainty)):
-                        if (test.data[i][pt][0][0][1] <= (self.y_pos + uncertainty)) and (test.data[i][pt][0][0][1] >= (self.y_pos- uncertainty)):
+                for pt in range(len(test.data[i])):
+                    if (test.data[i][pt][0] <= (self.x_pos + uncertainty)) and (test.data[i][pt][0] >= (self.x_pos - uncertainty)):
+                        if (test.data[i][pt][1] <= (self.y_pos + uncertainty)) and (test.data[i][pt][1] >= (self.y_pos- uncertainty)):
                             self.pt_selected = test.data[i][pt]
         
 
