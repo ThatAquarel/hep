@@ -7,20 +7,31 @@ import os
 
 class DataReception:
     def __init__(self):
+        dsrdtr = False
+        port = "/dev/ttyUSB0"
 
-        windows = True if os.name == "nt" else False
+        if os.name == "nt":
+            dsrdtr = True
+            port = "COM5"
 
-        self.arduino = serial.Serial(port='COM5', baudrate=115200, dsrdtr=windows)
+        self.arduino = serial.Serial(port=port, baudrate=115200, dsrdtr=dsrdtr)
 
     def has_new_data(self):
-        if self.arduino.in_waiting >= 6:
-            return True
-        else:
-            return False
+        return self.arduino.in_waiting >= 8
+        
+
+    def format_print(self, value):
+        lsb = value & 0xFFFFFF
+        b1 = (lsb >> 16) & 0xFF
+        b2 = (lsb >> 8) & 0xFF
+        b3 = lsb & 0xFF
+
+        print("receive trigger: SiPM status")
+        print(f"    {b1:02x}          {b2:02x}          {b3:02x}")
+        print(f"    {b1:08b}    {b2:08b}    {b3:08b}")
+        print()
 
     def get_data_from_arduino(self):
-
-
         self.arduino.read_until(b"\x7E")
         value = self.arduino.read(4)
 
@@ -29,13 +40,12 @@ class DataReception:
 
         (n,) = struct.unpack("<I", value)
 
+        self.format_print(n)
         return n
 
-        string_int = self.arduino.readline()
-
-        print(string_int, "a")
-
-        return string_int
+        # string_int = self.arduino.readline()
+        # print(string_int, "a")
+        # return string_int
 
     def string_int32_to_scintillator_binary(self, string_int32):
         num_int = int(string_int32)
