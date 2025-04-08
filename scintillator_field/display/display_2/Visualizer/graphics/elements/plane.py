@@ -49,11 +49,11 @@ class Plane:
         
         vertices = []
 
-        offset = 0.4
+        z_ratio = 10/size * 0.1     #aka plate thickness
 
-        z_ratio = 0.1
+        offset = 2 #??? idk it's just off
 
-        layer_gap = size * z_ratio
+        layer_gap = 2 * 0.1     
 
         #Lower plane
         for layer in range(2,2+self.number_of_layers):
@@ -122,7 +122,7 @@ class Plane:
         #vertices = np.array(vertices, dtype = np.float32)
 
         #Up plane
-        middle_gap = 1
+        middle_gap = 162 * 0.1
         for layer in range(2,2+self.number_of_layers):
             number_of_strips = 2** (layer//2)
 

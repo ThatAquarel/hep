@@ -40,7 +40,7 @@ class Axes:
         domain = (-range_max, range_max)
 
         # a division at every unit
-        divs = (0.1 * range_max, 0.1 * range_max)
+        divs = (0.9 * range_max, 0.9 * range_max)
 
         return domain, domain, domain, divs
 
@@ -84,40 +84,29 @@ class Axes:
         # blue line for y-axis
         # green line for z-axis
 
-        # data = np.array(
-        #     [
-        #         #x-axis
-        #         [0, 0, 0],  #min
-        #         [1, 0, 0],
-        #         [x_max, 0, 0],  #max
-        #         [1, 0, 0],
+        data = np.array(
+            [
+                #x-axis
+                [0, 0, 0],  #min
+                [1, 0, 0],
+                [x_max, 0, 0],  #max
+                [1, 0, 0],
 
-        #         #y-axis
-        #         [0, 0, 0],  #min
-        #         [0, 1, 0],
-        #         [0, y_max, 0],  #max
-        #         [0, 1, 0],
+                #y-axis
+                [0, 0, 0],  #min
+                [0, 1, 0],
+                [0, y_max, 0],  #max
+                [0, 1, 0],
 
-        #         #z-axis
-        #         [0, 0, 0],    #min
-        #         [0, 0, 1],
-        #         [0, 0, z_max],    #max
-        #         [0, 0, 1],
-        #     ],
-        #     dtype=np.float32,
-        # )
+                #z-axis
+                [0, 0, 0],    #min
+                [0, 0, 1],
+                [0, 0, z_max],    #max
+                [0, 0, 1],
+            ],
+            dtype=np.float32,
+        )
 
-        #fixed to be compatible with opacity
-        data = np.array([
-            [0, 0, 0, 1, 0, 0, 1],  # x-axis start (red, alpha=1)
-            [x_max, 0, 0, 1, 0, 0, 1],
-
-            [0, 0, 0, 0, 1, 0, 1],  # y-axis start (green)
-            [0, y_max, 0, 0, 1, 0, 1],
-
-            [0, 0, 0, 0, 0, 1, 1],  # z-axis start (blue)
-            [0, 0, z_max, 0, 0, 1, 1],
-        ], dtype=np.float32)
         return create_vao(data), 6
 
     def _build_scaled_gridlines(self, s_div, s_min, s_max):
@@ -145,7 +134,7 @@ class Axes:
         # rescale vertices with respect to range
         return vertices * (s_max - s_min ) 
 
-    def _build_gridline_color(self, vertices, color=[0.6, 0.6, 0.6,1]):
+    def _build_gridline_color(self, vertices, color=[0.6, 0.6, 0.6]):
         """
         Build colors of gridline
 
@@ -155,7 +144,7 @@ class Axes:
         """
 
         # build colors
-        colors = np.ones((vertices.shape[0],4), dtype=np.float32) * color
+        colors = np.ones(vertices.shape, dtype=np.float32) * color
 
         # stack colors to coordinates
         return np.hstack((vertices, colors)).astype(np.float32)
