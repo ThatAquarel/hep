@@ -41,10 +41,11 @@ class OpenGLStuff:
 
 
         if self.detected_hulls.arduino.has_new_data():
-            self.detected_hulls.create_hull_data(window)
+            self.detected_hulls.create_hull_data()
             self.detected_hulls.create_hull_vao()
 
-        self.detected_hulls.draw_hull()
+        if self.detected_hulls.data_exists:
+            self.detected_hulls.draw_hull()
 
         self.scintillator_structuce.draw_scintillator_structure()
 

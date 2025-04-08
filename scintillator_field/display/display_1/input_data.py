@@ -16,6 +16,8 @@ class DataReception:
 
         self.arduino = serial.Serial(port=port, baudrate=115200, dsrdtr=dsrdtr)
 
+        self.detection_algorithm = Detection()
+
     def has_new_data(self):
         return self.arduino.in_waiting >= 8
         
@@ -89,6 +91,9 @@ class DataReception:
 
         for pairx, pairy in zip(self.scintillators[0], self.scintillators[1]):
             if (0, 0) in (pairx, pairy):
-                return True
+                return False
+
+            elif self.detection_algorithm.scintillators_to_bounds(self.scintillators) == None:
+                return False
         
         return True
