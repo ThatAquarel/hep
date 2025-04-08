@@ -3,6 +3,9 @@
 // hardware interrupt
 #define TRIGGER 2
 volatile bool triggered = false;
+#define MANUAL_RESET 3
+volatile bool resetted = false;
+#define RESET 4
 
 // FPGA data shifting
 #define CS 10
@@ -14,23 +17,28 @@ void setup() {
   Serial.begin(115200);
 
   // hardware interrupt for trigger
-  pinMode(TRIGGER, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(TRIGGER), trigger, FALLING);
+  pinMode(TRIGGER, INPUT);
+  attachInterrupt(digitalPinToInterrupt(TRIGGER), trigger, RISING);
+
+  // auto reset
+  pinMode(MANUAL_RESET, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(MANUAL_RESET), reset, FALLING);
+
+  pinMode(RESET, OUTPUT);
+  digitalWrite(RESET, HIGH);
 
   // FPGA data shifting
-  // SPI.begin();
   pinMode(CS, OUTPUT);
   digitalWrite(CS, HIGH);
 
   pinMode(MISO, INPUT);
   pinMode(CLK, OUTPUT);
   digitalWrite(CLK, LOW);
-
-  // SPI.beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE0));
 }
 
 void loop() {
   if (triggered) {
+    delayMicroseconds(30);
     // Start SPI transaction
     digitalWrite(CS, LOW); // Select FPGA
 
@@ -43,26 +51,26 @@ void loop() {
       value |= digitalRead(MISO);
     }
     
-    // Read 3 bytes (24 bits)
-    // uint8_t byte1 = SPI.transfer(0x00);
-    // uint8_t byte2 = SPI.transfer(0x00);
-    // uint8_t byte3 = SPI.transfer(0x00);
-
     digitalWrite(CS, HIGH); // Deselect FPGA
-
-    // // Combine bytes into a 24-bit value
-    // uint32_t data = ((uint32_t)byte1 << 16) | ((uint32_t)byte2 << 8) | byte3;
-
-    // Serial.print("Received 24-bit data: 0x");
-    // Serial.println(data, HEX);
 
     Serial.print("TRIGGERED: 0x");
     Serial.println(value, HEX);
 
     triggered = false;
+
+    reset();
+  }
+
+  if (resetted) {
+    digitalWrite(RESET, LOW);
+    digitalWrite(RESET, HIGH);
   }
 }
 
 void trigger() {
   triggered = true;
+}
+
+void reset() {
+  resetted = true;
 }
