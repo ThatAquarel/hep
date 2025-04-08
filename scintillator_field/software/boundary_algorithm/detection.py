@@ -46,6 +46,26 @@ class Detection:
         self.highest_point = self.half_gap_size + 5*self.intra_level_gap + 6*self.plate_thickness # Values custom set to this detector
         self.lowest_point = -self.highest_point
 
+    def reset_to_initial_values(self):
+        # Global variables
+        self.level_count = 1
+        self.n = 2*60 # Sideview length of scintillator in unit x
+
+
+        # These values are used for x perspective
+        self.upper_side_views = [(0, self.n)] # (start, end) coordinates for each level 
+        self.lower_side_views = [(0, self.n)]
+
+        self.plate_thickness = 10 # In unit x
+        self.intra_level_gap = 2 #Actual physical gap between each level, in unit x
+        self.inter_level_gap = self.plate_thickness + self.intra_level_gap # Adjusted inter level gap for computation 
+
+        self.half_gap_size =  162/2# In unit x
+        self.top_half_gap = self.half_gap_size + self.plate_thickness + self.intra_level_gap
+        self.bottom_half_gap = self.half_gap_size
+        self.gap_line = 0
+        self.highest_point = self.half_gap_size + 5*self.intra_level_gap + 6*self.plate_thickness # Values custom set to this detector
+        self.lowest_point = -self.highest_point
 
     def update_perspective_values(self):
 
@@ -310,19 +330,22 @@ class Detection:
         for i in range(2):
             z_bounds[i] = ((self.n - z_bounds[i][0][0], z_bounds[i][0][1]), (self.n - z_bounds[i][1][0], z_bounds[i][1][1]))
 
-        print(f' xbounds {x_bounds}')
-        print(f' zbounds {z_bounds}')
-
         hull_bounds, fan_out_lines = self.hull_coordinates(x_bounds, z_bounds)
+
+        # Reset initial values before next use
+        self.reset_to_initial_values()
 
         return hull_bounds, fan_out_lines
 
-""" detection_algorithm = Detection()
+detection_algorithm = Detection()
 
 scintillators = [[(0, 1), (0, 1), (0, 1), (0, 1), (0, 1), (0, 1)],[(0, 1), (0, 1), (0, 1), (0, 1), (0, 1), (0, 1)]]
 scintillator_2 = [[(1, 0), (1, 0), (1, 0), (1, 0), (1, 0), (1, 0)], [(1, 0), (1, 0), (1, 0), (1, 0), (1, 0), (1, 0)]]
 hull_bounds, _ = detection_algorithm.scintillators_to_bounds(scintillator_2)
-print(hull_bounds) """
+print(hull_bounds)
+
+hull_bounds, _ = detection_algorithm.scintillators_to_bounds(scintillator_2)
+print(hull_bounds)
 
     # Testing data
 
