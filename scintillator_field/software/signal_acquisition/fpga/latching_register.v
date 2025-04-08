@@ -10,7 +10,8 @@ module top (
 
     // interface
     input wire rst_n,           // active-low reset (clears all latches)
-    output wire trigger,
+    output reg trigger,
+    output wire trigger_led,
 
     input wire spi_cs,          // chip select, active-low
     input wire spi_clk,          // spi clock
@@ -45,6 +46,11 @@ reg spi_cs_sync1, spi_cs_sync2;
 assign counter_0 = bit_count[0];
 assign counter_1 = bit_count[1];
 
+// difference detection
+wire [23:0] diff;
+assign diff = sync2 ^ Q;
+assign trigger_led = trigger;
+
 // input-latching
 // always @(posedge sys_clk_pll or negedge rst_n or negedge spi_cs) begin
 always @(posedge sys_clk_pll or negedge rst_n) begin
@@ -53,6 +59,7 @@ always @(posedge sys_clk_pll or negedge rst_n) begin
         sync1 <= 24'b0;      // Clear first stage of synchronizers
         sync2 <= 24'b0;      // Clear second stage of synchronizers
 
+        // clear shift register sync
         shift_reg <= 24'b0;
         bit_count <= 5'b0;
         spi_miso <= 1'b0;
@@ -61,6 +68,9 @@ always @(posedge sys_clk_pll or negedge rst_n) begin
         spi_clk_sync2 <= 1'b0; 
         spi_cs_sync1 <= 1'b0; 
         spi_cs_sync2 <= 1'b0; 
+
+        // clear trigger
+        trigger <= 1'b0;
 
     end else begin
         // Synchronize the inputs with two stages
@@ -73,6 +83,9 @@ always @(posedge sys_clk_pll or negedge rst_n) begin
                 Q[i] <= 1'b1;
             // If sync2[i] is low, hold the previous state (Q[i] stays the same)
         end
+
+        if (diff)
+            trigger <= 1'b1;
 
         // previous spi signal
         // spi_clk_prev <= spi_clk;
