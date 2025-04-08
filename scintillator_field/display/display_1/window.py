@@ -19,6 +19,8 @@ import time
 class Window:
     def __init__(self):
 
+        self.start_time = time.time()
+
         # sets up basic window parameters
 
         self.render_distance = 1024
@@ -38,6 +40,7 @@ class Window:
         self.angle_x, self.angle_y, self.angle_z = 67.3, -73.1, 45
         self.pan_x, self.pan_y, self.pan_z = -2.63, -0.89, 0
         self.zoom = 14.1
+        self.zoom = 231
 
 
         self.pan_sensitivity = 0.001
