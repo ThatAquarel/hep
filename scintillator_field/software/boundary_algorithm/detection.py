@@ -30,7 +30,7 @@ n = 2*60 # Sideview length of scintillator in unit x
 upper_side_views = [(0, n)] # (start, end) coordinates for each level 
 lower_side_views = [(0, n)]
 
-plate_thickness = 100 # In unit x
+plate_thickness = 10 # In unit x
 intra_level_gap = 2 #Actual physical gap between each level, in unit x
 inter_level_gap = plate_thickness + intra_level_gap # Adjusted inter level gap for computation 
 
@@ -329,10 +329,10 @@ def scintillators_to_bounds(scintillators):
 
     return hull_bounds, fan_out_lines
 
-""" scintillators = [[(0, 1), (0, 1), (0, 1), (0, 1), (0, 1), (0, 1)],[(0, 1), (0, 1), (0, 1), (0, 1), (0, 1), (0, 1)]]
+scintillators = [[(0, 1), (0, 1), (0, 1), (0, 1), (0, 1), (0, 1)],[(0, 1), (0, 1), (0, 1), (0, 1), (0, 1), (0, 1)]]
 scintillator_2 = [[(1, 0), (1, 0), (1, 0), (1, 0), (1, 0), (1, 0)], [(1, 0), (1, 0), (1, 0), (1, 0), (1, 0), (1, 0)]]
 hull_bounds, _ = scintillators_to_bounds(scintillator_2)
-print(hull_bounds) """
+print(hull_bounds)
 
 # Testing data
 
