@@ -36,12 +36,15 @@ class OpenGLStuff:
 
         make_uniforms(self.shader_program, window)
 
+        self.detected_hulls.data_exists = False
 
-        are_hulls_detected = True
-        if are_hulls_detected:
+
+
+        if self.detected_hulls.arduino.has_new_data():
             self.detected_hulls.create_hull_data(window)
             self.detected_hulls.create_hull_vao()
-            self.detected_hulls.draw_hull()
+
+        self.detected_hulls.draw_hull()
 
         self.scintillator_structuce.draw_scintillator_structure()
 
