@@ -21,7 +21,6 @@ import graphics.elements.axes
 
 import data_manager
 
-import test
 
 class App(CameraOrbitControls, ShaderRenderer):
     def __init__(
@@ -197,6 +196,9 @@ class App(CameraOrbitControls, ShaderRenderer):
             self.get_camera_projection(),
             self.get_camera_transform(),
         )
+
+        if self.test.has_data():
+            self.test.update_data(self.test.get_data_from_arduino())
 
         #input for drawing
         self.square.input_data = self.test.data.copy()
