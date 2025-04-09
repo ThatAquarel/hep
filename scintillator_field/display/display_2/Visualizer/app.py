@@ -19,6 +19,8 @@ import graphics.elements.trajectory
 import graphics.elements.fan
 import graphics.elements.axes
 
+import data_manager
+
 import test
 
 class App(CameraOrbitControls, ShaderRenderer):
@@ -61,6 +63,8 @@ class App(CameraOrbitControls, ShaderRenderer):
         self.axes = graphics.elements.axes.Axes(self.scale,self.scale)
 
         self.fan = graphics.elements.fan.Fan(scale = self.scale)
+
+        self.test = data_manager()
 
 
         self.pt_selected = None
@@ -194,8 +198,10 @@ class App(CameraOrbitControls, ShaderRenderer):
             self.get_camera_transform(),
         )
 
+        #input for drawing
+        self.square.input_data = self.test.data.copy()
+        self.fan.input_data = self.test.data.copy()
         
-
         #draw elements
         self.square.draw(self.ui.dataset_active)
         self.fan.draw(self.ui.dataset_active)
@@ -237,13 +243,13 @@ class App(CameraOrbitControls, ShaderRenderer):
 
         print(self.x, self.y, self.z)
         uncertainty = 0.25
-        for i in range(len(test.data)):
+        for i in range(len(self.test.data)):
             #To see if the mouse position matches 
             if self.ui.dataset_active[i]:
-                for pt in range(len(test.data[i])):     #test.data -> datasets -> cubes -> vertices or fan -> coords -> xyz values
-                    if (test.data[i][pt][0][0][0] <= (self.x_pos + uncertainty)) and (test.data[i][pt][0][0][0] >= (self.x_pos - uncertainty)):
-                        if (test.data[i][pt][0][0][1] <= (self.y_pos + uncertainty)) and (test.data[i][pt][0][0][1] >= (self.y_pos- uncertainty)):
-                            self.pt_selected = test.data[i][pt]
+                for pt in range(len(self.test.data[i])):     #test.data -> datasets -> cubes -> vertices or fan -> coords -> xyz values
+                    if (self.test.data[i][pt][0][0][0] <= (self.x_pos + uncertainty)) and (self.test.data[i][pt][0][0][0] >= (self.x_pos - uncertainty)):
+                        if (self.test.data[i][pt][0][0][1] <= (self.y_pos + uncertainty)) and (self.test.data[i][pt][0][0][1] >= (self.y_pos- uncertainty)):
+                            self.pt_selected = self.test.data[i][pt]
         
 
 
