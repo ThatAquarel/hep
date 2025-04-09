@@ -35,12 +35,11 @@ class test:
         if self.arduino.read(1) != b"\x7D":
             print("serial frame end error")
 
-        remaining = self.arduino.in_waiting
-        self.arduino.read(remaining)
+        # remaining = self.arduino.in_waiting
+        # self.arduino.read(remaining)
 
         (n,) = struct.unpack("<I", value)
 
-        self.format_print(n)
         return n
 
     def reset(self):
@@ -72,9 +71,10 @@ class test:
         """
         transform data ready to be interpreted by the visualizer, then update self.data
         """
-    
         
-        cooked_data = self.interpret_raw_data(raw_data)
+        bit24 = raw_data & 0xffffff
+
+        cooked_data = self.interpret_raw_data(bit24)
         algorithmized = self.detection_algorithm.scintillators_to_bounds(cooked_data)
 
         self.reset()
