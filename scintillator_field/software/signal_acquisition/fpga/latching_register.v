@@ -78,7 +78,7 @@ always @(posedge sys_clk_pll or negedge rst_n) begin
         sync2 <= sync1;     // Second stage synchronizer
 
         // Latch the output based on the synchronized input
-        for (i = 0; i < 24; i = i + 1)
+        for (i = 0; i < 24; i = i + 1) begin
             if (sync2[i])
                 Q[i] <= 1'b1;
         end
