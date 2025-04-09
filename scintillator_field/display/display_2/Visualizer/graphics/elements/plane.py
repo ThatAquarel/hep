@@ -201,13 +201,15 @@ class Plane:
         #000000 means that all of the negative(more towards the negative x or y)
 
         #More towards the positive has a white strip, more towards the negative has a gray strip
-            for up_or_top in range(2):  #ensures that both top and up layer are set
-                if up_or_top == 0:
-                    x = (pt_selected[2] & 3584) >> 9
-                    y = (pt_selected[2] & 56) >> 3
+            for bottom_or_top in range(2):  #ensures that both top and up layer are set
+                # bottom_or_top = 0  => bottom
+                if bottom_or_top == 0:
+                    x = pt_selected[2][0][3] * 4 + pt_selected[2][0][4] * 2 + pt_selected[2][0][5]
+                    y = pt_selected[2][1][3] * 4 + pt_selected[2][1][4] * 2 + pt_selected[2][1][5]
+
                 else:
-                    x = (pt_selected[2] &448) >> 6
-                    y = pt_selected[2] & 7
+                    x = pt_selected[2][0][2] * 4 + pt_selected[2][0][1] * 2 + pt_selected[2][0][0]
+                    y = pt_selected[2][1][2] * 4 + pt_selected[2][1][1] * 2 + pt_selected[2][1][0]
                     
 
                 for layer in range(self.number_of_layers):
@@ -217,7 +219,7 @@ class Plane:
                     for i in range(number_of_strips):
                         reverse_number = 2** ((5-layer)//2)    #This means that the binary is read from left to right
 
-                        k = 0 + 28 * up_or_top  #apply offset so when it comes to top, it correctly displays
+                        k = 0 + 28 * bottom_or_top  #apply offset so when it comes to top, it correctly displays
                         for j in range(layer + 1):  #Find the number of the strip we are on. This is counting by 2^x
                             if j != 0:
                                 k += 2**((j+1)//2)

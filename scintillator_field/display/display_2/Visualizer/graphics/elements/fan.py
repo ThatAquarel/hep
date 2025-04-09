@@ -2,7 +2,6 @@ import numpy as np
 from itertools import product
 from OpenGL.GL import GL_TRIANGLES
 
-import test
 from graphics.vbo import create_vao, draw_vao, update_vbo
 
 
@@ -10,11 +9,12 @@ from graphics.vbo import create_vao, draw_vao, update_vbo
 class Fan:
     def __init__(self, scale=1.0):
         self.scale = scale
+        self.input_data = []
         
     def manage_data(self,dataset_num):
         #vertices = self.interpret_data(test.data[dataset_num])
 
-        vertices = self.interpret_data(test.data[dataset_num])
+        vertices = self.interpret_data(self.input_data[dataset_num])
         
         self.n = len(vertices)
 
@@ -227,8 +227,10 @@ class Fan:
         """
         Draw multiple squares for multiple sets of data
         """
-        
-        for i in range(len(dataset_active)):
-            if dataset_active[i]:
-                self.manage_data(i)
-                self._draw_square()
+        if self.input_data == []:
+            return
+        else:
+            for i in range(len(dataset_active)):
+                if dataset_active[i]:
+                    self.manage_data(i)
+                    self._draw_square()
