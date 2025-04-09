@@ -77,6 +77,9 @@ class test:
         cooked_data = self.interpret_raw_data(bit24)
         algorithmized = self.detection_algorithm.scintillators_to_bounds(cooked_data)
 
+        if not algorithmized:
+            return
+
         self.reset()
 
         new_hull_bounds = self.transform_coordinates(algorithmized[0])
