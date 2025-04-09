@@ -21,6 +21,8 @@ import graphics.elements.axes
 
 import data_manager
 
+import pandas as pd
+import numpy as np
 
 class App(CameraOrbitControls, ShaderRenderer):
     def __init__(
@@ -67,6 +69,7 @@ class App(CameraOrbitControls, ShaderRenderer):
 
 
         self.pt_selected = None
+
 
         # fall into rendering loop
         self.rendering_loop()
@@ -180,6 +183,8 @@ class App(CameraOrbitControls, ShaderRenderer):
             dt = current - start
             start = current
 
+        self.generate_csv()
+
         glfw.terminate()
 
 
@@ -198,10 +203,14 @@ class App(CameraOrbitControls, ShaderRenderer):
             self.get_camera_transform(),
         )
 
-        if self.test.has_data():
-             self.test.update_data(self.test.get_data_from_arduino())
+        # if self.test.has_data():
+        #      self.test.update_data(self.test.get_data_from_arduino())
 
-        self.pt_selected = self.test.data[-1][0]
+                #Update self.pt_selected to None when the data set is no longer chosen to be displayed
+        if self.ui.pt_selected_send == None:
+            self.pt_selected = None
+        else:
+            self.pt_selected = self.test.data[-1][0]
         #input for drawing
         self.square.input_data = self.test.data.copy()
         self.fan.input_data = self.test.data.copy()
@@ -233,9 +242,7 @@ class App(CameraOrbitControls, ShaderRenderer):
             specular_reflection=self.ui.specular_reflection,
         )
 
-        #Update self.pt_selected to None when the data set is no longer chosen to be displayed
-        if self.ui.pt_selected_send == None:
-            self.pt_selected = None
+
 
 
     def on_click(self, window):
@@ -254,6 +261,19 @@ class App(CameraOrbitControls, ShaderRenderer):
                         if (self.test.data[i][pt][0][0][1] <= (self.y + uncertainty)) and (self.test.data[i][pt][0][0][1] >= (self.y - uncertainty)):
                             self.pt_selected = self.test.data[i][pt]
       
+    def generate_csv(self):
+
+        df = pd.DataFrame(self.test.data[0],columns=["new_hull_bounds", "new_fan_out_lines", "cooked_data", "bit24", "time"])
+
+        df = df.drop("new_hull_bounds", axis=1)
+        df = df.drop("new_fan_out_lines", axis=1)
+        df = df.drop("cooked_data", axis=1)
+
+        #df.columns[0], df.columns[1] = df.columns[1], df.columns[0] 
+
+        df.to_csv("data.csv")
+
+        
 
 
 

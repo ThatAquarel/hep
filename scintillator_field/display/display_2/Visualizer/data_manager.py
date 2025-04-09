@@ -5,6 +5,10 @@ import serial
 import struct
 import os
 
+from datetime import datetime
+
+
+import numpy as np
 class test:
     def __init__(self):
         dsrdtr = False
@@ -14,7 +18,7 @@ class test:
             dsrdtr = True
             port = "COM5"
 
-        self.arduino = serial.Serial(port=port, baudrate=115200, dsrdtr=dsrdtr)
+        #self.arduino = serial.Serial(port=port, baudrate=115200, dsrdtr=dsrdtr)
 
 
 
@@ -80,17 +84,28 @@ class test:
         if not algorithmized:
             return
 
+        time = datetime.now()
+
         self.reset()
 
         new_hull_bounds = self.transform_coordinates(algorithmized[0])
         new_fan_out_lines = self.transform_coordinates_fanned(algorithmized[1])
 
         #This part depends on if you want to make the point to be assigned to a dataset or as a new dataset
-        point = [new_hull_bounds, new_fan_out_lines, cooked_data]
+        point = [new_hull_bounds, new_fan_out_lines, cooked_data, bit24, time]
         dataset = []
         dataset.append(point)
 
         self.data.append(dataset)
+
+    def rationalize(self,raw_data):
+        a = []
+        for i in range(24):
+            a.append((raw_data & (2**i)) >> i )
+        
+        b = [5,4,7,6,0,1,2,3,8,9,10,11,13,12,15,14,16,17,18,19,21,20,22,23]
+
+
 
     def interpret_raw_data(self,bin):
         x = bin & 3355443   #& operator on 0b001100110011001100110011
@@ -138,6 +153,14 @@ class test:
         scintillator_1= [[(0, 1), (0, 1), (0, 1), (0, 1), (0, 1), (0, 1)],[(0, 1), (0, 1), (0, 1), (0, 1), (0, 1), (0, 1)]]
         scintillator_2 = [[(1, 0), (1, 0), (1, 0), (1, 0), (1, 0), (1, 0)], [(1, 0), (1, 0), (1, 0), (1, 0), (1, 0), (1, 0)]]
         
-        self.update_data(0b101101010101101011010110)     
+        # self.update_data(0b101101010101101011010110)     
+        # self.update_data(0b111101100101111101101111)
+        #self.update_data(0b101111011110111001011101)
+        #self.update_data(0b010101010101010101010101)
+        #self.update_data(0b010111011110100110011101)
+
+        #self.update_data(0b011011010110101011010110)
+        self.update_data(0b100110101101010101101001)
+            
 
 
