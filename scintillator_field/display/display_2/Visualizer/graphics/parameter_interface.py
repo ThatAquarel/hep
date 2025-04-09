@@ -5,7 +5,6 @@ import numpy as np
 
 import graphics.orbit_controls
 
-import test
 
 
 def ui_spacing():
@@ -98,6 +97,8 @@ class ParameterInterface:
 
 
 
+
+
     @property
     def want_keyboard(self):
         return imgui.get_io().want_capture_keyboard
@@ -128,15 +129,15 @@ class ParameterInterface:
 
 
     @ui_section("Point data")
-    def point_data(self,pt_selected):
+    def point_data(self):
         
-        if pt_selected == None:
+        if self.pt_selected == None:
             imgui.text(f"No data point selected")
 
         else:
             for i in range(len(self.dataset_active)):
                 #To prevent the selected point of previous data set which is no longer showing
-                if pt_selected in self.input_data[i] and not self.dataset_active[i]:
+                if self.pt_selected in self.input_data[i] and not self.dataset_active[i]:
                     self.pt_selected_send = None   #This thing tells app.py to change back the pt_selected 
                     imgui.text(f"No data point selected")
                     return 
@@ -144,14 +145,14 @@ class ParameterInterface:
                 #To find the data of the point selected
                 elif self.dataset_active[i]:
                     for pt in self.input_data[i]:
-                        if pt_selected == pt:
+                        if self.pt_selected == pt:
                             set_number = i + 1
-                            point = self.input_data[i].index(pt_selected) + 1
+                            point = self.input_data[i].index(self.pt_selected) + 1
 
-            imgui.text(f"Dataset #{set_number}")
-            imgui.text(f"Point #{point}")
-            imgui.text(f"Coordinates: ({pt_selected[0]})")
-            imgui.text(f"Coordinates in Binary:{pt_selected[2]}")
+            imgui.text(f"{self.pt_selected[4]}")
+            imgui.text(f"Coordinates: ({self.pt_selected[0]})")
+            imgui.text(f"Coordinates in Binary:{self.pt_selected[2]}")
+            imgui.text(f"Binary:{self.pt_selected[3]}")
             
 
         
@@ -161,7 +162,7 @@ class ParameterInterface:
     def tests(self):
 
         for i in range(len(self.input_data)):
-            _, self.dataset_active[i] = imgui.checkbox(f"Datatest {i + 1}", self.dataset_active[i])
+            _, self.dataset_active[i] = imgui.checkbox(f"Datatest {i + 1}: {self.input_data[i][0][4]}", self.dataset_active[i])
         
 
         
@@ -171,12 +172,13 @@ class ParameterInterface:
         Renders full user interface on frame
         """
 
+        self.pt_selected = pt_selected
 
         imgui.new_frame()
         imgui.begin("Code 'borrowed' from Joule")
 
         self.status()
-        self.point_data(pt_selected)
+        self.point_data()
         self.tests()
 
 
