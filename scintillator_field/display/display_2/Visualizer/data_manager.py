@@ -18,7 +18,7 @@ class test:
 
 
 
-        self.detection_algorithm = d.Detection()
+        self.detection_algorithm = Detection()
         self.data = []
         self.reset()
 
