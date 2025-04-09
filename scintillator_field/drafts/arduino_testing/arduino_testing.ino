@@ -18,7 +18,17 @@ void send_packet(uint32_t value)
 }
 
 uint32_t state_0 = 0b01010101010101010101010101010101;
-uint32_t state_1 = 0b10101010101010101010101010101010;
+uint32_t state_1 
+{
+    send_packet(state_0);
+    delay(0.1);
+    send_packet(state_1);
+    delay(0.1);
+    send_packet(state_2);
+    delay(0.1);
+    send_packet(state_3);
+    delay(0.1);
+}= 0b10101010101010101010101010101010;
 uint32_t state_2 = 0b01010101010101011010101010101010;
 uint32_t state_3 = 0b10101010101010100101010101010101;
 
