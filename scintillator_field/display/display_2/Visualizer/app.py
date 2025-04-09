@@ -124,7 +124,8 @@ class App(CameraOrbitControls, ShaderRenderer):
 
         # add ball: left click
         if button == glfw.MOUSE_BUTTON_LEFT and action == glfw.PRESS:
-            self.on_click(window)
+            pass
+            #self.on_click(window)
 
     def cursor_pos_callback(self, window, xpos, ypos):
         # forward ui mouse callbacks
@@ -198,8 +199,9 @@ class App(CameraOrbitControls, ShaderRenderer):
         )
 
         if self.test.has_data():
-            self.test.update_data(self.test.get_data_from_arduino())
+             self.test.update_data(self.test.get_data_from_arduino())
 
+        self.pt_selected = self.test.data[-1][0]
         #input for drawing
         self.square.input_data = self.test.data.copy()
         self.fan.input_data = self.test.data.copy()
