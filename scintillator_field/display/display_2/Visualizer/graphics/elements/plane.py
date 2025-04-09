@@ -204,12 +204,12 @@ class Plane:
             for bottom_or_top in range(2):  #ensures that both top and up layer are set
                 # bottom_or_top = 0  => bottom
                 if bottom_or_top == 0:
-                    x = pt_selected[2][0][3] * 4 + pt_selected[2][0][4] * 2 + pt_selected[2][0][5]
-                    y = pt_selected[2][1][3] * 4 + pt_selected[2][1][4] * 2 + pt_selected[2][1][5]
+                    x = pt_selected[2][0][3][0] * 4 + pt_selected[2][0][4][0] * 2 + pt_selected[2][0][5][0]
+                    y = pt_selected[2][1][3][0] * 4 + pt_selected[2][1][4][0] * 2 + pt_selected[2][1][5][0]
 
                 else:
-                    x = pt_selected[2][0][2] * 4 + pt_selected[2][0][1] * 2 + pt_selected[2][0][0]
-                    y = pt_selected[2][1][2] * 4 + pt_selected[2][1][1] * 2 + pt_selected[2][1][0]
+                    x = pt_selected[2][0][2][0] * 4 + pt_selected[2][0][1][0] * 2 + pt_selected[2][0][0][0]
+                    y = pt_selected[2][1][2][0] * 4 + pt_selected[2][1][1][0] * 2 + pt_selected[2][1][0][0]
                     
 
                 for layer in range(self.number_of_layers):

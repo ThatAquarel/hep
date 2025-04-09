@@ -82,15 +82,18 @@ class ParameterInterface:
         self.specular_strength = 0.1
         self.specular_reflection = 16.0
 
+        self.input_data = []
+
         #elements
         self.dataset_active = []
-        for i in range(len(test.data)):
+        for i in range(len(self.input_data)):
             self.dataset_active.append(False)
 
         self.show_axes = True
         self.latest = True
 
         self.pt_selected_send = False
+
 
 
 
@@ -119,7 +122,7 @@ class ParameterInterface:
         #To update the list of dataset which is active
         if self.latest:
             self.dataset_active = []
-            for i in range(len(test.data)):
+            for i in range(len(self.input_data)):
                 self.dataset_active.append(False)
             self.dataset_active[-1] = True
 
@@ -133,17 +136,17 @@ class ParameterInterface:
         else:
             for i in range(len(self.dataset_active)):
                 #To prevent the selected point of previous data set which is no longer showing
-                if pt_selected in test.data[i] and not self.dataset_active[i]:
+                if pt_selected in self.input_data[i] and not self.dataset_active[i]:
                     self.pt_selected_send = None   #This thing tells app.py to change back the pt_selected 
                     imgui.text(f"No data point selected")
                     return 
                 
                 #To find the data of the point selected
                 elif self.dataset_active[i]:
-                    for pt in test.data[i]:
+                    for pt in self.input_data[i]:
                         if pt_selected == pt:
                             set_number = i + 1
-                            point = test.data[i].index(pt_selected) + 1
+                            point = self.input_data[i].index(pt_selected) + 1
 
             imgui.text(f"Dataset #{set_number}")
             imgui.text(f"Point #{point}")
@@ -157,7 +160,7 @@ class ParameterInterface:
     @ui_section("Tests")
     def tests(self):
 
-        for i in range(len(test.data)):
+        for i in range(len(self.input_data)):
             _, self.dataset_active[i] = imgui.checkbox(f"Datatest {i + 1}", self.dataset_active[i])
         
 

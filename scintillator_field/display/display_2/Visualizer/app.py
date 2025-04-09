@@ -64,7 +64,7 @@ class App(CameraOrbitControls, ShaderRenderer):
 
         self.fan = graphics.elements.fan.Fan(scale = self.scale)
 
-        self.test = data_manager()
+        self.test = data_manager.test()
 
 
         self.pt_selected = None
@@ -201,6 +201,7 @@ class App(CameraOrbitControls, ShaderRenderer):
         #input for drawing
         self.square.input_data = self.test.data.copy()
         self.fan.input_data = self.test.data.copy()
+        self.ui.input_data = self.test.data.copy()
         
         #draw elements
         self.square.draw(self.ui.dataset_active)
@@ -238,19 +239,17 @@ class App(CameraOrbitControls, ShaderRenderer):
         rh = self.get_right_handed()
         self.x, self.y, self.z = self.get_click_point(window, rh)
         
-        self.x_pos = self.x / (self.scale/ 2)  #the 2 is n from aljoscha's algorithm
-        self.y_pos = self.y / (self.scale/ 2)
 
         print(self.x, self.y, self.z)
-        uncertainty = 0.25
+        uncertainty = 1
         for i in range(len(self.test.data)):
             #To see if the mouse position matches 
             if self.ui.dataset_active[i]:
                 for pt in range(len(self.test.data[i])):     #test.data -> datasets -> cubes -> vertices or fan -> coords -> xyz values
-                    if (self.test.data[i][pt][0][0][0] <= (self.x_pos + uncertainty)) and (self.test.data[i][pt][0][0][0] >= (self.x_pos - uncertainty)):
-                        if (self.test.data[i][pt][0][0][1] <= (self.y_pos + uncertainty)) and (self.test.data[i][pt][0][0][1] >= (self.y_pos- uncertainty)):
+                    if (self.test.data[i][pt][0][0][0] <= (self.x + uncertainty)) and (self.test.data[i][pt][0][0][0] >= (self.x - uncertainty)):
+                        if (self.test.data[i][pt][0][0][1] <= (self.y + uncertainty)) and (self.test.data[i][pt][0][0][1] >= (self.y - uncertainty)):
                             self.pt_selected = self.test.data[i][pt]
-        
+      
 
 
 

@@ -1,6 +1,4 @@
-from scintillator_field.software.boundary_algorithm.detection import *
-
-
+from detection import *
 
 class test:
     def __init__(self):
@@ -8,7 +6,7 @@ class test:
         self.data = []
         self.reset()
 
-        self.testing()
+        self.testing()  #For real data, remove this line
         
 
 
@@ -44,15 +42,22 @@ class test:
         """
         transform data ready to be interpreted by the visualizer
         """
+    
+        
         cooked_data = self.interpret_raw_data(raw_data)
-        algorithmized = detection_algorithm.scintillators_to_bounds(raw_data)
+        algorithmized = detection_algorithm.scintillators_to_bounds(cooked_data)
 
-        self.reset()    
+        self.reset()
 
         new_hull_bounds = self.transform_coordinates(algorithmized[0])
         new_fan_out_lines = self.transform_coordinates_fanned(algorithmized[1])
 
-        self.data.append(new_hull_bounds, new_fan_out_lines, cooked_data)
+        #This part depends on if you want to make the point to be assigned to a dataset or as a new dataset
+        point = [new_hull_bounds, new_fan_out_lines, cooked_data]
+        dataset = []
+        dataset.append(point)
+
+        self.data.append(dataset)
 
     def interpret_raw_data(self,bin):
         x = bin & 3355443   #& operator on 0b001100110011001100110011
@@ -75,8 +80,8 @@ class test:
         """
         transform into my coordinate system
         """
-        translate_x = -self.n / 2
-        translate_y = -self.n/2
+        translate_x = -detection_algorithm.n / 2
+        translate_y = -detection_algorithm.n/2
         z_scale = 1
 
         list = []
@@ -99,9 +104,7 @@ class test:
     def testing(self):
         scintillator_1= [[(0, 1), (0, 1), (0, 1), (0, 1), (0, 1), (0, 1)],[(0, 1), (0, 1), (0, 1), (0, 1), (0, 1), (0, 1)]]
         scintillator_2 = [[(1, 0), (1, 0), (1, 0), (1, 0), (1, 0), (1, 0)], [(1, 0), (1, 0), (1, 0), (1, 0), (1, 0), (1, 0)]]
-        data_all = []
-        data_all.append(detection_algorithm.scintillators_to_bounds(scintillator_1))
+        
+        self.transform_data(0b010110010101101010101010)     #0b010110010101011010101010 doesn't work
 
-        self.data = []
-        self.data.append(data_all)
 
