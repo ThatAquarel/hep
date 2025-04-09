@@ -38,9 +38,9 @@ class test:
         detection_algorithm.highest_point = detection_algorithm.half_gap_size + 5*detection_algorithm.intra_level_gap + 6*detection_algorithm.plate_thickness # Values custom set to this detector
         detection_algorithm.lowest_point = -detection_algorithm.highest_point
 
-    def transform_data(self,raw_data):
+    def update_data(self,raw_data):
         """
-        transform data ready to be interpreted by the visualizer
+        transform data ready to be interpreted by the visualizer, then update self.data
         """
     
         
@@ -105,6 +105,6 @@ class test:
         scintillator_1= [[(0, 1), (0, 1), (0, 1), (0, 1), (0, 1), (0, 1)],[(0, 1), (0, 1), (0, 1), (0, 1), (0, 1), (0, 1)]]
         scintillator_2 = [[(1, 0), (1, 0), (1, 0), (1, 0), (1, 0), (1, 0)], [(1, 0), (1, 0), (1, 0), (1, 0), (1, 0), (1, 0)]]
         
-        self.transform_data(0b010110010101101010101010)     #0b010110010101011010101010 doesn't work
+        self.update_data(0b101101010101101011010110)     
 
 

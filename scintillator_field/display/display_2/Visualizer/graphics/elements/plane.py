@@ -131,11 +131,11 @@ class Plane:
             z2 = (layer + 1) * size * z_ratio  - offset + middle_gap + layer_gap * (layer - 2)       #-z
 
             for i in range(number_of_strips):
-                if layer % 2 == 0:   #axis = x
+                if layer % 2 == 0:   #axis = y
                     x1 = -unit       #s
                     x2 = unit      #-s
-                    y1 = -unit + (i+1) * strip_length       #-s
-                    y2 = -unit + (i) * strip_length      #s        #-z
+                    y1 = -unit + (i) * strip_length      #s        #-z
+                    y2 = -unit + (i+1) * strip_length       #-s
                     
                 else: #axis = x
                     x1 = -unit + (i+1) * strip_length       #s
@@ -192,8 +192,10 @@ class Plane:
     
     def set_colour(self, pt_selected):
         if pt_selected == None:
-            x = -1
-            y = -1
+            x_white = -1
+            y_white = -1
+            x_grey = -1
+            y_grey = -1
         else:
 
         
@@ -201,15 +203,14 @@ class Plane:
         #000000 means that all of the negative(more towards the negative x or y)
 
         #More towards the positive has a white strip, more towards the negative has a gray strip
-            for bottom_or_top in range(2):  #ensures that both top and up layer are set
-                # bottom_or_top = 0  => bottom
-                if bottom_or_top == 0:
-                    x = pt_selected[2][0][3][0] * 4 + pt_selected[2][0][4][0] * 2 + pt_selected[2][0][5][0]
-                    y = pt_selected[2][1][3][0] * 4 + pt_selected[2][1][4][0] * 2 + pt_selected[2][1][5][0]
 
-                else:
-                    x = pt_selected[2][0][2][0] * 4 + pt_selected[2][0][1][0] * 2 + pt_selected[2][0][0][0]
-                    y = pt_selected[2][1][2][0] * 4 + pt_selected[2][1][1][0] * 2 + pt_selected[2][1][0][0]
+            #Top
+                x_white = pt_selected[2][0][3][0] * 4 + pt_selected[2][0][4][0] * 2 + pt_selected[2][0][5][0]
+                y_white = pt_selected[2][1][3][0] * 4 + pt_selected[2][1][4][0] * 2 + pt_selected[2][1][5][0]
+                x_grey = pt_selected[2][0][3][1] * 4 + pt_selected[2][0][4][1] * 2 + pt_selected[2][0][5][1]
+                y_grey = pt_selected[2][1][3][1] * 4 + pt_selected[2][1][4][1] * 2 + pt_selected[2][1][5][1]
+
+
                     
 
                 for layer in range(self.number_of_layers):
@@ -219,7 +220,7 @@ class Plane:
                     for i in range(number_of_strips):
                         reverse_number = 2** ((5-layer)//2)    #This means that the binary is read from left to right
 
-                        k = 0 + 28 * bottom_or_top  #apply offset so when it comes to top, it correctly displays
+                        k = 0  #apply offset so when it comes to top, it correctly displays
                         for j in range(layer + 1):  #Find the number of the strip we are on. This is counting by 2^x
                             if j != 0:
                                 k += 2**((j+1)//2)
@@ -228,29 +229,75 @@ class Plane:
 
                         if layer % 2 == 0:  #x - axis
                             if i % 2 == 1:  #white strips
-                                if x & reverse_number != 0 and x != -1: #If x in that spot is 1
+                                if x_white & reverse_number != 0 and x_white != -1: #If x in that spot is 1
                                     
                                     self.data[k : k + 36, 3:6] = [1,1,0]    #light up
                                 else: 
                                     self.data[k : k + 36, 3:6] = [1,1,1]    #default colour(white)
                             else:   #second strip (grey)
-                                if x & reverse_number == 0: #If x in that spot is 0
+                                if x_grey & reverse_number != 0 and x_grey != -1: #If x in that spot is 0
                                     self.data[k : k + 36, 3:6] = [1,1,0]    #light up
                                 else: 
                                     self.data[k : k + 36, 3:6] = [211/256,211/256,211/256]  #default colour: gray
                         else:
                             if i % 2 == 1:  #white strips
-                                if y & reverse_number != 0 and y != -1: 
+                                if y_white & reverse_number != 0 and y_white != -1: 
                                     
                                     self.data[k : k + 36, 3:6] = [1,1,0]
                                 else: 
                                     self.data[k : k + 36, 3:6] = [1,1,1]
                             else: 
-                                if y & reverse_number == 0: 
+                                if y_grey & reverse_number != 0 and y_grey != -1: 
                                     self.data[k : k + 36, 3:6] = [1,1,0]
                                 else: 
                                     self.data[k : k + 36, 3:6] = [211/256,211/256,211/256]
 
+            # bottom
+
+                x_white = pt_selected[2][0][2][0] * 4 + pt_selected[2][0][1][0] * 2 + pt_selected[2][0][0][0]
+                y_white = pt_selected[2][1][2][0] * 4 + pt_selected[2][1][1][0] * 2 + pt_selected[2][1][0][0]
+                x_grey = pt_selected[2][0][2][1] * 4 + pt_selected[2][0][1][1] * 2 + pt_selected[2][0][0][1]
+                y_grey = pt_selected[2][1][2][1] * 4 + pt_selected[2][1][1][1] * 2 + pt_selected[2][1][0][1]
+                    
+
+                for layer in range(self.number_of_layers):
+                    number_of_strips = 2 ** ((layer + 2)//2)    #calculate the number of strips per layer
+
+
+                    for i in range(number_of_strips):
+                        reverse_number = 2** ((5-layer)//2)    #This means that the binary is read from left to right
+
+                        k = 28  #apply offset so when it comes to top, it correctly displays
+                        for j in range(layer + 1):  #Find the number of the strip we are on. This is counting by 2^x
+                            if j != 0:
+                                k += 2**((j+1)//2)
+
+                        k = (k + i) * 36    #+i since it is the number of the strip in that layer. 36 is for each prism has 36 vertices
+
+                        if layer % 2 == 0:  #y - axis
+                            if i % 2 == 1:  #white strips
+                                if y_white & reverse_number != 0 and y_white != -1: #If x in that spot is 1
+                                    
+                                    self.data[k : k + 36, 3:6] = [1,1,0]    #light up
+                                else: 
+                                    self.data[k : k + 36, 3:6] = [1,1,1]    #default colour(white)
+                            else:   #second strip (grey)
+                                if y_grey & reverse_number != 0 and y_white != -1: #If x in that spot is 0
+                                    self.data[k : k + 36, 3:6] = [1,1,0]    #light up
+                                else: 
+                                    self.data[k : k + 36, 3:6] = [211/256,211/256,211/256]  #default colour: gray
+                        else:   #x-axis
+                            if i % 2 == 1:  #white strips
+                                if x_white & reverse_number != 0 and x_white != -1: 
+                                    
+                                    self.data[k : k + 36, 3:6] = [1,1,0]
+                                else: 
+                                    self.data[k : k + 36, 3:6] = [1,1,1]
+                            else: 
+                                if x_grey & reverse_number != 0 and x_grey != -1: 
+                                    self.data[k : k + 36, 3:6] = [1,1,0]
+                                else: 
+                                    self.data[k : k + 36, 3:6] = [211/256,211/256,211/256]
 
 
 
