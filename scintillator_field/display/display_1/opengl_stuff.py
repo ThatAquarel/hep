@@ -26,6 +26,21 @@ class OpenGLStuff:
 
         self.shader_program = make_shaders()
 
+
+
+        self.lines = np.array([
+            [ 0, 0,   -81, 1, 0, 0, 1],
+            [25, 0,   -81, 1, 0, 0, 1],
+            [ 0, 0,   -81, 0, 1, 0, 1],
+            [0, 25,   -81, 0, 1, 0, 1],
+            [ 0, 0,   -81, 0, 0, 1, 1],
+            [0,  0, 25-81, 0, 0, 1, 1],
+        ]).astype(np.float32)
+
+        self.lines_vao = make_vao_vbo(self.lines)[0]
+
+
+
         pass
 
     def per_render_loop(self, window):
@@ -51,6 +66,8 @@ class OpenGLStuff:
             self.detected_hulls.draw_hull()
 
         self.scintillator_structuce.draw_scintillator_structure()
+
+        draw_vao(self.lines_vao, GL_LINES, self.lines.shape[0])
 
 
         pass
