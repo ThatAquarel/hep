@@ -36,9 +36,11 @@ class DataReception:
     def get_data_from_arduino(self):
         self.arduino.read_until(b"\x7E")
         value = self.arduino.read(4)
-
         if self.arduino.read(1) != b"\x7D":
             print("serial frame end error")
+
+        remaining = self.arduino.in_waiting
+        self.arduino.read(remaining)
 
         (n,) = struct.unpack("<I", value)
 
@@ -93,7 +95,7 @@ class DataReception:
             if (0, 0) in (pairx, pairy):
                 return False
 
-            elif self.detection_algorithm.scintillators_to_bounds(self.scintillators) == None:
-                return False
+            #elif self.detection_algorithm.scintillators_to_bounds(self.scintillators) == None:
+            #    return False
         
         return True

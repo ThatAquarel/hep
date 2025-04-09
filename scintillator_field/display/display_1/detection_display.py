@@ -163,6 +163,7 @@ class DetectionHulls:
 
         if self.arduino.has_new_data():
             data = self.arduino.get_data_from_arduino()
+            print(self.arduino.is_valid_data(data))
             if self.arduino.is_valid_data(data):
                 self.hull_bounds, self.fan_out = self.get_hull_returns(self.arduino.scintillators)
 
@@ -219,12 +220,11 @@ class DetectionHulls:
                 self.hull_data = np.array(hull_data).astype(np.float32)
 
                 self.data_exists = True
+                self.new_data = True
 
 
     def create_hull_vao(self):
-        if self.data_exists:
-            self.hull_vao = make_vao_vbo(self.hull_data)[0]
+        self.hull_vao = make_vao_vbo(self.hull_data)[0]
     
     def draw_hull(self):
-        if self.data_exists:
-            draw_vao(self.hull_vao, GL_TRIANGLES, self.hull_data.shape[0])
+        draw_vao(self.hull_vao, GL_TRIANGLES, self.hull_data.shape[0])

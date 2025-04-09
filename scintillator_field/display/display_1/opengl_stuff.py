@@ -37,11 +37,14 @@ class OpenGLStuff:
         make_uniforms(self.shader_program, window)
 
         self.detected_hulls.data_exists = False
+        self.detected_hulls.new_data = False
 
 
 
         if self.detected_hulls.arduino.has_new_data():
             self.detected_hulls.create_hull_data()
+
+        if self.detected_hulls.new_data:
             self.detected_hulls.create_hull_vao()
 
         if self.detected_hulls.data_exists:
