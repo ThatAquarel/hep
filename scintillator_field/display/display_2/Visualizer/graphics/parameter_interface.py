@@ -154,6 +154,14 @@ class ParameterInterface:
             imgui.text(f"Coordinates: ({self.pt_selected[0]})")
             imgui.text(f"Coordinates in Binary:{self.pt_selected[2]}")
             imgui.text(f"Binary:{self.pt_selected[3]}")
+
+            double = False
+            for xylist in self.pt_selected[2]:
+                for pair in xylist:
+                    if pair == (1,1):
+                        double = True
+            if double:
+                imgui.text(f"Note: the data point contains coordinate(s) (1,1), the calculations of the trajectory may be inaccurate")
             
 
         
