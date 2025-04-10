@@ -5,10 +5,11 @@
 	(uuid "78398317-4708-4f0b-8983-0fbb7308b4de")
 	(paper "A4")
 	(title_block
-		(title "Scintillating Chamber: SIPM Amplifier")
+		(title "Scintillating Chamber: SIPM Trigger Board")
 		(date "2025-03-11")
-		(rev "2")
-		(company "Alex Xia")
+		(rev "3")
+		(comment 3 "Dawson Enriched Pure & Applied")
+		(comment 4 "Alex Xia")
 	)
 	(lib_symbols
 		(symbol "Connector:Conn_Coaxial_Small"
