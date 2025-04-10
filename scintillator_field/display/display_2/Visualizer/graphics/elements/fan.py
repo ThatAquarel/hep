@@ -11,10 +11,13 @@ class Fan:
         self.scale = scale
         self.input_data = []
         
-    def manage_data(self,dataset_num):
+    def manage_data(self,prism):
+        """
+        manage data
+        """
         #vertices = self.interpret_data(test.data[dataset_num])
 
-        vertices = self.interpret_data(self.input_data[dataset_num])
+        vertices = self.interpret_data(prism)
         
         self.n = len(vertices)
 
@@ -34,40 +37,10 @@ class Fan:
         # Build VAO and VBO
         self.vao, self.vbo = create_vao(self.data, return_vbo=True, store_normals=True)
 
-    # def interpret_data(self,data):
-    #     """
-    #     Turn data into coordinates to be rendered
-    #     """
-    #     number_of_lines = self.scale / 256
-    #     z = 0.01
-    #     coords = []
-    #     for pt in data:
-    #         posx1 = pt[0] * number_of_lines
-    #         posy1 = pt[1] * number_of_lines
-
-    #         posx2 = (pt[0]+1) * number_of_lines
-    #         posy2 = pt[1] * number_of_lines
-            
-    #         posx3 = (pt[0]+1) * number_of_lines
-    #         posy3 = (pt[1]+1) * number_of_lines
-
-    #         posx4 = pt[0] * number_of_lines
-    #         posy4 = (pt[1]+1) * number_of_lines
-
-    #         #triangle 1
-    #         coords.append([posx1,posy1,z])    
-    #         coords.append([posx2,posy2,z])
-    #         coords.append([posx3,posy3,z])
-
-    #         coords.append([posx1,posy1,z])
-    #         coords.append([posx3,posy3,z])
-    #         coords.append([posx4,posy4,z])
-            
-    #     coords = np.array(coords, dtype = np.float32)
-                
-    #     return coords
-
     def fanned_coords(self,pair):
+        """
+        transform the given coordinates into coordinates to be drawn
+        """
         scale = 3
         z_scale = 128
         dx = (pair[0][0] - pair[1][0]) * scale
@@ -76,138 +49,135 @@ class Fan:
 
         return [pair[0][0] + dx, pair[0][1] + dy, (pair[0][2] + dz)]
 
-    def interpret_data(self,data):
+    def interpret_data(self,prism):
+        """
+        Create veritex datas
+        """
         vertices = []
 
-        for cube in data:
-            p1 = self.fanned_coords(cube[1][0])
-            p2 = self.fanned_coords(cube[1][1])
-            p3 = self.fanned_coords(cube[1][2])
-            p4 = self.fanned_coords(cube[1][3])
+        p1 = self.fanned_coords(prism[1][0])
+        p2 = self.fanned_coords(prism[1][1])
+        p3 = self.fanned_coords(prism[1][2])
+        p4 = self.fanned_coords(prism[1][3])
 
-            #tuple to list
-            
-            p5 = [cube[0][0][0],cube[0][0][1],cube[0][0][2]]
-            p6 = [cube[0][1][0],cube[0][1][1],cube[0][1][2]]
-            p7 = [cube[0][2][0],cube[0][2][1],cube[0][2][2]]
-            p8 = [cube[0][3][0],cube[0][3][1],cube[0][3][2]]
-            
-            # #scale z
-            # p5[2] = p5[2]/128
-            # p6[2] = p6[2]/128
-            # p7[2] = p7[2]/128
-            # p8[2] = p8[2]/128
-            
+        #tuple to list
+        
+        p5 = [prism[0][0][0],prism[0][0][1],prism[0][0][2]]
+        p6 = [prism[0][1][0],prism[0][1][1],prism[0][1][2]]
+        p7 = [prism[0][2][0],prism[0][2][1],prism[0][2][2]]
+        p8 = [prism[0][3][0],prism[0][3][1],prism[0][3][2]]
+        
+        
 
-            # Front face
-            vertices.append(p5)
-            vertices.append(p1)
-            vertices.append(p7)
-            vertices.append(p1)
-            vertices.append(p7)
-            vertices.append(p3)
-            # Back face
-            vertices.append(p6)
-            vertices.append(p2)
-            vertices.append(p8)
-            vertices.append(p2)
-            vertices.append(p8)
-            vertices.append(p4)
-            # Left face
-            vertices.append(p5)
-            vertices.append(p1)
-            vertices.append(p6)
-            vertices.append(p1)
-            vertices.append(p6)
-            vertices.append(p2)
-            # Right face
-            vertices.append(p7)
-            vertices.append(p3)
-            vertices.append(p8)
-            vertices.append(p3)
-            vertices.append(p8)
-            vertices.append(p4)
+        # Front face
+        vertices.append(p5)
+        vertices.append(p1)
+        vertices.append(p7)
+        vertices.append(p1)
+        vertices.append(p7)
+        vertices.append(p3)
+        # Back face
+        vertices.append(p6)
+        vertices.append(p2)
+        vertices.append(p8)
+        vertices.append(p2)
+        vertices.append(p8)
+        vertices.append(p4)
+        # Left face
+        vertices.append(p5)
+        vertices.append(p1)
+        vertices.append(p6)
+        vertices.append(p1)
+        vertices.append(p6)
+        vertices.append(p2)
+        # Right face
+        vertices.append(p7)
+        vertices.append(p3)
+        vertices.append(p8)
+        vertices.append(p3)
+        vertices.append(p8)
+        vertices.append(p4)
 
-            # # Top face
-            # vertices.append(p1)
-            # vertices.append(p2)
-            # vertices.append(p3)
-            # vertices.append(p2)
-            # vertices.append(p3)
-            # vertices.append(p4)
-            # # Bottom face
-            # vertices.append(p5)
-            # vertices.append(p6)
-            # vertices.append(p7)
-            # vertices.append(p6)
-            # vertices.append(p7)
-            # vertices.append(p8)
-            
-            
-            #coords
-            p1 = [cube[0][4][0],cube[0][4][1],cube[0][4][2]]
-            p2 = [cube[0][5][0],cube[0][5][1],cube[0][5][2]]
-            p3 = [cube[0][6][0],cube[0][6][1],cube[0][6][2]]
-            p4 = [cube[0][7][0],cube[0][7][1],cube[0][7][2]]
+        # # Top face
+        # vertices.append(p1)
+        # vertices.append(p2)
+        # vertices.append(p3)
+        # vertices.append(p2)
+        # vertices.append(p3)
+        # vertices.append(p4)
+        # # Bottom face
+        # vertices.append(p5)
+        # vertices.append(p6)
+        # vertices.append(p7)
+        # vertices.append(p6)
+        # vertices.append(p7)
+        # vertices.append(p8)
+        
+        
+        #coords
+        p1 = [prism[0][4][0],prism[0][4][1],prism[0][4][2]]
+        p2 = [prism[0][5][0],prism[0][5][1],prism[0][5][2]]
+        p3 = [prism[0][6][0],prism[0][6][1],prism[0][6][2]]
+        p4 = [prism[0][7][0],prism[0][7][1],prism[0][7][2]]
 
 
-            #tuple to list
-            p5 = self.fanned_coords((cube[1][3][1],cube[1][3][0]))
-            p6 = self.fanned_coords((cube[1][2][1],cube[1][2][0]))
-            p7 = self.fanned_coords((cube[1][1][1],cube[1][1][0]))
-            p8 = self.fanned_coords((cube[1][0][1],cube[1][0][0]))
+        #tuple to list
+        p5 = self.fanned_coords((prism[1][3][1],prism[1][3][0]))
+        p6 = self.fanned_coords((prism[1][2][1],prism[1][2][0]))
+        p7 = self.fanned_coords((prism[1][1][1],prism[1][1][0]))
+        p8 = self.fanned_coords((prism[1][0][1],prism[1][0][0]))
 
-            
-            # #scale z
-            # p1[2] = p1[2]/128
-            # p2[2] = p2[2]/128
-            # p3[2] = p3[2]/128
-            # p4[2] = p4[2]/128
-            
+        
+        # #scale z
+        # p1[2] = p1[2]/128
+        # p2[2] = p2[2]/128
+        # p3[2] = p3[2]/128
+        # p4[2] = p4[2]/128
+        
 
-            # Front face
-            vertices.append(p5)
-            vertices.append(p1)
-            vertices.append(p7)
-            vertices.append(p1)
-            vertices.append(p7)
-            vertices.append(p3)
-            # Back face
-            vertices.append(p6)
-            vertices.append(p2)
-            vertices.append(p8)
-            vertices.append(p2)
-            vertices.append(p8)
-            vertices.append(p4)
-            # Left face
-            vertices.append(p5)
-            vertices.append(p1)
-            vertices.append(p6)
-            vertices.append(p1)
-            vertices.append(p6)
-            vertices.append(p2)
-            # Right face
-            vertices.append(p7)
-            vertices.append(p3)
-            vertices.append(p8)
-            vertices.append(p3)
-            vertices.append(p8)
-            vertices.append(p4)
+        # Front face
+        vertices.append(p5)
+        vertices.append(p1)
+        vertices.append(p7)
+        vertices.append(p1)
+        vertices.append(p7)
+        vertices.append(p3)
+        # Back face
+        vertices.append(p6)
+        vertices.append(p2)
+        vertices.append(p8)
+        vertices.append(p2)
+        vertices.append(p8)
+        vertices.append(p4)
+        # Left face
+        vertices.append(p5)
+        vertices.append(p1)
+        vertices.append(p6)
+        vertices.append(p1)
+        vertices.append(p6)
+        vertices.append(p2)
+        # Right face
+        vertices.append(p7)
+        vertices.append(p3)
+        vertices.append(p8)
+        vertices.append(p3)
+        vertices.append(p8)
+        vertices.append(p4)
 
-            # # Top face
-            # vertices.append(p1)
-            # vertices.append(p2)
-            # vertices.append(p3)
-            # vertices.append(p2)
-            # vertices.append(p3)
-            # vertices.append(p4)
-            # # Bottom face
-            # vertices.append(p5)
-            # vertices.append(p6)
-            # vertices.append(p7)
-            # vertices.append(p6)
-            # vertices.append(p7)
-            # vertices.append(p8)
+        # # Top face
+        # vertices.append(p1)
+        # vertices.append(p2)
+        # vertices.append(p3)
+        # vertices.append(p2)
+        # vertices.append(p3)
+        # vertices.append(p4)
+        # # Bottom face
+        # vertices.append(p5)
+        # vertices.append(p6)
+        # vertices.append(p7)
+        # vertices.append(p6)
+        # vertices.append(p7)
+        # vertices.append(p8)
 
         vertices = np.array(vertices, dtype = np.float32)
 
@@ -223,14 +193,15 @@ class Fan:
         draw_vao(self.vao, GL_TRIANGLES, self.n)
 
 
-    def draw(self,dataset_active):
+    def draw(self,input_data, dataset_active):
         """
         Draw multiple squares for multiple sets of data
         """
-        if self.input_data == []:
+        if input_data == []:
             return
         else:
             for i in range(len(dataset_active)):
-                if dataset_active[i]:
-                    self.manage_data(i)
-                    self._draw_square()
+                if dataset_active != [] and input_data != []:
+                    if dataset_active[i]:
+                        self.manage_data(input_data[i])
+                        self._draw_square()
