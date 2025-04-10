@@ -204,6 +204,8 @@ class App(CameraOrbitControls, ShaderRenderer):
             self.get_camera_transform(),
         )
 
+
+        #chekc arduino if there's data; gather data if there is
         if self.test.has_data():
             self.test.update_data(self.test.get_data_from_arduino())
         
@@ -267,7 +269,10 @@ class App(CameraOrbitControls, ShaderRenderer):
         #df.columns[0], df.columns[1] = df.columns[1], df.columns[0] 
         time = datetime.now()
 
-        df.to_csv(f"scintillator_field/display/display_2/Visualizer/data/{time}.csv")   #Current directory is set to the "data" folder
+        try:
+            df.to_csv(f"scintillator_field/display/display_2/Visualizer/data/{time}.csv")   #Current directory is set to the "data" folder
+        except:
+            df.to_csv(f"{time}.csv")
 
         
 

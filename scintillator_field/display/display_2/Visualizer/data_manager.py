@@ -82,22 +82,34 @@ class test:
         transform data ready to be interpreted by the visualizer, then update self.data
         """
         
-        bit24 = raw_data & 0xffffff     #turn from 32bit to 24 bit
+        #bit24 = raw_data & 0xffffff     #turn from 32bit to 24 bit
+        
 
-        cooked_data = self.interpret_raw_data(bit24)    
+        #cooked_data = self.interpret_raw_data(bit24) 
+
+        f_sc_idx = [
+        [(21,20),(16,17),(13,12),(8,9),(0,1),(5,4),],
+        [(22,23),(18,19),(15,14),(11,10),(2,3),(6,7),],
+        ]
+
+        k = np.array([(raw_data & (2**i)) >> i for i in range(24)])[f_sc_idx]
+
+        cooked_data = [[(int(k[0]), int(k[1])) for k in k[0]], [(int(k[0]), int(k[1])) for k in k[1]]]
+
         algorithmized = self.detection_algorithm.scintillators_to_bounds(cooked_data)
 
         if not algorithmized:
             return
 
-        time = datetime.now()
-
         self.reset()
+
+        time = datetime.now()
 
         new_hull_bounds = self.transform_coordinates(algorithmized[0])
         new_fan_out_lines = self.transform_coordinates_fanned(algorithmized[1])
 
-        #This part depends on if you want to make the point to be assigned to a dataset or as a new dataset
+        bit24 = raw_data & 0xffffff
+        
         point = [new_hull_bounds, new_fan_out_lines, cooked_data, bit24, time]
 
         self.data.append(point)
@@ -161,12 +173,15 @@ class test:
         
         # self.update_data(0b101101010101101011010110)     
         # self.update_data(0b111101100101111101101111)
-        #self.update_data(0b101111011110111001011101)
-        #self.update_data(0b010101010101010101010101)
-        #self.update_data(0b010111011110100110011101)
+        # self.update_data(0b101111011110111001011101)
+        # self.update_data(0b010101010101010101010101)
+        # self.update_data(0b010111011110100110011101)
 
         self.update_data(0b011011010110101011010110)
         self.update_data(0b100110101101010101101001)
-            
+        self.update_data(0b100101101010011101011001)
+        
+        # self.update_data(0b101010101010101010101010)
+        # self.update_data(0b010101010101010101010101)
 
 
