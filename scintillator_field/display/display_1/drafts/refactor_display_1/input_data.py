@@ -4,7 +4,6 @@ from scintillator_field.software.boundary_algorithm.detection import *
 import struct
 
 import os
-import numpy as np
 
 class DataReception:
     def __init__(self):
@@ -40,8 +39,8 @@ class DataReception:
         if self.arduino.read(1) != b"\x7D":
             print("serial frame end error")
 
-        #remaining = self.arduino.in_waiting
-        #self.arduino.read(remaining)
+        remaining = self.arduino.in_waiting
+        self.arduino.read(remaining)
 
         (n,) = struct.unpack("<I", value)
 
@@ -90,34 +89,13 @@ class DataReception:
 
     def is_valid_data(self, data):
 
-        #print(data)
-
         self.scintillators = self.string_int32_to_scintillator_binary(data)
 
+        for pairx, pairy in zip(self.scintillators[0], self.scintillators[1]):
+            if (0, 0) in (pairx, pairy):
+                return False
 
-        f_sc_idx = [
-        [(21,20),(16,17),(13,12),(8,9),(0,1),(5,4),],
-        [(22,23),(18,19),(15,14),(11,10),(2,3),(6,7),],
-        ]
-
-        k = np.array([(data & (2**i)) >> i for i in range(24)])[f_sc_idx]
-
-        k = [[(int(k[0]), int(k[1])) for k in k[0]], [(int(k[0]), int(k[1])) for k in k[1]]]
-
-        bl4 = k
-
-        #print(self.scintillators)
-        #print(bl4)
-        #print()
-
-        self.scintillators = bl4
-
-
-        #for pairx, pairy in zip(self.scintillators[0], self.scintillators[1]):
-        #    if (0, 0) in (pairx, pairy):
-        #        return False
-
-        if self.detection_algorithm.scintillators_to_bounds(self.scintillators) == None:
-            return False
+            #elif self.detection_algorithm.scintillators_to_bounds(self.scintillators) == None:
+            #    return False
         
         return True

@@ -14,7 +14,7 @@ class CameraOrbitControls:
         orbit_sensitivity=0.0025,
         initial_zoom=5,
         initial_view_angle=(np.pi / 6, np.pi / 4),
-        clipping=[-32, 32],
+        clipping=[-512, 512],
         **kwargs,
     ):
         """

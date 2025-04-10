@@ -28,16 +28,30 @@ class OpenGLStuff:
 
 
 
+        # self.lines = np.array([
+        #     [ 0, 0,   -81, 1, 0, 0, 1],
+        #     [25, 0,   -81, 1, 0, 0, 1],
+        #     [ 0, 0,   -81, 0, 1, 0, 1],
+        #     [0, 25,   -81, 0, 1, 0, 1],
+        #     [ 0, 0,   -81, 0, 0, 1, 1],
+        #     [0,  0, 25-81, 0, 0, 1, 1],
+        # ]).astype(np.float32)
+
+        
         self.lines = np.array([
-            [ 0, 0,   -81, 1, 0, 0, 1],
-            [25, 0,   -81, 1, 0, 0, 1],
-            [ 0, 0,   -81, 0, 1, 0, 1],
-            [0, 25,   -81, 0, 1, 0, 1],
-            [ 0, 0,   -81, 0, 0, 1, 1],
-            [0,  0, 25-81, 0, 0, 1, 1],
+            [ 0, 0,   0, 1, 0, 0, 1],
+            [250, 0,   0, 1, 0, 0, 1],
+            [ 0, 0,   0, 0, 1, 0, 1],
+            [0, 250,   0, 0, 1, 0, 1],
+            [ 0, 0,   0, 0, 0, 1, 1],
+            [0,  0,  250, 0, 0, 1, 1],
         ]).astype(np.float32)
 
         self.lines_vao = make_vao_vbo(self.lines)[0]
+
+        self.detected_hulls.data_exists = False
+        self.detected_hulls.new_data = False
+
 
 
 
@@ -51,8 +65,6 @@ class OpenGLStuff:
 
         make_uniforms(self.shader_program, window)
 
-        self.detected_hulls.data_exists = False
-        self.detected_hulls.new_data = False
 
 
 
@@ -62,12 +74,14 @@ class OpenGLStuff:
         if self.detected_hulls.new_data:
             self.detected_hulls.create_hull_vao()
 
+        self.detected_hulls.new_data = False
+
         if self.detected_hulls.data_exists:
             self.detected_hulls.draw_hull()
 
         self.scintillator_structuce.draw_scintillator_structure()
 
-        draw_vao(self.lines_vao, GL_LINES, self.lines.shape[0])
+        #draw_vao(self.lines_vao, GL_LINES, self.lines.shape[0])
 
 
         pass

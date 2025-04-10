@@ -4,6 +4,10 @@
 	(generator_version "8.0")
 	(uuid "730acbb0-c465-4f5e-8c3f-a8df7be9ee52")
 	(paper "A4")
+	(title_block
+		(comment 3 "Dawson Enriched Pure & Applied")
+		(comment 4 "Alex Xia")
+	)
 	(lib_symbols
 		(symbol "Device:C"
 			(pin_numbers hide)

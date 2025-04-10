@@ -51,17 +51,6 @@ wire [23:0] diff;
 assign diff = sync2 ^ Q;
 assign trigger_led = trigger;
 
-// noise-filtering
-// reg [8:0] noise_counter [23:0];
-
-// 10 bit counters for each 
-// 72 MHZ -> 13.89ns
-// 108 cycles -> 1.50us
-// 216 cycles -> 3.00us
-// 432 cycles -> 6.00us
-// 256 cycles -> 3.56us
-// 512 cycles -> 7.11us
-
 // input-latching
 // always @(posedge sys_clk_pll or negedge rst_n or negedge spi_cs) begin
 always @(posedge sys_clk_pll or negedge rst_n) begin
@@ -90,22 +79,6 @@ always @(posedge sys_clk_pll or negedge rst_n) begin
 
         // Latch the output based on the synchronized input
         for (i = 0; i < 24; i = i + 1) begin
-            // // if (sync2[i])   // Set output high if synchronized S[i] is asserted
-            // if (sync2[i]) begin
-            //     // prevent counter overflow
-            //     if (noise_counter[i] < 8'd255)
-            //         // increment by clock interval
-            //         noise_counter[i] <= noise_counter[i] + 1;
-
-            //     // if hitting threshold
-            //     if (noise_counter[i] >= 8'd54) // 1.50us
-            //         // latch pin
-            //         Q[i] <= 1'b1;
-            // end else begin
-            //     // reset counter if signal low
-            //     noise_counter[i] <= 8'd0;
-            // end
-
             if (sync2[i])
                 Q[i] <= 1'b1;
         end

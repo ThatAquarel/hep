@@ -21,6 +21,9 @@ import graphics.elements.axes
 
 import data_manager
 
+import pandas as pd
+import numpy as np
+from datetime import datetime
 
 class App(CameraOrbitControls, ShaderRenderer):
     def __init__(
@@ -67,6 +70,7 @@ class App(CameraOrbitControls, ShaderRenderer):
 
 
         self.pt_selected = None
+
 
         # fall into rendering loop
         self.rendering_loop()
@@ -180,6 +184,8 @@ class App(CameraOrbitControls, ShaderRenderer):
             dt = current - start
             start = current
 
+        self.generate_csv()
+
         glfw.terminate()
 
 
@@ -199,30 +205,25 @@ class App(CameraOrbitControls, ShaderRenderer):
         )
 
         if self.test.has_data():
-             self.test.update_data(self.test.get_data_from_arduino())
+            self.test.update_data(self.test.get_data_from_arduino())
+        
 
-        self.pt_selected = self.test.data[-1][0]
+
         #input for drawing
-        self.square.input_data = self.test.data.copy()
-        self.fan.input_data = self.test.data.copy()
         self.ui.input_data = self.test.data.copy()
+
         
         #draw elements
-        self.square.draw(self.ui.dataset_active)
-        self.fan.draw(self.ui.dataset_active)
+        self.square.draw(self.test.data.copy(), self.ui.dataset_active)
+        self.fan.draw(self.test.data.copy(), self.ui.dataset_active)
 
         if self.ui.show_axes:
             self.axes.draw()
             
-        self.plane.draw(self.pt_selected)
-        
-        
-        #self.trajectory.draw(self.ui.dataset_active)
+        self.plane.draw(self.ui.pt_selected)
+    
 
         
-
-
-
         # shader: update lighting
         self.set_lighting_uniforms(
             glm.vec3(*self.ui.light_color),
@@ -233,27 +234,42 @@ class App(CameraOrbitControls, ShaderRenderer):
             specular_reflection=self.ui.specular_reflection,
         )
 
-        #Update self.pt_selected to None when the data set is no longer chosen to be displayed
-        if self.ui.pt_selected_send == None:
-            self.pt_selected = None
 
 
-    def on_click(self, window):
-        # get 3D click coordinates
-        rh = self.get_right_handed()
-        self.x, self.y, self.z = self.get_click_point(window, rh)
+
+    # def on_click(self, window):
+    #     # get 3D click coordinates
+    #     rh = self.get_right_handed()
+    #     self.x, self.y, self.z = self.get_click_point(window, rh)
         
 
-        print(self.x, self.y, self.z)
-        uncertainty = 1
-        for i in range(len(self.test.data)):
-            #To see if the mouse position matches 
-            if self.ui.dataset_active[i]:
-                for pt in range(len(self.test.data[i])):     #test.data -> datasets -> cubes -> vertices or fan -> coords -> xyz values
-                    if (self.test.data[i][pt][0][0][0] <= (self.x + uncertainty)) and (self.test.data[i][pt][0][0][0] >= (self.x - uncertainty)):
-                        if (self.test.data[i][pt][0][0][1] <= (self.y + uncertainty)) and (self.test.data[i][pt][0][0][1] >= (self.y - uncertainty)):
-                            self.pt_selected = self.test.data[i][pt]
+    #     print(self.x, self.y, self.z)
+    #     uncertainty = 1
+    #     for i in range(len(self.test.data)):
+    #         #To see if the mouse position matches 
+    #         if self.ui.dataset_active[i]:
+    #             for pt in range(len(self.test.data[i])):     #test.data -> datasets -> cubes -> vertices or fan -> coords -> xyz values
+    #                 if (self.test.data[i][pt][0][0][0] <= (self.x + uncertainty)) and (self.test.data[i][pt][0][0][0] >= (self.x - uncertainty)):
+    #                     if (self.test.data[i][pt][0][0][1] <= (self.y + uncertainty)) and (self.test.data[i][pt][0][0][1] >= (self.y - uncertainty)):
+    #                         self.pt_selected = self.test.data[i][pt]
       
+    def generate_csv(self):
+        """
+        Create csv file
+        """
+        
+        df = pd.DataFrame(self.test.data,columns=["new_hull_bounds", "new_fan_out_lines", "cooked_data", "bit24", "time"])
+
+        df = df.drop("new_hull_bounds", axis=1)
+        df = df.drop("new_fan_out_lines", axis=1)
+        df = df.drop("cooked_data", axis=1)
+
+        #df.columns[0], df.columns[1] = df.columns[1], df.columns[0] 
+        time = datetime.now()
+
+        df.to_csv(f"scintillator_field/display/display_2/Visualizer/data/{time}.csv")   #Current directory is set to the "data" folder
+
+        
 
 
 

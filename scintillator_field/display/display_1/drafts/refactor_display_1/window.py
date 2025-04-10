@@ -9,24 +9,21 @@ from imgui.integrations.glfw import GlfwRenderer
 
 import numpy as np
 
-from scintillator_field.display.display_1.imgui_stuff import *
-from scintillator_field.display.display_1.opengl_stuff import *
-
 import time
 
 
 
 class Window:
     def __init__(self):
+        pass
 
-        self.start_time = time.time()
+    def set_window_values(self):
 
         # sets up basic window parameters
 
         self.render_distance = 1024
         
         self.width, self.height = 1924, 1028
-        #self.width, self.height = 800, 900
         #self.width, self.height = 750, 500
         self.aspect_ratio = self.width/self.height
 
@@ -43,7 +40,6 @@ class Window:
         self.pan_x, self.pan_y, self.pan_z = 0,0,0
         self.zoom = 14.1
         self.zoom = 231
-        self.zoom = 251
 
         #self.angle_x, self.angle_y, self.angle_z = (0,)*3
 
@@ -54,7 +50,42 @@ class Window:
 
         self.panning, self.angling = False, False
 
+    def setup_imgui(self, window, appname):
+        self.appname = appname
+        imgui.create_context()
+        imgui.get_io().display_size = 100,100
+        self.imgui_use = GlfwRenderer(window, attach_callbacks=False)
+
+    def set_imgui_box_per_render(self, dt, paused):
+        imgui.new_frame()
+        imgui.begin(self.appname)
+
+        if not paused:
+            if dt != 0:
+                imgui.text(f'{1/dt:.4g} fps')
+        else:
+            imgui.text(f"paused ({1/dt:.4g} fps)")
+
+        imgui.text(f'{self.angle_x:.3g}, {self.angle_y:.3g}, {self.angle_z:.3g} : angles x, y, z')
+        imgui.text(f'{self.pan_x:.3g}, {self.pan_y:.3g}, {self.pan_z:.3g} : pan x, y, z')
+        imgui.text(f'{self.zoom:.3g} : zoom level')
+        imgui.text(f'{self.aspect_ratio:.3g} : aspect ratio')
+
+        imgui.end()
+
+    def imgui_in_use(self):
+        if self.imgui_use != None and imgui.get_io().want_capture_mouse:
+            return True
+        
+    def render_imgui_box(self):
+        imgui.render()
+        self.imgui_use.process_inputs()
+        self.imgui_use.render(imgui.get_draw_data())
+
     def build_window(self, window_name):
+
+        if not glfw.init():
+            return
         
         window = glfw.create_window(self.width, self.height, window_name, None, None)
         glfw.make_context_current(window)
@@ -94,8 +125,16 @@ class Window:
         if self.angling:
             dx = xpos - self.last_x
             dy = ypos - self.last_y
+
+
             self.angle_x += dy * self.angle_sensitivity * self.zoom
             self.angle_y += dx * self.angle_sensitivity * self.zoom
+
+
+
+            self.angle_x += dy * self.angle_sensitivity * self.zoom
+            self.angle_y += dx * self.angle_sensitivity * self.zoom
+
 
             self.angle_x %= 360
             self.angle_y %= 360
@@ -106,7 +145,7 @@ class Window:
     
     def mouse_callbacks(self, window, button, action, mods):
         # stops screen panning/rotating if imgui box is moving
-        if self.imgui_stuff.in_use():
+        if self.imgui_in_use():
             return
 
         if action == glfw.PRESS:
@@ -132,21 +171,8 @@ class Window:
             if (key == glfw.KEY_SPACE) and (self.paused) and (time.time()- pause_time > 0.01):
                 self.paused = False
 
-    def main(self):
-        if not glfw.init():
-            return
 
-        self.imgui_stuff = ImguiStuff()
-
-        appname = type(self).__name__
-        self.window = self.build_window(appname)
-        
-        # glViewport(0, 0, self.width, self.height)
-        # will be changed to double viewport later
-
-
-        self.imgui_stuff.initiate_imgui(self.window, appname)
-
+    def set_opengl_values(self):
         
         glClearColor(0.5, 0.5, 0.5, 1)
         glEnable(GL_DEPTH_TEST)
@@ -159,32 +185,9 @@ class Window:
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glEnable(GL_BLEND)
 
-        self.opengl_stuff_for_window = OpenGLStuff()
-        self.opengl_stuff_for_window.setup()
-
-
-        self.dt = 0
-        self.current = time.time()
-
-        self.done = False
-        self.paused = False
-
-        while not self.done:
-            self.render_loop()
-
-
-    def render_loop(self):
-
+    def begin_render_loop_actions(self):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-        self.opengl_stuff_for_window.per_render_loop(self)
-
-        self.imgui_stuff.imgui_box(self.dt, self, self.opengl_stuff_for_window)
-        self.imgui_stuff.render_box()
-
-        end = time.time()
-        if end-self.current !=0:
-            self.dt = end-self.current
-        self.current = end
-        glfw.swap_buffers(self.window)
+    def end_render_loop_actions(self, window):
+        glfw.swap_buffers(window)
         glfw.poll_events()

@@ -1,4 +1,4 @@
-def interpret_raw_data(bin):
+def interpret_raw_data(bin): # Andy's function
     x = bin & 3355443   #& operator on 0b001100110011001100110011
     y = bin & 13421772  #& operator on 0b110011001100110011001100
 
@@ -16,7 +16,7 @@ def interpret_raw_data(bin):
     return [list_x,list_y]
 
 
-def interpet(num_int):
+def interpet(num_int): # Evan's function
     binary_list = []
     for i in range(32):
         '''
@@ -54,7 +54,15 @@ def interpet(num_int):
     return [bits_x, bits_y]
 
 
+num = 23
+print(            format(num, '032b'))
+print(            format(num, '032b')[8:])
 
+# we get data in MSB
+
+#print(            format(num, '032b')[::-1])
+print(          interpet(num))
+print(interpret_raw_data(num))
 
 
 ...
