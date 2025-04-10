@@ -1,30 +1,16 @@
 import numpy as np
 
-from scintillator_field.display.display_1.vbo_vao_stuff import *
-from scintillator_field.software.boundary_algorithm.detection import *
-from scintillator_field.display.display_1.input_data import *
+from scintillator_field.display.display_1.drafts.refactor_display_1.vbo_vao_stuff import *
+from scintillator_field.display.display_1.drafts.refactor_display_1.input_data import *
 
 import time
 
 class DetectionHulls:
     def __init__(self):
-        self.detection_algorithm = Detection()
         self.arduino = DataReception()
-
-    def make_points_from_xyz(self, low_x, high_x, low_y, high_y, low_z, high_z, colour, opacity):
-        p1 = np.array([low_x,  low_y,  low_z,  colour[0], colour[1], colour[2], opacity]) # base_point + (0,    0,    0)    # BFL
-        p2 = np.array([high_x, low_y,  low_z,  colour[0], colour[1], colour[2], opacity]) # base_point + (xlen, 0,    0)    # BFR
-        p3 = np.array([low_x,  high_y, low_z,  colour[0], colour[1], colour[2], opacity]) # base_point + (0,    ylen, 0)    # BBL
-        p4 = np.array([high_x, high_y, low_z,  colour[0], colour[1], colour[2], opacity]) # base_point + (xlen, ylen, 0)    # BBR
-        p5 = np.array([low_x,  low_y,  high_z, colour[0], colour[1], colour[2], opacity]) # base_point + (0,    0,    zlen) # TFL
-        p6 = np.array([high_x, low_y,  high_z, colour[0], colour[1], colour[2], opacity]) # base_point + (xlen, 0,    zlen) # TFR
-        p7 = np.array([low_x,  high_y, high_z, colour[0], colour[1], colour[2], opacity]) # base_point + (0,    ylen, zlen) # TBL
-        p8 = np.array([high_x, high_y, high_z, colour[0], colour[1], colour[2], opacity]) # base_point + (xlen, ylen, zlen) # TBR
-
-        return p1, p2, p3, p4, p5, p6, p7, p8
     
     def vec3_to_vec7(self, p, colour, opacity):
-        return np.array([p[0], p[1], p[2], colour[0], colour[1], colour[2], opacity])
+        return np.array([p[0], p[1], p[2], *colour, opacity])
 
     def make_prism_triangles(self, p1, p2, p3, p4, p5, p6, p7, p8):
 
@@ -118,7 +104,7 @@ class DetectionHulls:
         return scaled_hull_bounds, scaled_fan_out
 
 
-    def get_hull_returns(self, scintillators_from_arduino):
+    def get_hull_returns(self, scintillators_from_arduino, detection_algorithm):
 
 
         # hull_bounds, fan_out = "do some stuff"
@@ -131,7 +117,7 @@ class DetectionHulls:
         '''
         scintillators = scintillators_from_arduino
         
-        hull_bounds, fan_out = self.detection_algorithm.scintillators_to_bounds(scintillators)
+        hull_bounds, fan_out = detection_algorithm.scintillators_to_bounds(scintillators)
         hull_bounds = np.array(hull_bounds) - np.array([0, 0, 162/2])
 
 
@@ -139,7 +125,7 @@ class DetectionHulls:
     
 
 
-    def create_hull_data(self):
+    def create_hull_data(self, detection_algorithm):
         '''
 
         works with actual values of structure
@@ -163,11 +149,12 @@ class DetectionHulls:
 
         if self.arduino.has_new_data():
             data = self.arduino.get_data_from_arduino()
-            # data = 10843835
 
             if self.arduino.is_valid_data(data):
                 self.arduino.format_print(data)
-                self.hull_bounds, self.fan_out = self.get_hull_returns(self.arduino.scintillators)
+                self.hull_bounds, self.fan_out = self.get_hull_returns(self.arduino.scintillators, detection_algorithm)
+
+                print(hull_bounds)
 
                 #self.hull_bounds, self.fan_out = self.get_hull_returns(window)
                 '''

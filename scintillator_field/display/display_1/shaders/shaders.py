@@ -32,13 +32,19 @@ def make_uniforms(shader_program, window):
 
     camera_transformation = translation_rotation_scale_matrix(
         t=(window.pan_x, window.pan_y, window.pan_z),
-        r=(window.angle_x, window.angle_y, window.angle_z),
-        s=(1, 1, 1))
+        r=(window.angle_x, window.angle_y, window.angle_z),)
     
     inv_cam_transform = np.linalg.inv(camera_transformation)
 
 
     world_transform = np.eye(4)
+
+    world_transform = np.array([
+        [1,0,0,0],
+        [0,0,1,0],
+        [0,1,0,0],
+        [0,0,0,1],
+    ])
 
 
     set_mat4_uniform(shader_program, "orthographic_projection", orthographic_projection)
@@ -47,11 +53,10 @@ def make_uniforms(shader_program, window):
     set_mat4_uniform(shader_program, "world_transform", world_transform)
 
 
-def translation_rotation_scale_matrix(t=(0, 0, 0), r=(0, 0, 0), s=(1, 1, 1)):
+def translation_rotation_scale_matrix(t=(0, 0, 0), r=(0, 0, 0)):
     tx, ty, tz = t
     drx, dry, drz = r # degrees
     rrx, rry, rrz = np.radians(drx), np.radians(dry), np.radians(drz),
-    sx, sy, sz = s
 
     translation = np.array([
         [1, 0, 0, tx],
@@ -76,14 +81,9 @@ def translation_rotation_scale_matrix(t=(0, 0, 0), r=(0, 0, 0), s=(1, 1, 1)):
         [np.sin(rrz),  np.cos(rrz), 0, 0],
         [          0,            0, 1, 0],
         [          0,            0, 0, 1],])
+
     
-    scale = np.array([
-        [sx,  0,  0, 0],
-        [ 0, sy,  0, 0],
-        [ 0,  0, sz, 0],
-        [ 0,  0,  0, 1]])
-    
-    transformation_matrix = translation @ scale @ rot_x @ rot_y @ rot_z
+    transformation_matrix = translation @ rot_x @ rot_y @ rot_z
     #transformation_matrix = translation @ rot_z @ rot_y @ rot_x
 
     return transformation_matrix
