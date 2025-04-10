@@ -7,6 +7,13 @@
 		(legacy_teardrops no)
 	)
 	(paper "A4")
+	(title_block
+		(title "Scintillating Chamber: SIPM Trigger Board")
+		(date "2025-03-12")
+		(rev "4")
+		(comment 3 "Dawson Enriched Pure & Applied")
+		(comment 4 "Alex Xia")
+	)
 	(layers
 		(0 "F.Cu" signal)
 		(31 "B.Cu" signal)
@@ -2768,7 +2775,7 @@
 		(descr "Capacitor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC_7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "capacitor")
 		(property "Reference" "C3"
-			(at 0 -1.43 360)
+			(at 0 -1.43 0)
 			(layer "F.SilkS")
 			(hide yes)
 			(uuid "230347eb-4b23-4b14-9548-e4e46253c756")
@@ -2780,7 +2787,7 @@
 			)
 		)
 		(property "Value" "1u"
-			(at 0 1.43 360)
+			(at 0 1.43 0)
 			(layer "F.Fab")
 			(uuid "829c5f0d-14d3-4d94-ade2-9716b11934d3")
 			(effects
@@ -2948,7 +2955,7 @@
 			(uuid "27f5baa6-2d92-4dc4-9409-dd6c1a404d44")
 		)
 		(fp_text user "${REFERENCE}"
-			(at 0 0 360)
+			(at 0 0 0)
 			(layer "F.Fab")
 			(uuid "2c50f6cd-a2d2-4465-8387-033445b1ec20")
 			(effects
@@ -3222,7 +3229,7 @@
 		(descr "Resistor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC_7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "resistor")
 		(property "Reference" "R19"
-			(at -3.075 0.025 360)
+			(at -3.075 0.025 0)
 			(layer "F.SilkS")
 			(hide yes)
 			(uuid "1497bb29-acf1-46a2-a626-8b4f7a6316ff")
@@ -3234,7 +3241,7 @@
 			)
 		)
 		(property "Value" "226k 0.1%"
-			(at 0 1.43 360)
+			(at 0 1.43 0)
 			(layer "F.Fab")
 			(uuid "d629421d-e27c-44fc-b078-8b5606ccc2cd")
 			(effects
@@ -3402,7 +3409,7 @@
 			(uuid "08e1c24c-65dd-47a7-90b3-24185ecebb38")
 		)
 		(fp_text user "${REFERENCE}"
-			(at 0 0 360)
+			(at 0 0 0)
 			(layer "F.Fab")
 			(uuid "29976da5-8728-4eaa-ac90-33771c11d06a")
 			(effects
@@ -5173,7 +5180,7 @@
 		(descr "Resistor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC_7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "resistor")
 		(property "Reference" "R6"
-			(at 0 -1.43 360)
+			(at 0 -1.43 0)
 			(layer "F.SilkS")
 			(uuid "f370a3b9-e43f-47c4-9cd0-0b0db9a351f1")
 			(effects
@@ -5184,7 +5191,7 @@
 			)
 		)
 		(property "Value" "10k 0.1%"
-			(at 0 1.43 360)
+			(at 0 1.43 0)
 			(layer "F.Fab")
 			(uuid "6a250972-8ac0-448d-a320-61b91770aebe")
 			(effects
@@ -5352,7 +5359,7 @@
 			(uuid "04660f29-5b3e-429c-acd5-876b57a23f4b")
 		)
 		(fp_text user "${REFERENCE}"
-			(at 0 0 360)
+			(at 0 0 0)
 			(layer "F.Fab")
 			(uuid "cbc21b8f-4889-4e31-8ba4-dda14aa7ab8a")
 			(effects
@@ -5399,7 +5406,7 @@
 		(descr "SMD pad as test Point, diameter 1.0mm")
 		(tags "test point SMD pad")
 		(property "Reference" "+5V0"
-			(at 0 3.2 270)
+			(at 0 3.2 -90)
 			(layer "F.SilkS")
 			(uuid "d9c24b7e-25a4-4b4b-97d4-02c370b70fab")
 			(effects
@@ -10023,7 +10030,7 @@
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC_7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "capacitor")
 		(property "Reference" "C27"
-			(at -3.075 -0.225 360)
+			(at -3.075 -0.225 0)
 			(layer "F.SilkS")
 			(hide yes)
 			(uuid "8039a349-a64c-4050-81fe-856177691821")
@@ -10035,7 +10042,7 @@
 			)
 		)
 		(property "Value" "3p"
-			(at 0 1.16 360)
+			(at 0 1.16 0)
 			(layer "F.Fab")
 			(uuid "99d32479-db0e-466a-aa54-9c890ca737fb")
 			(effects
@@ -10203,7 +10210,7 @@
 			(uuid "69e679d2-78e0-4b2b-b10c-f2907c7cf86f")
 		)
 		(fp_text user "${REFERENCE}"
-			(at 0 0 360)
+			(at 0 0 0)
 			(layer "F.Fab")
 			(uuid "e7a15338-fb58-4bea-84ae-2bf81b414ca6")
 			(effects
@@ -21123,7 +21130,7 @@
 		(descr "8-Lead Plastic WSON, 2x2mm Body, 0.5mm Pitch, WSON-8, http://www.ti.com/lit/ds/symlink/lm27761.pdf")
 		(tags "WSON 8 1EP")
 		(property "Reference" "U5"
-			(at -0.225 5.8 360)
+			(at -0.225 5.8 0)
 			(layer "F.SilkS")
 			(uuid "ed5a296f-1c18-4d33-9195-267f289e75ac")
 			(effects
@@ -21134,7 +21141,7 @@
 			)
 		)
 		(property "Value" "OPA858xDSG"
-			(at 0.01 2.14 360)
+			(at 0.01 2.14 0)
 			(layer "F.Fab")
 			(uuid "77c0633e-49b5-44b3-bb22-38ebad094b66")
 			(effects
@@ -21324,7 +21331,7 @@
 			(uuid "5350ce37-e4b5-4bd9-b122-c299ebf5c5ff")
 		)
 		(fp_text user "${REFERENCE}"
-			(at 0 0 360)
+			(at 0 0 0)
 			(layer "F.Fab")
 			(uuid "b2a92ef0-e361-478d-928d-490e26a40e65")
 			(effects
@@ -24203,7 +24210,7 @@
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC_7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "capacitor")
 		(property "Reference" "C2"
-			(at 0 -1.16 360)
+			(at 0 -1.16 0)
 			(layer "F.SilkS")
 			(hide yes)
 			(uuid "c2e392f3-37e9-41d0-9121-6456e85b510a")
@@ -24215,7 +24222,7 @@
 			)
 		)
 		(property "Value" "0.1u"
-			(at 0 1.16 360)
+			(at 0 1.16 0)
 			(layer "F.Fab")
 			(uuid "4d0ad4ae-c060-42bd-b19c-565e311054a3")
 			(effects
@@ -24383,7 +24390,7 @@
 			(uuid "cb712851-b11b-4532-8a2e-ab66a7c253d9")
 		)
 		(fp_text user "${REFERENCE}"
-			(at 0 0 360)
+			(at 0 0 0)
 			(layer "F.Fab")
 			(uuid "7a8a7eca-2fb7-4db3-ae9a-c85975a751d4")
 			(effects
@@ -27630,7 +27637,7 @@
 		(descr "SMD pad as test Point, diameter 1.0mm")
 		(tags "test point SMD pad")
 		(property "Reference" "+34V3"
-			(at 1.7 1.7 270)
+			(at 1.7 1.7 -90)
 			(layer "F.SilkS")
 			(uuid "21616148-a57b-4d2f-a7ac-5b16d87328c5")
 			(effects
@@ -35861,8 +35868,8 @@
 		(polygon
 			(pts
 				(xy 79.34 99.11) (xy 79.35 97.2) (xy 79.35 96.4) (xy 80.7 96.4) (xy 80.7 92.85) (xy 84.075 92.85)
-				(xy 84.075 95.8) (xy 85.6 95.8) (xy 85.6 96.7) (xy 85.6 96.7) (xy 85.6 98.6) (xy 81.15 98.6) (xy 81.14 97.6)
-				(xy 80.21 97.6) (xy 80.21 99.11)
+				(xy 84.075 95.8) (xy 85.6 95.8) (xy 85.6 96.7) (xy 85.6 98.6) (xy 81.15 98.6) (xy 81.14 97.6) (xy 80.21 97.6)
+				(xy 80.21 99.11)
 			)
 		)
 		(filled_polygon
@@ -36286,7 +36293,7 @@
 		(polygon
 			(pts
 				(xy 81.1 99.9) (xy 82.9 99.9) (xy 82.9 98.35) (xy 84.45 98.35) (xy 85.35 98.35) (xy 85.4 102.5)
-				(xy 81.1 102.5) (xy 80.325 102.5) (xy 80.325 99.9) (xy 81.1 99.9)
+				(xy 81.1 102.5) (xy 80.325 102.5) (xy 80.325 99.9)
 			)
 		)
 		(filled_polygon

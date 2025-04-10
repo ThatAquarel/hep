@@ -41,7 +41,7 @@ void setup() {
 
 void loop() {
   if (triggered) {
-    delayMicroseconds(30);
+    // delayMicroseconds(30);
     // Start SPI transaction
     digitalWrite(CS, LOW); // Select FPGA
 

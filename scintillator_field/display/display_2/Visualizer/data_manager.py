@@ -1,8 +1,28 @@
+# from scintillator_field.software.boundary_algorithm.detection import *
+#import scintillator_field.software.boundary_algorithm.detection as d
 from detection import *
+import serial
+import struct
+import os
 
+from datetime import datetime
+
+
+import numpy as np
 class test:
     def __init__(self):
-        detection_algorithm = Detection()
+        dsrdtr = False
+        port = "/dev/ttyUSB0"
+
+        if os.name == "nt":
+            dsrdtr = True
+            port = "COM5"
+
+        #self.arduino = serial.Serial(port=port, baudrate=115200, dsrdtr=dsrdtr)
+
+
+
+        self.detection_algorithm = Detection()
         self.data = []
         self.reset()
 
@@ -11,41 +31,60 @@ class test:
 
 
     def has_data(self):
-        pass
+        return self.arduino.in_waiting >= 8
     
+    def get_data_from_arduino(self):
+        self.arduino.read_until(b"\x7E")
+        value = self.arduino.read(4)
+        if self.arduino.read(1) != b"\x7D":
+            print("serial frame end error")
+
+        # remaining = self.arduino.in_waiting
+        # self.arduino.read(remaining)
+
+        (n,) = struct.unpack("<I", value)
+
+        return n
+
     def reset(self):
         """
         Reset Aljoscha's code, since we use different values
         """
 
         # Global variables
-        detection_algorithm.level_count = 1
-        detection_algorithm.n = 2*60 * 0.1 # Sideview length of scintillator in unit x
+        self.detection_algorithm.level_count = 1
+        self.detection_algorithm.n = 2*60 * 0.1 # Sideview length of scintillator in unit x
 
 
         # These values are used for x perspective
-        detection_algorithm.upper_side_views = [(0, detection_algorithm.n)] # (start, end) coordinates for each level 
-        detection_algorithm.lower_side_views = [(0, detection_algorithm.n)]
+        self.detection_algorithm.upper_side_views = [(0, self.detection_algorithm.n)] # (start, end) coordinates for each level 
+        self.detection_algorithm.lower_side_views = [(0, self.detection_algorithm.n)]
 
-        detection_algorithm.plate_thickness = 10 * 0.1# In unit x
-        detection_algorithm.intra_level_gap = 2 * 0.1#Actual physical gap between each level, in unit x
-        detection_algorithm.inter_level_gap = detection_algorithm.plate_thickness + detection_algorithm.intra_level_gap # Adjusted inter level gap for computation 
+        self.detection_algorithm.plate_thickness = 10 * 0.1# In unit x
+        self.detection_algorithm.intra_level_gap = 2 * 0.1#Actual physical gap between each level, in unit x
+        self.detection_algorithm.inter_level_gap = self.detection_algorithm.plate_thickness + self.detection_algorithm.intra_level_gap # Adjusted inter level gap for computation 
 
-        detection_algorithm.half_gap_size =  162/2 * 0.1# In unit x
-        detection_algorithm.top_half_gap = detection_algorithm.half_gap_size + detection_algorithm.plate_thickness + detection_algorithm.intra_level_gap
-        detection_algorithm.bottom_half_gap = detection_algorithm.half_gap_size
-        detection_algorithm.gap_line = 0
-        detection_algorithm.highest_point = detection_algorithm.half_gap_size + 5*detection_algorithm.intra_level_gap + 6*detection_algorithm.plate_thickness # Values custom set to this detector
-        detection_algorithm.lowest_point = -detection_algorithm.highest_point
+        self.detection_algorithm.half_gap_size =  162/2 * 0.1# In unit x
+        self.detection_algorithm.top_half_gap = self.detection_algorithm.half_gap_size + self.detection_algorithm.plate_thickness + self.detection_algorithm.intra_level_gap
+        self.detection_algorithm.bottom_half_gap = self.detection_algorithm.half_gap_size
+        self.detection_algorithm.gap_line = 0
+        self.detection_algorithm.highest_point = self.detection_algorithm.half_gap_size + 5*self.detection_algorithm.intra_level_gap + 6*self.detection_algorithm.plate_thickness # Values custom set to this detector
+        self.detection_algorithm.lowest_point = -self.detection_algorithm.highest_point
 
     def update_data(self,raw_data):
         """
         transform data ready to be interpreted by the visualizer, then update self.data
         """
-    
         
-        cooked_data = self.interpret_raw_data(raw_data)
-        algorithmized = detection_algorithm.scintillators_to_bounds(cooked_data)
+        bit24 = raw_data & 0xffffff
+
+        cooked_data = self.interpret_raw_data(bit24)
+        algorithmized = self.detection_algorithm.scintillators_to_bounds(cooked_data)
+
+        if not algorithmized:
+            return
+
+        time = datetime.now()
 
         self.reset()
 
@@ -53,11 +92,20 @@ class test:
         new_fan_out_lines = self.transform_coordinates_fanned(algorithmized[1])
 
         #This part depends on if you want to make the point to be assigned to a dataset or as a new dataset
-        point = [new_hull_bounds, new_fan_out_lines, cooked_data]
+        point = [new_hull_bounds, new_fan_out_lines, cooked_data, bit24, time]
         dataset = []
         dataset.append(point)
 
         self.data.append(dataset)
+
+    def rationalize(self,raw_data):
+        a = []
+        for i in range(24):
+            a.append((raw_data & (2**i)) >> i )
+        
+        b = [5,4,7,6,0,1,2,3,8,9,10,11,13,12,15,14,16,17,18,19,21,20,22,23]
+
+
 
     def interpret_raw_data(self,bin):
         x = bin & 3355443   #& operator on 0b001100110011001100110011
@@ -80,15 +128,15 @@ class test:
         """
         transform into my coordinate system
         """
-        translate_x = -detection_algorithm.n / 2
-        translate_y = -detection_algorithm.n/2
+        translate_x = -self.detection_algorithm.n / 2
+        translate_y = -self.detection_algorithm.n/2
         z_scale = 1
 
         list = []
         for coordinates in data:
             x = (coordinates[0] + translate_x) * -1
             y = (coordinates[1] + translate_y) * 1
-            z = (coordinates[2] + detection_algorithm.half_gap_size - detection_algorithm.inter_level_gap + detection_algorithm.plate_thickness) / z_scale
+            z = (coordinates[2] + self.detection_algorithm.half_gap_size - self.detection_algorithm.inter_level_gap + self.detection_algorithm.plate_thickness) / z_scale
             list.append((x,y,z))
 
         return list
@@ -105,6 +153,14 @@ class test:
         scintillator_1= [[(0, 1), (0, 1), (0, 1), (0, 1), (0, 1), (0, 1)],[(0, 1), (0, 1), (0, 1), (0, 1), (0, 1), (0, 1)]]
         scintillator_2 = [[(1, 0), (1, 0), (1, 0), (1, 0), (1, 0), (1, 0)], [(1, 0), (1, 0), (1, 0), (1, 0), (1, 0), (1, 0)]]
         
-        self.update_data(0b101101010101101011010110)     
+        # self.update_data(0b101101010101101011010110)     
+        # self.update_data(0b111101100101111101101111)
+        #self.update_data(0b101111011110111001011101)
+        #self.update_data(0b010101010101010101010101)
+        #self.update_data(0b010111011110100110011101)
+
+        self.update_data(0b011011010110101011010110)
+        #self.update_data(0b100110101101010101101001)
+            
 
 

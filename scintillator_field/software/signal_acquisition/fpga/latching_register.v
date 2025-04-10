@@ -1,7 +1,7 @@
 module top (
     // system clock
     input wire sys_clk,           // 14.4 mhz
-    output wire sys_clk_pll,      // 255.5 mhz
+    output wire sys_clk_pll,
     output wire sys_clk_pll_lock, // high -> pll lock
 
     // data registers
@@ -25,7 +25,7 @@ module top (
 pll pll_inst (
     .clock_in(sys_clk),        // Input clock (14.4 MHz) STM32
     .clock_out(sys_clk_pll),
-    .locked(sys_clk_pll_lock)            // Output clock (255.5 MHz)
+    .locked(sys_clk_pll_lock)
 );
 
 // Synchronizer registers for each bit (two-stage for each input)
@@ -79,13 +79,27 @@ always @(posedge sys_clk_pll or negedge rst_n) begin
 
         // Latch the output based on the synchronized input
         for (i = 0; i < 24; i = i + 1) begin
-            if (sync2[i])   // Set output high if synchronized S[i] is asserted
+            if (sync2[i])
                 Q[i] <= 1'b1;
-            // If sync2[i] is low, hold the previous state (Q[i] stays the same)
         end
 
-        if (diff)
+        // empty data filter trigger
+        if (
+            diff[1:0]   != 2'b00 &&
+            diff[3:2]   != 2'b00 &&
+            diff[5:4]   != 2'b00 &&
+            diff[7:6]   != 2'b00 &&
+            diff[9:8]   != 2'b00 &&
+            diff[11:10] != 2'b00 &&
+            diff[13:12] != 2'b00 &&
+            diff[15:14] != 2'b00 &&
+            diff[17:16] != 2'b00 &&
+            diff[19:18] != 2'b00 &&
+            diff[21:20] != 2'b00 &&
+            diff[23:22] != 2'b00
+        ) begin
             trigger <= 1'b1;
+        end
 
         // previous spi signal
         // spi_clk_prev <= spi_clk;

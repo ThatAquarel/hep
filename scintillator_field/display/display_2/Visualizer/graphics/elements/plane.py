@@ -24,13 +24,7 @@ class Plane:
         self.data[:, :3] = self.vertices 
 
         # #Set colour
-        for i in range(len(self.vertices)):
-            if i %2 ==  0 :
-                self.data[i*36:(i+1)*36,3:7] = [1,1,1,0.5]  #white
-                #self.data[i*36:(i+1)*36,3:7] = [1,0,0,0.5] 
-            else:
-                self.data[i*36:(i+1)*36,3:7] = [211/256,211/256,211/256,0.5]   #gray
-                #self.data[i*36:(i+1)*36,3:7] = [0,1,0,0.5]
+        self.set_colour_default()
 
 
         #Set normals
@@ -196,15 +190,15 @@ class Plane:
             y_white = -1
             x_grey = -1
             y_grey = -1
+            self.set_colour_default()
         else:
-
         
-        #In here 111111 means that all of the positives light up(more towards positive x or y)
-        #000000 means that all of the negative(more towards the negative x or y)
+#In here 111111 means that all of the positives light up(more towards positive x or y, white)
+#000000 means that all of the negative(more towards the negative x or y, grey)
 
-        #More towards the positive has a white strip, more towards the negative has a gray strip
+#More towards the positive has a white strip, more towards the negative has a gray strip
 
-            #Top
+    #Top
                 x_white = pt_selected[2][0][3][0] * 4 + pt_selected[2][0][4][0] * 2 + pt_selected[2][0][5][0]
                 y_white = pt_selected[2][1][3][0] * 4 + pt_selected[2][1][4][0] * 2 + pt_selected[2][1][5][0]
                 x_grey = pt_selected[2][0][3][1] * 4 + pt_selected[2][0][4][1] * 2 + pt_selected[2][0][5][1]
@@ -298,8 +292,15 @@ class Plane:
                                     self.data[k : k + 36, 3:6] = [1,1,0]
                                 else: 
                                     self.data[k : k + 36, 3:6] = [211/256,211/256,211/256]
-
-
+    
+    def set_colour_default(self):
+        for i in range(len(self.vertices)):
+            if i %2 ==  0 :
+                self.data[i*36:(i+1)*36,3:7] = [1,1,1,0.5]  #white
+                #self.data[i*36:(i+1)*36,3:7] = [1,0,0,0.5] 
+            else:
+                self.data[i*36:(i+1)*36,3:7] = [211/256,211/256,211/256,0.5]   #gray
+                #self.data[i*36:(i+1)*36,3:7] = [0,1,0,0.5]
 
 
 

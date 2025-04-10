@@ -6,6 +6,13 @@ build: $(VERILOG_FILES)
 	@nextpnr-ice40 --package tq144 --json latching_register.json --pcf latching_register.pcf --asc latching_register.asc
 	@icepack latching_register.asc latching_register.bin
 
+
+synth: $(VERILOG_FILES)
+	@yosys -p 'synth_ice40 -top top -json latching_register.json' $(VERILOG_FILES)
+
+route:
+	@nextpnr-ice40 --package tq144 --json latching_register.json --pcf latching_register.pcf --asc latching_register.asc --placer-heap-cell-placement-timeout 10
+
 flash:
 	@dd if=/dev/zero ibs=1 count=2097152 > padding.bin
 	@dd if=latching_register.bin of=padding.bin conv=notrunc
