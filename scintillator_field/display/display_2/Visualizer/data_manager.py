@@ -159,8 +159,8 @@ class test:
         #self.update_data(0b010101010101010101010101)
         #self.update_data(0b010111011110100110011101)
 
-        #self.update_data(0b011011010110101011010110)
-        self.update_data(0b100110101101010101101001)
+        self.update_data(0b011011010110101011010110)
+        #self.update_data(0b100110101101010101101001)
             
 
 

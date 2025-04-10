@@ -183,7 +183,7 @@ class App(CameraOrbitControls, ShaderRenderer):
             dt = current - start
             start = current
 
-        self.generate_csv()
+        #self.generate_csv()
 
         glfw.terminate()
 
