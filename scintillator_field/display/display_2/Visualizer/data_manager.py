@@ -18,7 +18,7 @@ class test:
             dsrdtr = True
             port = "COM5"
 
-        #self.arduino = serial.Serial(port=port, baudrate=115200, dsrdtr=dsrdtr)
+        self.arduino = serial.Serial(port=port, baudrate=115200, dsrdtr=dsrdtr)
 
 
 
@@ -26,21 +26,27 @@ class test:
         self.data = []
         self.reset()
 
-        self.testing()  #For real data, remove this line
+        #self.testing()  #For real data, remove this line
         
 
 
     def has_data(self):
+        """
+        Check if the Arduino has data
+        """
         return self.arduino.in_waiting >= 8
     
     def get_data_from_arduino(self):
+        """
+        Gather the data from Arduino
+        """
         self.arduino.read_until(b"\x7E")
         value = self.arduino.read(4)
         if self.arduino.read(1) != b"\x7D":
             print("serial frame end error")
 
-        # remaining = self.arduino.in_waiting
-        # self.arduino.read(remaining)
+        remaining = self.arduino.in_waiting
+        self.arduino.read(remaining)
 
         (n,) = struct.unpack("<I", value)
 
@@ -76,9 +82,9 @@ class test:
         transform data ready to be interpreted by the visualizer, then update self.data
         """
         
-        bit24 = raw_data & 0xffffff
+        bit24 = raw_data & 0xffffff     #turn from 32bit to 24 bit
 
-        cooked_data = self.interpret_raw_data(bit24)
+        cooked_data = self.interpret_raw_data(bit24)    
         algorithmized = self.detection_algorithm.scintillators_to_bounds(cooked_data)
 
         if not algorithmized:
@@ -93,21 +99,18 @@ class test:
 
         #This part depends on if you want to make the point to be assigned to a dataset or as a new dataset
         point = [new_hull_bounds, new_fan_out_lines, cooked_data, bit24, time]
-        dataset = []
-        dataset.append(point)
 
-        self.data.append(dataset)
+        self.data.append(point)
 
-    def rationalize(self,raw_data):
-        a = []
-        for i in range(24):
-            a.append((raw_data & (2**i)) >> i )
-        
-        b = [5,4,7,6,0,1,2,3,8,9,10,11,13,12,15,14,16,17,18,19,21,20,22,23]
+
 
 
 
     def interpret_raw_data(self,bin):
+        """
+        change the format to be inputted into Aljoscha's code
+        """
+
         x = bin & 3355443   #& operator on 0b001100110011001100110011
         y = bin & 13421772  #& operator on 0b110011001100110011001100
 
@@ -142,6 +145,9 @@ class test:
         return list
 
     def transform_coordinates_fanned(self,data):
+        """
+        Transform the fanning part into my coordinate system
+        """
         list = []
         for pair in data:
             list.append(self.transform_coordinates(pair))
@@ -160,7 +166,7 @@ class test:
         #self.update_data(0b010111011110100110011101)
 
         self.update_data(0b011011010110101011010110)
-        #self.update_data(0b100110101101010101101001)
+        self.update_data(0b100110101101010101101001)
             
 
 

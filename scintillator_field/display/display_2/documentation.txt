@@ -11,30 +11,27 @@ app.py
 test.py
     -This is where all of the data points come from. 
     -The algorithm designed by Aljoscha gives out vertices for drawing objects
-    -The code allows one to have multiple "datasets". This means that:
-        You can toggle multiple datasets at once from the ui
-        Each dataset can be displayed seperately, meaning that they can overlap and you can display whichever datasets you want
-        You can have multiple points within the dataset
-        This is why we have this monstrosity of a list:
+    -The code allows one to store multiple "data points". This means that:
+        You can toggle multiple data points at once from the ui
+        Each data point can be displayed seperately, meaning that they can overlap and you can display whichever data point you want
+        This is why we have this list:
 
-        test.data
-            |_ datasets
-                |
-                |_ prisms/points(whatever you want to call it)
-                    |
-                    |_ vertices
-                    |    |
-                    |    |_(x,y,z) coordinates
-                    |
-                    |_ fanning pairs
-                    |    |
-                    |    |_ pairs: (1-8), (2-7), (3-6), (4-5)
-                    |        |
-                    |        |_ vertices (eg 1)
-                    |            |
-                    |            |_ (x,y,z)
-                    |
-                    |_ raw data(original binary)
+        self.test.data
+        |_ data prisms/points
+            |
+            |_ vertices
+            |    |
+            |    |_(x,y,z) coordinates
+            |
+            |_ fanning pairs
+            |    |
+            |    |_ pairs: (1-8), (2-7), (3-6), (4-5)
+            |        |
+            |        |_ vertices (eg 1)
+            |            |
+            |            |_ (x,y,z)
+            |
+            |_ raw data(original binary)
         
 
 arduino.py

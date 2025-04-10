@@ -83,15 +83,16 @@ class ParameterInterface:
 
         self.input_data = []
 
-        #elements
-        self.dataset_active = []
-        for i in range(len(self.input_data)):
-            self.dataset_active.append(False)
+
 
         self.show_axes = True
         self.latest = True
 
-        self.pt_selected_send = False
+        self.pt_selected = None
+
+        self.dataset_active = []
+        for i in range(len(self.input_data)):
+            self.dataset_active.append(False)
 
 
 
@@ -113,6 +114,9 @@ class ParameterInterface:
     
     @ui_section("Status", top_margin=False)
     def status(self):
+        """
+        show xyz axis, show latest
+        """
         
         _, self.show_axes = imgui.checkbox("show xy axes", self.show_axes)
         imgui.text("x-axis: red, y-axis: green, z-axis:blue")
@@ -120,17 +124,20 @@ class ParameterInterface:
 
         _, self.latest = imgui.checkbox("Only show last data", self.latest)
 
-        #To update the list of dataset which is active
-        if self.latest:
+        if self.latest and self.dataset_active != []:
             self.dataset_active = []
             for i in range(len(self.input_data)):
                 self.dataset_active.append(False)
+
             self.dataset_active[-1] = True
+
 
 
     @ui_section("Point data")
     def point_data(self):
-        
+        """
+        Data about the point
+        """
         if self.pt_selected == None:
             imgui.text(f"No data point selected")
 
@@ -138,16 +145,10 @@ class ParameterInterface:
             for i in range(len(self.dataset_active)):
                 #To prevent the selected point of previous data set which is no longer showing
                 if self.pt_selected in self.input_data[i] and not self.dataset_active[i]:
-                    self.pt_selected_send = None   #This thing tells app.py to change back the pt_selected 
+                    self.pt_selected = None   #This thing tells app.py to change back the pt_selected 
                     imgui.text(f"No data point selected")
                     return 
-                
-                #To find the data of the point selected
-                elif self.dataset_active[i]:
-                    for pt in self.input_data[i]:
-                        if self.pt_selected == pt:
-                            set_number = i + 1
-                            point = self.input_data[i].index(self.pt_selected) + 1
+
 
             imgui.text(f"{self.pt_selected[4]}")
             imgui.text(f"Coordinates: ({self.pt_selected[0]})")
@@ -160,12 +161,26 @@ class ParameterInterface:
 
     @ui_section("Tests")
     def tests(self):
-
+        """
+        Options to select which datasets are chosen
+        """
         for i in range(len(self.input_data)):
-            _, self.dataset_active[i] = imgui.checkbox(f"Datatest {i + 1}: {self.input_data[i][0][4]}", self.dataset_active[i])
-        
+            _, self.dataset_active[i] = imgui.checkbox(f"Datatest {i + 1}: {self.input_data[i][4]}", self.dataset_active[i])
 
         
+
+
+    def update_variables(self):
+        """
+        Update the variables every loop
+        """
+        for i in range(len(self.input_data)-len(self.dataset_active)):
+            self.dataset_active.append(False)
+
+        for i in range(len(self.dataset_active)):
+            if self.dataset_active[i]:
+                self.pt_selected = self.input_data[i]
+
 
     def on_render_ui(self,window,pt_selected):
         """
@@ -177,11 +192,10 @@ class ParameterInterface:
         imgui.new_frame()
         imgui.begin("Code 'borrowed' from Joule")
 
+        self.update_variables()
         self.status()
         self.point_data()
         self.tests()
-
-
 
 
         imgui.end()
