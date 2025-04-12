@@ -1,39 +1,41 @@
-# from scintillator_field.software.boundary_algorithm.detection import *
-#import scintillator_field.software.boundary_algorithm.detection as d
-from detection import *
-import serial
-import struct
 import os
+import struct
 
 from datetime import datetime
 
-
+import serial
 import numpy as np
+
+from scintillator_display.math.convex_hull import ConvexHullDetection as Detection
+
+
 class test:
-    def __init__(self):
-        dsrdtr = False
-        port = "/dev/ttyUSB0"
-
-        if os.name == "nt":
-            dsrdtr = True
-            port = "COM5"
-
-        self.arduino = serial.Serial(port=port, baudrate=115200, dsrdtr=dsrdtr)
-
-
-
+    def __init__(self, debug=True):
         self.detection_algorithm = Detection()
         self.data = []
+
+        if debug:
+            self.testing()
+        else:
+            dsrdtr = False
+            port = "/dev/ttyUSB0"
+
+            if os.name == "nt":
+                dsrdtr = True
+                port = "COM5"
+
+            self.arduino = serial.Serial(port=port, baudrate=115200, dsrdtr=dsrdtr)
+
+        self.debug = debug
+
         self.reset()
-
-        #self.testing()  #For real data, remove this line
-        
-
 
     def has_data(self):
         """
         Check if the Arduino has data
         """
+        if self.debug:
+            return False
         return self.arduino.in_waiting >= 8
     
     def get_data_from_arduino(self):

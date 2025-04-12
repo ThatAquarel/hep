@@ -1,10 +1,8 @@
 import imgui
 from imgui.integrations.glfw import GlfwRenderer
 
-import numpy as np
 
-import graphics.orbit_controls
-
+import scintillator_display.display.impl_a.graphics as graphics
 
 
 def ui_spacing():

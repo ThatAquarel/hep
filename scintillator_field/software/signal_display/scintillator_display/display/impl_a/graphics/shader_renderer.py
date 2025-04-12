@@ -4,7 +4,7 @@ import glm
 from OpenGL.GL import *
 from OpenGL.GL.shaders import compileShader, compileProgram
 
-import graphics.shaders as shaders
+import scintillator_display.display.impl_a.graphics.shaders as shaders
 
 
 class ShaderRenderer:
