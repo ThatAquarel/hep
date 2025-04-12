@@ -1,7 +1,9 @@
 import glfw
 import imgui
 
+from OpenGL.GL import glViewport, glEnable, GL_SCISSOR_TEST, glScissor, glDisable
 from scintillator_display.compat.imgui_manager import ImguiManager
+
 
 class ViewportManager:
     _instance = None
@@ -27,8 +29,14 @@ class ViewportManager:
         self.imgui = ImguiManager(self.window)
 
     def render_loop(self):
+        self.vp_resize(vp_resize_callback=True)
+        glEnable(GL_SCISSOR_TEST)
+
         while not glfw.window_should_close(self.window):
+
             for vp in self.viewports:
+                glViewport(vp.xpos, vp.ypos, vp.width, vp.height)
+                glScissor(vp.xpos, vp.ypos, vp.width, vp.height)
                 vp.on_render()
 
             imgui.render()
@@ -37,6 +45,8 @@ class ViewportManager:
 
             glfw.swap_buffers(self.window)
             glfw.poll_events()
+
+        glDisable(GL_SCISSOR_TEST)
         glfw.terminate()
 
     def create_window(self, window_size, name):
@@ -74,25 +84,29 @@ class ViewportManager:
             return
 
         vp = self.viewports[self.current_vp]
-        vp.cursor_pos_callback(vp.idx, xpos, ypos)
+        vp.cursor_pos_callback(vp, xpos, ypos)
 
     def _mouse_button_callback(self, window, button, action, mods):        
         if self.imgui.want_mouse:
             return
 
         vp = self.viewports[self.current_vp]
-        vp.mouse_button_callback(vp.idx, button, action, mods)
+        vp.mouse_button_callback(vp, button, action, mods)
 
     def _scroll_callback(self, window, xoffset, yoffset):
         if self.imgui.want_mouse:
             return
         
         vp = self.viewports[self.current_vp]
-        vp.scroll_callback(vp.idx, xoffset, yoffset)
+        vp.scroll_callback(vp, xoffset, yoffset)
 
     def _window_size_callback(self, window, width, height):
-        vp = self.viewports[self.current_vp]
-        vp.window_size_callback(vp.idx, width, height)
+        self.width = width
+        self.height = height
+        self.vp_resize(vp_resize_callback=True)
+
+        # vp = self.viewports[self.current_vp]
+        # vp.window_size_callback(vp.idx, width, height)
 
         # TODO: CALL viewport resize
 
@@ -117,13 +131,22 @@ class ViewportManager:
         self.viewports.append(vp_new)
 
         self.vp_count += 1
+        self.vp_resize()
+
+        return vp_new
+    
+    def vp_resize(self, vp_resize_callback=False):
         vp_w = self.width // self.vp_count
 
         for i, vp in enumerate(self.viewports):
             vp.width = vp_w
-            vp.xpos = vp_w * i
+            vp.height = self.height
 
-        return vp_new
+            vp.xpos = vp_w * i
+            vp.ypos = 0
+
+            if vp_resize_callback:
+                vp.window_size_callback(vp, vp.width, vp.height)
     
     def vp_intersect(self, xpos, ypos):
         idx = int(xpos / self.width * self.vp_count)
