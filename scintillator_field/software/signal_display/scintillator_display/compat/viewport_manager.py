@@ -29,6 +29,8 @@ class ViewportManager:
         self.vp_focus = 0
         self.vp_focused = False
 
+        self._intersect_regions = []
+
         self.imgui = ImguiManager(self.window)
 
     def render_loop(self):
@@ -145,31 +147,42 @@ class ViewportManager:
         return vp_new
     
     def vp_resize(self, vp_resize_callback=False):
-        vp_w = self.width // self.vp_count
+        total_ratio = 0
+        for vp in self.viewports:
+            total_ratio += vp.ratio
+
+        ratio_width = self.width // total_ratio
+        ratio_current = 0
+
+        self._intersect_regions = [0]
 
         for i, vp in enumerate(self.viewports):
-            vp.width = vp_w
+            vp.xpos = ratio_current * ratio_width
+            vp.ypos = 0
+
+            vp.width = vp.ratio * ratio_width
             vp.height = self.height
 
-            vp.xpos = vp_w * i
-            vp.ypos = 0
+            ratio_current += vp.ratio
+            self._intersect_regions.append(vp.xpos + vp.width)
 
             if vp_resize_callback:
                 vp.window_size_callback(vp, vp.width, vp.height)
     
     def vp_intersect(self, xpos, ypos):
-        idx = int(xpos / self.width * self.vp_count)
+        if not len(self._intersect_regions):
+            self.vp_resize(vp_resize_callback=False)
 
-        return min(idx, self.vp_count - 1)
+        for i, bound_min in enumerate(self._intersect_regions[:-1]):
+            bound_max = self._intersect_regions[i + 1]
 
-        # for vp in self.viewports:
-        #     x_in = vp.xpos <= xpos <= (vp.xpos + vp.width)
-        #     y_in = vp.ypos <= ypos <= (vp.ypos + vp.height)
+            if bound_min <= xpos < bound_max:
+                return i
+        return 0
 
-        #     if x_in and y_in:
-        #         return vp.idx
-
-        # return 0
+    def set_vp_ratio(self, vp, ratio):
+        vp_id = vp.idx
+        self.viewports[vp_id].ratio = ratio
 
     def set_cursor_pos_callback(self, vp, fn):
         vp_id = vp.idx
@@ -209,6 +222,8 @@ class Viewport:
         self.width = None
         self.height = None
 
+        self._ratio = 1
+
         self._cursor_pos_callback = None
         self._mouse_button_callback = None
         self._scroll_callback = None
@@ -217,6 +232,14 @@ class Viewport:
         self._char_callback = None
 
         self._on_render = None
+
+    @property
+    def ratio(self):
+        return self._ratio
+    
+    @ratio.setter
+    def ratio(self, ratio):
+        self._ratio = ratio
 
     @property
     def idx(self):
