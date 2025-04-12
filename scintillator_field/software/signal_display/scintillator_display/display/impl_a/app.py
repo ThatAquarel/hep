@@ -1,10 +1,12 @@
 import time
 from datetime import datetime
 
-import glfw
+# import glfw
+import scintillator_display.compat.glfw as glfw
 
 import glm
-import imgui
+# import imgui
+import scintillator_display.compat.imgui as imgui
 
 import pandas as pd
 
