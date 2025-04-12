@@ -209,15 +209,89 @@ class Viewport:
         self.width = None
         self.height = None
 
-        self.cursor_pos_callback = None
-        self.mouse_button_callback = None
-        self.scroll_callback = None
-        self.window_size_callback = None
-        self.key_callback = None
-        self.char_callback = None
+        self._cursor_pos_callback = None
+        self._mouse_button_callback = None
+        self._scroll_callback = None
+        self._window_size_callback = None
+        self._key_callback = None
+        self._char_callback = None
 
-        self.on_render = None
+        self._on_render = None
 
     @property
     def idx(self):
         return self._idx
+    
+    def null_callback(self, *args, **kwargs):
+        ...
+    
+    @property
+    def cursor_pos_callback(self):
+        if self._cursor_pos_callback:
+            return self._cursor_pos_callback
+
+        return self.null_callback
+
+    @cursor_pos_callback.setter
+    def cursor_pos_callback(self, fn):
+        self._cursor_pos_callback = fn
+
+    @property
+    def mouse_button_callback(self):
+        if self._mouse_button_callback:
+            return self._mouse_button_callback
+        return self.null_callback
+
+    @mouse_button_callback.setter
+    def mouse_button_callback(self, fn):
+        self._mouse_button_callback = fn
+
+    @property
+    def scroll_callback(self):
+        if self._scroll_callback:
+            return self._scroll_callback
+        return self.null_callback
+
+    @scroll_callback.setter
+    def scroll_callback(self, fn):
+        self._scroll_callback = fn
+
+    @property
+    def window_size_callback(self):
+        if self._window_size_callback:
+            return self._window_size_callback
+        return self.null_callback
+
+    @window_size_callback.setter
+    def window_size_callback(self, fn):
+        self._window_size_callback = fn
+
+    @property
+    def key_callback(self):
+        if self._key_callback:
+            return self._key_callback
+        return self.null_callback
+
+    @key_callback.setter
+    def key_callback(self, fn):
+        self._key_callback = fn
+
+    @property
+    def char_callback(self):
+        if self._char_callback:
+            return self._char_callback
+        return self.null_callback
+
+    @char_callback.setter
+    def char_callback(self, fn):
+        self._char_callback = fn
+
+    @property
+    def on_render(self):
+        if self._on_render:
+            return self._on_render
+        return self.null_callback
+
+    @on_render.setter
+    def on_render(self, fn):
+        self._on_render = fn
