@@ -3,11 +3,17 @@ from OpenGL.GLU import *
 
 import numpy as np
 
-from scintillator_field.display.display_1.vbo_vao_stuff import *
-from scintillator_field.display.display_1.shaders.shaders import *
+# from scintillator_field.display.display_1.vbo_vao_stuff import *
+from scintillator_display.display.impl_b.vbo_vao_stuff import *
 
-from scintillator_field.display.display_1.scintillator_blocks import *
-from scintillator_field.display.display_1.detection_display import *
+# from scintillator_field.display.display_1.shaders.shaders import *
+from scintillator_display.display.impl_b.shaders.shaders import *
+
+# from scintillator_field.display.display_1.scintillator_blocks import *
+from scintillator_display.display.impl_b.scintillator_blocks import ScintillatorStructure
+
+# from scintillator_field.display.display_1.detection_display import *
+from scintillator_display.display.impl_b.detection_display import DetectionHulls
 
 
 class OpenGLStuff:

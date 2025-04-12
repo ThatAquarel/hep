@@ -1,10 +1,16 @@
+import time
+
 import numpy as np
 
-from scintillator_field.display.display_1.vbo_vao_stuff import *
-from scintillator_field.software.boundary_algorithm.detection import *
-from scintillator_field.display.display_1.input_data import *
+# from scintillator_field.display.display_1.vbo_vao_stuff import *
+from scintillator_display.display.impl_b.vbo_vao_stuff import *
 
-import time
+# from scintillator_field.software.boundary_algorithm.detection import *
+from scintillator_display.math.convex_hull import ConvexHullDetection as Detection
+
+# from scintillator_field.display.display_1.input_data import *
+from scintillator_display.display.impl_b.input_data import DataReception
+
 
 class DetectionHulls:
     def __init__(self):

@@ -45,7 +45,7 @@ def update_vao_vbo(data, vao, vbo):
 def draw_vao(vao, draw_type, n):
     glBindVertexArray(vao)
     glPointSize(10)
-    glLineWidth(15)
+    # glLineWidth(15) # Dual-viewports: remove for OpenGL 3.3 CORE COMPAT
     glDrawArrays(draw_type, 0, n)
     glBindVertexArray(0)
 

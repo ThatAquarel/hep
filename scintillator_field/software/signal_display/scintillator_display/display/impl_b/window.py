@@ -1,18 +1,21 @@
-import glfw
-from glfw.GLFW import *
+import time
+
+
+# import glfw
+import scintillator_display.compat.glfw as glfw
+
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
-import imgui
-from imgui.integrations.glfw import GlfwRenderer
-
 import numpy as np
 
-from scintillator_field.display.display_1.imgui_stuff import *
-from scintillator_field.display.display_1.opengl_stuff import *
+# from scintillator_field.display.display_1.imgui_stuff import *
+from scintillator_display.display.impl_b.imgui_stuff import ImguiStuff
 
-import time
+# from scintillator_field.display.display_1.opengl_stuff import *
+from scintillator_display.display.impl_b.opengl_stuff import OpenGLStuff
+
 
 
 
@@ -112,12 +115,12 @@ class Window:
         if action == glfw.PRESS:
             if button == glfw.MOUSE_BUTTON_LEFT:
                 self.panning = True
-            elif button == GLFW_MOUSE_BUTTON_RIGHT:
+            elif button == glfw.MOUSE_BUTTON_RIGHT: # Dual-viewports: glfw namespace change
                 self.angling = True
         if action == glfw.RELEASE:
             if button == glfw.MOUSE_BUTTON_LEFT:
                 self.panning = False
-            elif button == GLFW_MOUSE_BUTTON_RIGHT:
+            elif button == glfw.MOUSE_BUTTON_RIGHT: # Dual-viewports: glfw namespace change
                 self.angling = False
     
     def key_callbacks(self, window, key, scancode, action, mods):
@@ -148,12 +151,12 @@ class Window:
         self.imgui_stuff.initiate_imgui(self.window, appname)
 
         
-        glClearColor(0.5, 0.5, 0.5, 1)
+        # glClearColor(0.5, 0.5, 0.5, 1) # Dual-viewports: move to main render_loop
         glEnable(GL_DEPTH_TEST)
 
         # antialiasing (smoother lines)
         glEnable(GL_MULTISAMPLE)
-        glEnable(GL_POINT_SMOOTH)
+        # glEnable(GL_POINT_SMOOTH)  # Dual-viewports: remove for OpenGL 3.3 CORE COMPAT
 
         # opacity
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -169,12 +172,12 @@ class Window:
         self.done = False
         self.paused = False
 
-        while not self.done:
+        while not (self.done or glfw.window_should_close(self.window)): # Dual-viewports: need reference to glfw.
             self.render_loop()
 
 
     def render_loop(self):
-
+        glClearColor(0.5, 0.5, 0.5, 1) # Dual-viewports: split color separation
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         self.opengl_stuff_for_window.per_render_loop(self)
