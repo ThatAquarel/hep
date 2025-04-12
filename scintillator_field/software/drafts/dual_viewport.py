@@ -1,4 +1,8 @@
 import glfw
+import imgui
+from imgui.integrations.glfw import GlfwRenderer
+
+
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
@@ -39,7 +43,8 @@ def setup_orthographic_projection():
     glLoadIdentity()
 
 
-def draw_axes():
+def draw_axes(thick):
+    glLineWidth(thick)
     glBegin(GL_LINES)
 
     # X axis (red)
@@ -84,6 +89,8 @@ def mouse_callback(window, xpos, ypos):
 
 
 def mouse_button_callback(window, button, action, mods):
+    print(action == glfw.PRESS)
+
     global dragging, panning
     if button == glfw.MOUSE_BUTTON_LEFT:
         if action == glfw.PRESS:
@@ -104,28 +111,49 @@ def main():
     global last_x, last_y
     window = initialize_glfw()
 
+    imgui.create_context()
+    imgui_impl = GlfwRenderer(window, attach_callbacks=False)
+
     # Initial cursor position
     last_x, last_y = glfw.get_cursor_pos(window)
 
     setup_orthographic_projection()
+    glEnable(GL_SCISSOR_TEST)
 
     while not glfw.window_should_close(window):
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-        glClearColor(245 / 255, 247 / 255, 248 / 255, 1.0)
+        # glViewport(0,0,width, height)~
+        imgui.new_frame()
+        imgui.begin("Test")
+
+        imgui.text("sadfkljafdsjlkadsfjlk")
+
+        imgui.end()
 
         glViewport(0, 0, width // 2, height)
+        glScissor(0, 0, width // 2, height)
+        glClearColor(0 / 255, 247 / 255, 248 / 255, 1.0)
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         glLoadIdentity()
         apply_view_transformations()
 
-        draw_axes()
+        draw_axes(20)
+
+        # glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         glViewport(width // 2, 0, width, height)
+        glScissor(width // 2, 0, width, height)
+        glClearColor(0 / 255, 0 / 255, 0 / 255, 1.0)
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         glLoadIdentity()
         apply_view_transformations()
 
-        draw_axes()
+        draw_axes(5)
+
+        imgui.render()
+        imgui_impl.process_inputs()
+        imgui_impl.render(imgui.get_draw_data())
 
         glfw.swap_buffers(window)
         glfw.poll_events()
