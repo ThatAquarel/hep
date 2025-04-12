@@ -24,7 +24,10 @@ class ViewportManager:
 
         self.viewports: list[Viewport] = []
         self.vp_count = 0
-        self._current_vp = 0
+        self.vp_current = 0
+
+        self.vp_focus = 0
+        self.vp_focused = False
 
         self.imgui = ImguiManager(self.window)
 
@@ -77,28 +80,38 @@ class ViewportManager:
         glfw.set_char_callback(window, self._char_callback)
 
         return window
-        
+    
+    def get_focused_vp(self):
+        return self.vp_focus if self.vp_focused else self.vp_current
+
     def _cursor_pos_callback(self, window, xpos, ypos):
-        self._current_vp = self.vp_intersect(xpos, ypos)
+        self.vp_current = self.vp_intersect(xpos, ypos)
 
         if self.imgui.want_mouse:
             return
 
-        vp = self.viewports[self.current_vp]
+        vp = self.viewports[self.get_focused_vp()]
         vp.cursor_pos_callback(vp, xpos, ypos)
 
     def _mouse_button_callback(self, window, button, action, mods):        
         if self.imgui.want_mouse:
             return
+        
+        self.vp_focused = action == glfw.PRESS
+        if not self.vp_focused:
+            deselect_vp = self.viewports[self.vp_focus]
+            deselect_vp.mouse_button_callback(deselect_vp, button, glfw.RELEASE, mods)
 
-        vp = self.viewports[self.current_vp]
+        self.vp_focus = self.vp_current
+
+        vp = self.viewports[self.get_focused_vp()]
         vp.mouse_button_callback(vp, button, action, mods)
 
     def _scroll_callback(self, window, xoffset, yoffset):
         if self.imgui.want_mouse:
             return
         
-        vp = self.viewports[self.current_vp]
+        vp = self.viewports[self.get_focused_vp()]
         vp.scroll_callback(vp, xoffset, yoffset)
 
     def _window_size_callback(self, window, width, height):
@@ -106,17 +119,12 @@ class ViewportManager:
         self.height = height
         self.vp_resize(vp_resize_callback=True)
 
-        # vp = self.viewports[self.current_vp]
-        # vp.window_size_callback(vp.idx, width, height)
-
-        # TODO: CALL viewport resize
-
     def _key_callback(self, *args, **kwargs):
         if self.imgui.want_keyboard:
             self.ui.impl.keyboard_callback(*args, **kwargs)
             return
 
-        vp = self.viewports[self.current_vp]
+        vp = self.viewports[self.get_focused_vp()]
         vp.key_callback(*args, **kwargs)
 
     def _char_callback(self, *args, **kwargs):
@@ -124,7 +132,7 @@ class ViewportManager:
             self.ui.impl.keyboard_callback(*args, **kwargs)
             return
 
-        vp = self.viewports[self.current_vp]
+        vp = self.viewports[self.get_focused_vp()]
         vp.char_callback(*args, **kwargs)
 
     def add_viewport(self, width, height):
@@ -162,10 +170,6 @@ class ViewportManager:
         #         return vp.idx
 
         # return 0
-
-    @property
-    def current_vp(self):
-        return self._current_vp
 
     def set_cursor_pos_callback(self, vp, fn):
         vp_id = vp.idx
