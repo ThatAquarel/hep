@@ -4,7 +4,7 @@ from scintillator_display.compat.viewport_manager import ViewportManager
 def entrypoint():
     vm = ViewportManager()
 
-    impl_a = IMPL_A((1280, 720), "IMPL_A")
+    impl_a = IMPL_A((1, 1), "IMPL_A")
     vp_a = impl_a.window
 
     def impl_a_render():
@@ -12,5 +12,15 @@ def entrypoint():
         impl_a.ui.on_render_ui(impl_a.window, impl_a.pt_selected)
 
     vm.set_on_render(vp_a, impl_a_render)
+
+    impl_b = IMPL_A((1, 1), "IMPL_B")
+    impl_b.ui.background_color = [0.5, 0.5, 0.5]
+    vp_b = impl_b.window
+
+    def impl_b_render():
+        impl_b.on_render_frame()
+        impl_b.ui.on_render_ui(impl_b.window, impl_b.pt_selected)
+
+    vm.set_on_render(vp_b, impl_b_render)
 
     vm.render_loop()
