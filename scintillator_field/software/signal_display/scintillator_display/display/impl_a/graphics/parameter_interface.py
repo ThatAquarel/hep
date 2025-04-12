@@ -1,7 +1,7 @@
 # import imgui
 # from imgui.integrations.glfw import GlfwRenderer
 
-import imgui
+import scintillator_display.compat.imgui as imgui
 from scintillator_display.compat.imgui.integrations.glfw import GlfwRenderer
 
 

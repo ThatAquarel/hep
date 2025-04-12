@@ -5,4 +5,7 @@ def render():
     ...
 
 def get_draw_data():
-    return 0
+    return None
+
+def new_frame():
+    ...

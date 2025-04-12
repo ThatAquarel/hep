@@ -1,5 +1,8 @@
-from scintillator_display.display.impl_a.app import App as IMPL_A
 from scintillator_display.compat.viewport_manager import ViewportManager
+
+from scintillator_display.display.impl_a.app import App as IMPL_A
+from scintillator_display.display.impl_b.window import Window as IMPL_B
+
 
 def entrypoint():
     vm = ViewportManager()
@@ -13,14 +16,15 @@ def entrypoint():
 
     vm.set_on_render(vp_a, impl_a_render)
 
-    impl_b = IMPL_A((1, 1), "IMPL_B")
-    impl_b.ui.background_color = [0.5, 0.5, 0.5]
+
+    impl_b = IMPL_B()
+    impl_b.main()
     vp_b = impl_b.window
 
     def impl_b_render():
-        impl_b.on_render_frame()
-        impl_b.ui.on_render_ui(impl_b.window, impl_b.pt_selected)
+        impl_b.render_loop()
 
     vm.set_on_render(vp_b, impl_b_render)
+
 
     vm.render_loop()
