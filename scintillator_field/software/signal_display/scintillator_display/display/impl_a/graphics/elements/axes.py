@@ -1,6 +1,6 @@
 import numpy as np
 
-from graphics.vbo import create_vao, draw_vao
+from scintillator_display.display.impl_a.graphics.vbo import create_vao, draw_vao
 
 from OpenGL.GL import *
 

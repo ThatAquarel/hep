@@ -1,11 +1,26 @@
 import numpy as np
-from itertools import product
 from OpenGL.GL import GL_LINES
 
-import test
-from graphics.vbo import create_vao, draw_vao, update_vbo
+
+from scintillator_display.math.convex_hull import ConvexHullDetection
+from scintillator_display.display.impl_a.graphics.vbo import create_vao, draw_vao, update_vbo
 
 import random
+
+
+def generate_test_data():
+    detection_algorithm = ConvexHullDetection()
+
+    scintillator_1= [[(0, 1), (0, 1), (0, 1), (0, 1), (0, 1), (0, 1)],[(0, 1), (0, 1), (0, 1), (0, 1), (0, 1), (0, 1)],]
+
+    # data_all = []
+    # data_all.append(detection_algorithm.scintillators_to_bounds(scintillator_1))
+
+    # data = []
+    # data.append(data_all)
+
+    return [[detection_algorithm.scintillators_to_bounds(scintillator_1)]]
+
 
 class trajectory:
     def __init__(self, scale=1.0):
@@ -46,7 +61,7 @@ class trajectory:
 
     def manage_data(self, dataset_num):
         #get position for vertices
-        vertices = self.interpret_data(test.data[dataset_num])
+        vertices = self.interpret_data(generate_test_data()) ## TODO: wtf, just change this please
         
         self.n = len(vertices)
 

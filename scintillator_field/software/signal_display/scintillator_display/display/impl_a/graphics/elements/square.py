@@ -1,8 +1,7 @@
 import numpy as np
-from itertools import product
 from OpenGL.GL import GL_TRIANGLES
 
-from graphics.vbo import create_vao, draw_vao, update_vbo
+from scintillator_display.display.impl_a.graphics.vbo import create_vao, draw_vao, update_vbo
 
 
 

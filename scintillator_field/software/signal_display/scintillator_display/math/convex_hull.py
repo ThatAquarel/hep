@@ -337,26 +337,3 @@ class ConvexHullDetection:
 
         return hull_bounds, fan_out_lines
 
-detection_algorithm = ConvexHullDetection()
-
-scintillators = [[(0, 1), (0, 1), (0, 1), (0, 1), (0, 1), (0, 1)],[(0, 1), (0, 1), (0, 1), (0, 1), (0, 1), (0, 1)]]
-scintillator_2 = [[(1, 0), (1, 0), (1, 0), (1, 0), (1, 0), (1, 0)], [(1, 0), (1, 0), (1, 0), (1, 0), (1, 0), (1, 0)]]
-hull_bounds, _ = detection_algorithm.scintillators_to_bounds(scintillator_2)
-#print(hull_bounds)
-
-hull_bounds, _ = detection_algorithm.scintillators_to_bounds(scintillator_2)
-#print(hull_bounds)
-
-    # Testing data
-
-        # scintillators = [(1, 0), (0, 1), (1, 0), (0, 1), (1, 0), (0, 1)]
-        # best_path = detect_side_view(scintillators)
-        # print(f'The path is bounded by {best_path}')
-
-
-        # Example test cases: scintillators = [(1, 0), (1, 0), (1, 0), (1, 0), (1, 0), (0, 1)] ---> Pass
-                            # >> [((0, 10), (0.25, -9)), ((0.25, 9), (0.5 -10))]
-        # [(0, 1), (1, 0), (1, 0), (1, 0), (0, 1), (1, 0)] ---> Pass 
-                            # >> [((0.25, 10), (0.5, -7)), ((0.5, 7), (0.75, -10))]
-        # [(1, 0), (0, 1), (1, 0), (0, 1), (1, 0), (0, 1)] ---> Pass
-                            # >> [((0.5, 10), (1.25, -9)), ((0.75, 9), (1.5, -10)) 

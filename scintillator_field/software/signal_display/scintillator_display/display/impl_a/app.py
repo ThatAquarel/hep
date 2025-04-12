@@ -1,29 +1,26 @@
 import time
+from datetime import datetime
 
 import glfw
-import numpy as np
 
 import glm
 import imgui
 
-
-import graphics.elements.axes
-import graphics.elements.plane
-from graphics.orbit_controls import CameraOrbitControls
-from graphics.parameter_interface import ParameterInterface
-from graphics.shader_renderer import ShaderRenderer
-
-import graphics.elements.cube
-import graphics.elements.square
-import graphics.elements.trajectory
-import graphics.elements.fan
-import graphics.elements.axes
-
-import data_manager
-
 import pandas as pd
-import numpy as np
-from datetime import datetime
+
+import scintillator_display.display.impl_a.graphics as graphics
+import scintillator_display.display.impl_a.data_manager as data_manager
+
+import scintillator_display.display.impl_a.graphics.elements.axes as axes
+import scintillator_display.display.impl_a.graphics.elements.square as square
+import scintillator_display.display.impl_a.graphics.elements.trajectory as trajectory
+import scintillator_display.display.impl_a.graphics.elements.fan as fan
+import scintillator_display.display.impl_a.graphics.elements.plane as plane
+
+from scintillator_display.display.impl_a.graphics.orbit_controls import CameraOrbitControls
+from scintillator_display.display.impl_a.graphics.parameter_interface import ParameterInterface
+from scintillator_display.display.impl_a.graphics.shader_renderer import ShaderRenderer
+
 
 class App(CameraOrbitControls, ShaderRenderer):
     def __init__(
@@ -55,16 +52,11 @@ class App(CameraOrbitControls, ShaderRenderer):
         self.scale = 12
 
         #setup elements
-        self.plane = graphics.elements.plane.Plane(scale = self.scale)
-
-
-        self.square = graphics.elements.square.square(scale = self.scale)
-
-        self.trajectory = graphics.elements.trajectory.trajectory(scale = self.scale)
-
-        self.axes = graphics.elements.axes.Axes(self.scale,self.scale)
-
-        self.fan = graphics.elements.fan.Fan(scale = self.scale)
+        self.plane = plane.Plane(scale = self.scale)
+        self.square = square.square(scale = self.scale)
+        self.trajectory = trajectory.trajectory(scale = self.scale)
+        self.axes = axes.Axes(self.scale,self.scale)
+        self.fan = fan.Fan(scale = self.scale)
 
         self.test = data_manager.test()
 
@@ -285,4 +277,4 @@ def run():
     # run the app
     App((1280, 720), "Not Joule")
 
-run()
+# run()
