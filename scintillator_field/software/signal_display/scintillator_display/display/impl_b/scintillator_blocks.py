@@ -1,7 +1,8 @@
 import numpy as np
 
 
-from scintillator_field.display.display_1.vbo_vao_stuff import *
+# from scintillator_field.display.display_1.vbo_vao_stuff import *
+from scintillator_display.display.impl_b.vbo_vao_stuff import *
 
 
 class ScintillatorStructure:

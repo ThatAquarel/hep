@@ -1,5 +1,6 @@
 import serial
-from scintillator_field.software.boundary_algorithm.detection import *
+# from scintillator_field.software.boundary_algorithm.detection import *
+from scintillator_display.math.convex_hull import ConvexHullDetection as Detection
 
 import struct
 
@@ -7,19 +8,30 @@ import os
 import numpy as np
 
 class DataReception:
-    def __init__(self):
-        dsrdtr = False
-        port = "/dev/ttyUSB0"
+    def __init__(self, debug=True):
+        self.debug = debug
 
-        if os.name == "nt":
-            dsrdtr = True
-            port = "COM4"
+        if debug:
+            self.testing()
+        else:
+            dsrdtr = False
+            port = "/dev/ttyUSB0"
 
-        self.arduino = serial.Serial(port=port, baudrate=115200, dsrdtr=dsrdtr)
+            if os.name == "nt":
+                dsrdtr = True
+                port = "COM4"
+
+            self.arduino = serial.Serial(port=port, baudrate=115200, dsrdtr=dsrdtr)
 
         self.detection_algorithm = Detection()
 
+    def testing(self):
+        self.to_create_testing = True
+
     def has_new_data(self):
+        if self.debug:
+            return self.to_create_testing
+
         return self.arduino.in_waiting >= 8
         
 
@@ -35,6 +47,10 @@ class DataReception:
         print()
 
     def get_data_from_arduino(self):
+        if self.debug:
+            self.to_create_testing = False
+            return 1431655765
+
         self.arduino.read_until(b"\x7E")
         value = self.arduino.read(4)
         if self.arduino.read(1) != b"\x7D":
