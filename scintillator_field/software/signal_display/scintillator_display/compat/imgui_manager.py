@@ -18,4 +18,5 @@ class ImguiManager:
     def want_mouse(self):
         return imgui.get_io().want_capture_mouse
 
-
+    def refresh_font_texture(self):
+        self._impl.refresh_font_texture()
