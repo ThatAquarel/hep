@@ -169,11 +169,12 @@ class ShaderRenderer:
         :param background_color: Screen background color as vector of shape (3,)
         """
 
-        # clear color and depth cache from previous frame
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-
         # set background color
         glClearColor(*background_color, 1.0)
+
+        # Dual-viewports: Clear bufferbit after clear color
+        # clear color and depth cache from previous frame
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         # use shader
         glUseProgram(self._shader)

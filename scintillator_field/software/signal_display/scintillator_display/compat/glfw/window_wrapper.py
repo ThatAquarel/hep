@@ -30,10 +30,6 @@ def window_should_close(window):
     return True
 
 
-def set_key_callback(window, fn):
-    v = ViewportManager()
-    v.set_key_callback(window, fn)
-
 def set_mouse_button_callback(window, fn):
     v = ViewportManager()
     v.set_mouse_button_callback(window, fn)

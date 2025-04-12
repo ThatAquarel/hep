@@ -33,6 +33,7 @@ class ViewportManager:
         glEnable(GL_SCISSOR_TEST)
 
         while not glfw.window_should_close(self.window):
+            imgui.new_frame()
 
             for vp in self.viewports:
                 glViewport(vp.xpos, vp.ypos, vp.width, vp.height)
