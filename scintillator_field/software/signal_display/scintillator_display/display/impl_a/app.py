@@ -262,9 +262,10 @@ class App(CameraOrbitControls, ShaderRenderer):
 
         #df.columns[0], df.columns[1] = df.columns[1], df.columns[0] 
         time = datetime.now()
+        time = ("").join([t if t != ":" else "." for t in str(time) ])
 
         try:
-            df.to_csv(f"scintillator_field/display/display_2/Visualizer/data/{time}.csv")   #Current directory is set to the "data" folder
+            df.to_csv(f"scintillator_display/data/{time}.csv")   #Current directory is set to the "data" folder
         except:
             df.to_csv(f"{time}.csv")
 
