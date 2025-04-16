@@ -37,12 +37,6 @@ def main(logger):
 
 
 if __name__ == "__main__":
-    logging.basicConfig(
-        filename=f"sc_{time.time()}.log",
-        encoding="utf-8",
-        level=logging.DEBUG,
-    )
-
     handler = TimedRotatingFileHandler(
         "sc_data.log", when="midnight", interval=1, backupCount=0
     )
