@@ -14,7 +14,7 @@ def record(logger):
             continue
 
         value = data_recorder.get_data_from_arduino()
-        logger.info(f"{time.time(),{value}}")
+        logger.info(f"{time.time()},{value}")
 
         lsb = value & 0xFFFFFF
         b1 = (lsb >> 16) & 0xFF
