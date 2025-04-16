@@ -42,6 +42,7 @@ if __name__ == "__main__":
     )
 
     logger = logging.getLogger("RECORDER")
+    logger.setLevel(logging.DEBUG)
     logger.addHandler(handler)
 
     main(logger)
