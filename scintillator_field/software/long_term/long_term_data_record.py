@@ -30,7 +30,7 @@ def main(logger):
     while True:
         try:
             logger.info("start recorder")
-            record()
+            record(logger)
         except Exception as e:
             logger.warning(f"restart recorder because {e}")
             ...
