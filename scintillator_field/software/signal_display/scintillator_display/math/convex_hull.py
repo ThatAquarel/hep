@@ -23,23 +23,26 @@ Unit x is mm
 '''   
 
 class ConvexHullDetection:
-    def __init__(self):
+    def __init__(self, impl_constant=1):
         pass
+
+        # constant multiplication from each impl
+        self.impl_constant = impl_constant
 
         # Global variables
         self.level_count = 1
-        self.n = 2*60 # Sideview length of scintillator in unit x
+        self.n = 2*60*self.impl_constant # Sideview length of scintillator in unit x
 
 
         # These values are used for x perspective
         self.upper_side_views = [(0, self.n)] # (start, end) coordinates for each level 
         self.lower_side_views = [(0, self.n)]
 
-        self.plate_thickness = 10 # In unit x
-        self.intra_level_gap = 2 #Actual physical gap between each level, in unit x
+        self.plate_thickness = 10*self.impl_constant # In unit x
+        self.intra_level_gap = 2*self.impl_constant #Actual physical gap between each level, in unit x
         self.inter_level_gap = self.plate_thickness + self.intra_level_gap # Adjusted inter level gap for computation 
 
-        self.half_gap_size =  162/2# In unit x
+        self.half_gap_size =  162/2*self.impl_constant # In unit x
         self.top_half_gap = self.half_gap_size + self.plate_thickness + self.intra_level_gap
         self.bottom_half_gap = self.half_gap_size
         self.gap_line = 0
@@ -49,18 +52,18 @@ class ConvexHullDetection:
     def reset_to_initial_values(self):
         # Global variables
         self.level_count = 1
-        self.n = 2*60 # Sideview length of scintillator in unit x
+        self.n = 2*60*self.impl_constant # Sideview length of scintillator in unit x
 
 
         # These values are used for x perspective
         self.upper_side_views = [(0, self.n)] # (start, end) coordinates for each level 
         self.lower_side_views = [(0, self.n)]
 
-        self.plate_thickness = 10 # In unit x
-        self.intra_level_gap = 2 #Actual physical gap between each level, in unit x
+        self.plate_thickness = 10*self.impl_constant # In unit x
+        self.intra_level_gap = 2*self.impl_constant #Actual physical gap between each level, in unit x
         self.inter_level_gap = self.plate_thickness + self.intra_level_gap # Adjusted inter level gap for computation 
 
-        self.half_gap_size =  162/2# In unit x
+        self.half_gap_size =  162/2*self.impl_constant# In unit x
         self.top_half_gap = self.half_gap_size + self.plate_thickness + self.intra_level_gap
         self.bottom_half_gap = self.half_gap_size
         self.gap_line = 0

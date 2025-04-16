@@ -11,7 +11,7 @@ from scintillator_display.math.convex_hull import ConvexHullDetection as Detecti
 
 class test:
     def __init__(self, debug=True):
-        self.detection_algorithm = Detection()
+        self.detection_algorithm = Detection(impl_constant=0.1)
         self.data = []
 
         if debug:
@@ -28,7 +28,7 @@ class test:
 
         self.debug = debug
 
-        self.reset()
+        self.detection_algorithm.reset_to_initial_values()
 
     def has_data(self):
         """
@@ -54,30 +54,9 @@ class test:
 
         return n
 
-    def reset(self):
-        """
-        Reset Aljoscha's code, since we use different values
-        """
 
-        # Global variables
-        self.detection_algorithm.level_count = 1
-        self.detection_algorithm.n = 2*60 * 0.1 # Sideview length of scintillator in unit x
+        
 
-
-        # These values are used for x perspective
-        self.detection_algorithm.upper_side_views = [(0, self.detection_algorithm.n)] # (start, end) coordinates for each level 
-        self.detection_algorithm.lower_side_views = [(0, self.detection_algorithm.n)]
-
-        self.detection_algorithm.plate_thickness = 10 * 0.1# In unit x
-        self.detection_algorithm.intra_level_gap = 2 * 0.1#Actual physical gap between each level, in unit x
-        self.detection_algorithm.inter_level_gap = self.detection_algorithm.plate_thickness + self.detection_algorithm.intra_level_gap # Adjusted inter level gap for computation 
-
-        self.detection_algorithm.half_gap_size =  162/2 * 0.1# In unit x
-        self.detection_algorithm.top_half_gap = self.detection_algorithm.half_gap_size + self.detection_algorithm.plate_thickness + self.detection_algorithm.intra_level_gap
-        self.detection_algorithm.bottom_half_gap = self.detection_algorithm.half_gap_size
-        self.detection_algorithm.gap_line = 0
-        self.detection_algorithm.highest_point = self.detection_algorithm.half_gap_size + 5*self.detection_algorithm.intra_level_gap + 6*self.detection_algorithm.plate_thickness # Values custom set to this detector
-        self.detection_algorithm.lowest_point = -self.detection_algorithm.highest_point
 
     def update_data(self,raw_data):
         """
@@ -103,7 +82,7 @@ class test:
         if not algorithmized:
             return
 
-        self.reset()
+        self.detection_algorithm.reset_to_initial_values()
 
         time = datetime.now()
 
@@ -120,27 +99,28 @@ class test:
 
 
 
-    def interpret_raw_data(self,bin):
-        """
-        change the format to be inputted into Aljoscha's code
-        """
+    #def interpret_raw_data(self,bin):
+    #    """
+    #    change the format to be inputted into Aljoscha's code
+    #    """
+#
+    #    x = bin & 3355443   #& operator on 0b001100110011001100110011
+    #    y = bin & 13421772  #& operator on 0b110011001100110011001100
+#
+    #    bit = 12
+    #    list_x = []
+    #    list_y = []
+    #    for i in range(0, bit, 2):
+    #        last_two_x = (x >> (i * 2))
+    #        list_x.append(((last_two_x & 2) >> 1, last_two_x & 1))
+#
+    #        last_two_x = (y >> (i * 2 + 2))
+    #        list_y.append(((last_two_x & 2) >> 1, last_two_x & 1))
+#
+    #    return [list_x,list_y]
+    #
+    #    #transforming coordinates
 
-        x = bin & 3355443   #& operator on 0b001100110011001100110011
-        y = bin & 13421772  #& operator on 0b110011001100110011001100
-
-        bit = 12
-        list_x = []
-        list_y = []
-        for i in range(0, bit, 2):
-            last_two_x = (x >> (i * 2))
-            list_x.append(((last_two_x & 2) >> 1, last_two_x & 1))
-
-            last_two_x = (y >> (i * 2 + 2))
-            list_y.append(((last_two_x & 2) >> 1, last_two_x & 1))
-
-        return [list_x,list_y]
-    
-        #transforming coordinates
     def transform_coordinates(self,data):
         """
         transform into my coordinate system

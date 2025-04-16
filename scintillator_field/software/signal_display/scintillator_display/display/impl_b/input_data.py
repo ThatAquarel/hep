@@ -23,7 +23,7 @@ class DataReception:
 
             self.arduino = serial.Serial(port=port, baudrate=115200, dsrdtr=dsrdtr)
 
-        self.detection_algorithm = Detection()
+        self.detection_algorithm = Detection(impl_constant=1)
 
     def testing(self):
         self.to_create_testing = True
