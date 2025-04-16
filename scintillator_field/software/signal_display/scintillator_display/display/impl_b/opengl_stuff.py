@@ -53,7 +53,7 @@ class OpenGLStuff:
             [0,  0,  250, 0, 0, 1, 1],
         ]).astype(np.float32)
 
-        self.lines_vao = make_vao_vbo(self.lines)[0]
+        self.lines_vao = make_vbo_vao(self.lines)[1]
 
         self.detected_hulls.data_exists = False
         self.detected_hulls.new_data = False
@@ -74,7 +74,7 @@ class OpenGLStuff:
 
 
 
-        if self.detected_hulls.arduino.has_new_data():
+        if self.detected_hulls.arduino.arduino_has_data():
             self.detected_hulls.create_hull_data()
 
         if self.detected_hulls.new_data:

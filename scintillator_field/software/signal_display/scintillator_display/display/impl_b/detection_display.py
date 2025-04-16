@@ -9,13 +9,14 @@ from scintillator_display.display.impl_b.vbo_vao_stuff import *
 from scintillator_display.math.convex_hull import ConvexHullDetection as Detection
 
 # from scintillator_field.display.display_1.input_data import *
-from scintillator_display.display.impl_b.input_data import DataReception
+from scintillator_display.display.impl_ab_data_input_manager import Data
 
 
 class DetectionHulls:
     def __init__(self):
         self.detection_algorithm = Detection()
-        self.arduino = DataReception()
+        self.arduino = Data(impl_constant=1, impl="b")
+        self.hull_vao = None
 
     def make_points_from_xyz(self, low_x, high_x, low_y, high_y, low_z, high_z, colour, opacity):
         p1 = np.array([low_x,  low_y,  low_z,  colour[0], colour[1], colour[2], opacity]) # base_point + (0,    0,    0)    # BFL
@@ -167,13 +168,13 @@ class DetectionHulls:
 
         '''
 
-        if self.arduino.has_new_data():
+        if self.arduino.arduino_has_data():
             data = self.arduino.get_data_from_arduino()
             # data = 10843835
 
-            if self.arduino.is_valid_data(data):
+            if self.arduino.impl_a_transform_data(data):
                 self.arduino.format_print(data)
-                self.hull_bounds, self.fan_out = self.get_hull_returns(self.arduino.scintillators)
+                self.hull_bounds, self.fan_out = self.get_hull_returns(self.arduino.cooked_data)
 
                 #self.hull_bounds, self.fan_out = self.get_hull_returns(window)
                 '''
@@ -232,7 +233,10 @@ class DetectionHulls:
 
 
     def create_hull_vao(self):
-        self.hull_vao = make_vao_vbo(self.hull_data)[0]
+        if self.hull_vao != None:
+            update_vbo_vao(self.hull_vbo, self.hull_vao)
+        else:
+            self.hull_vbo, self.hull_vao = make_vbo_vao(self.hull_data)
     
     def draw_hull(self):
         draw_vao(self.hull_vao, GL_TRIANGLES, self.hull_data.shape[0])

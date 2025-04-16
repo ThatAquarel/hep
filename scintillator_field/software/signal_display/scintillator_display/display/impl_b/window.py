@@ -84,8 +84,21 @@ class Window:
 
 
     def scroll_callbacks(self, window, xoffset, yoffset):
-        if (self.zoom-0.24*yoffset != 0) and not ((self.zoom-0.24*yoffset > -0.1) & (self.zoom-0.24*yoffset < 0.1)):
-            self.zoom -= 0.24*yoffset
+        self.scroll_amount = self.zoom/27.5 if self.zoom/27.5 > 0.24 else 0.24
+        if ((
+            self.zoom-self.scroll_amount*yoffset != 0
+            )
+                and not
+            (
+                (
+                    self.zoom-self.scroll_amount*yoffset > -0.1
+                )
+                    and
+                (
+                    self.zoom-self.scroll_amount*yoffset < 0.1
+                )
+            )):
+            self.zoom -= self.scroll_amount*yoffset
     
     def cursor_pos_callbacks(self, window, xpos, ypos):
         if self.panning:

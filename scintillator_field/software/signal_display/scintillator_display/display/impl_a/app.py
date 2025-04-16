@@ -11,7 +11,7 @@ import scintillator_display.compat.imgui as imgui
 import pandas as pd
 
 import scintillator_display.display.impl_a.graphics as graphics
-import scintillator_display.display.impl_a.data_manager as data_manager
+import scintillator_display.display.impl_ab_data_input_manager as ab_data_manager
 
 import scintillator_display.display.impl_a.graphics.elements.axes as axes
 import scintillator_display.display.impl_a.graphics.elements.square as square
@@ -60,7 +60,7 @@ class App(CameraOrbitControls, ShaderRenderer):
         self.axes = axes.Axes(self.scale,self.scale)
         self.fan = fan.Fan(scale = self.scale)
 
-        self.test = data_manager.test()
+        self.test_2 = ab_data_manager.Data(impl_constant=0.1, impl="a")
 
 
         self.pt_selected = None
@@ -200,18 +200,18 @@ class App(CameraOrbitControls, ShaderRenderer):
 
 
         #chekc arduino if there's data; gather data if there is
-        if self.test.has_data():
-            self.test.update_data(self.test.get_data_from_arduino())
+        if self.test_2.arduino_has_data():
+            self.test_2.impl_a_transform_data(self.test_2.get_data_from_arduino())
         
 
 
         #input for drawing
-        self.ui.input_data = self.test.data.copy()
+        self.ui.input_data = self.test_2.data.copy()
 
         
         #draw elements
-        self.square.draw(self.test.data.copy(), self.ui.dataset_active)
-        self.fan.draw(self.test.data.copy(), self.ui.dataset_active)
+        self.square.draw(self.test_2.data.copy(), self.ui.dataset_active)
+        self.fan.draw(self.test_2.data.copy(), self.ui.dataset_active)
 
         if self.ui.show_axes:
             self.axes.draw()
@@ -233,12 +233,14 @@ class App(CameraOrbitControls, ShaderRenderer):
 
 
 
+    # NOTE : these use the old self.test format for data from the old data_manager.py
+    # NOTE : now, one manager for impl a and b is used, with different function names
+    # NOTE : thus, the below code won't work immediately if uncommented
     # def on_click(self, window):
     #     # get 3D click coordinates
     #     rh = self.get_right_handed()
     #     self.x, self.y, self.z = self.get_click_point(window, rh)
         
-
     #     print(self.x, self.y, self.z)
     #     uncertainty = 1
     #     for i in range(len(self.test.data)):
@@ -254,7 +256,8 @@ class App(CameraOrbitControls, ShaderRenderer):
         Create csv file
         """
         
-        df = pd.DataFrame(self.test.data,columns=["new_hull_bounds", "new_fan_out_lines", "cooked_data", "bit24", "time"])
+        #df = pd.DataFrame(self.test.data,columns=["new_hull_bounds", "new_fan_out_lines", "cooked_data", "bit24", "time"])
+        df = pd.DataFrame(self.test_2.data,columns=["new_hull_bounds", "new_fan_out_lines", "cooked_data", "bit24", "time"])
 
         df = df.drop("new_hull_bounds", axis=1)
         df = df.drop("new_fan_out_lines", axis=1)
@@ -276,8 +279,7 @@ class App(CameraOrbitControls, ShaderRenderer):
         
 
 
-def run():
-    # run the app
-    App((1280, 720), "Not Joule")
+# run the app
+App((1280, 720), "Not Joule")
 
 # run()

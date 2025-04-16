@@ -279,7 +279,7 @@ class ScintillatorStructure:
 
 
     def make_vao(self):
-        self.triangles_vao = make_vao_vbo(self.all_data)[0]
+        self.triangles_vbo, self.triangles_vao = make_vbo_vao(self.all_data)
 
     def draw_scintillator_structure(self):
         draw_vao(self.triangles_vao, GL_TRIANGLES, self.all_data.shape[0])
