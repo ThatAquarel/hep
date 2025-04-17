@@ -132,10 +132,7 @@ class ConvexHullDetection(MathDisplayValues):
                         (x_left_bound[1], z_right_bound[1], self.lowest_point), (x_left_bound[1], z_left_bound[1], self.lowest_point),
                         (x_right_bound[1], z_right_bound[1], self.lowest_point), (x_right_bound[1], z_left_bound[1], self.lowest_point)]
         
-        fan_out_points = [(bounding_points[0], bounding_points[-1]), (bounding_points[1], bounding_points[-2]),
-                        (bounding_points[2], bounding_points[-3]), (bounding_points[3], bounding_points[-4])]
-        
-        return bounding_points, fan_out_points
+        return bounding_points
 
     def group_corresponding_levels(self, levels):
         '''
@@ -314,10 +311,10 @@ class ConvexHullDetection(MathDisplayValues):
         for i in range(2):
             z_bounds[i] = ((self.n - z_bounds[i][0][0], z_bounds[i][0][1]), (self.n - z_bounds[i][1][0], z_bounds[i][1][1]))
 
-        hull_bounds, fan_out_lines = self.hull_coordinates(x_bounds, z_bounds)
+        hull_bounds = self.hull_coordinates(x_bounds, z_bounds)
 
         # Reset initial values before next use
         self.reset_to_initial_values()
 
-        return hull_bounds, fan_out_lines
+        return hull_bounds
 

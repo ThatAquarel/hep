@@ -99,10 +99,38 @@ class Data:
             if self.scintillator_bounds == None:
                 return False
             return True
+
+
+    def scale_hull_bounds(self, hull_bounds):
+        '''
+        hull_bounds = [1, 2, 3, 4, 5, 6, 7, 8]
+        '''
+
+        idx = [[0, 7],[1, 6],[2, 5],[3, 4],]
+        fan = np.array(hull_bounds)[idx]
+        scale_factor = 75 if self.impl == "a" else 700
+        fan_vec = np.array([scale_factor*(p[0]-p[1])/np.linalg.norm(p[0]-p[1]) for p in fan])
+        
+        scaled_p0 =  fan_vec[0]+hull_bounds[0]
+        scaled_p1 =  fan_vec[1]+hull_bounds[1]
+        scaled_p2 =  fan_vec[2]+hull_bounds[2]
+        scaled_p3 =  fan_vec[3]+hull_bounds[3]
+        scaled_p4 = -fan_vec[3]+hull_bounds[4]
+        scaled_p5 = -fan_vec[2]+hull_bounds[5]
+        scaled_p6 = -fan_vec[1]+hull_bounds[6]
+        scaled_p7 = -fan_vec[0]+hull_bounds[7]
+
+
+        scaled_hull_bounds = [scaled_p0, scaled_p1,
+                              scaled_p2, scaled_p3,
+                              scaled_p4, scaled_p5,
+                              scaled_p6, scaled_p7]
+
+        return scaled_hull_bounds
         
     
     def transform_data_per_impl(self):
-        hull_bounds = self.scintillator_bounds[0]
+        hull_bounds = self.scintillator_bounds
 
         if self.impl == "a":
             time = datetime.now()
@@ -139,15 +167,6 @@ class Data:
 
         return lst
 
-    #def transform_coordinates_fanned_impl_a(self,data):
-    #    """
-    #    Transform the fanning part into my coordinate system
-    #    """
-    #    lst = []
-    #    for i, pair in enumerate(data):
-    #        lst.append(self.transform_coordinates_impl_a(pair))
-    #
-    #    return lst
     
     def testing(self):
         if self.impl == "b":

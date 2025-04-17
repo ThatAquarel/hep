@@ -7,9 +7,10 @@ from scintillator_display.display.impl_a.graphics.vbo import create_vao, draw_va
 
 
 class Fan:
-    def __init__(self, scale=1.0):
+    def __init__(self, arduino_data_manager, scale=1.0):
         self.scale = scale
         self.input_data = []
+        self.arduino_data_manager = arduino_data_manager
         
     def manage_data(self,prism):
         """
@@ -38,36 +39,6 @@ class Fan:
         self.vao, self.vbo = create_vao(self.data, return_vbo=True, store_normals=True)
 
 
-    def scale_points(self, hull_bounds):
-        '''
-        hull_bounds = [1, 2, 3, 4, 5, 6, 7, 8]
-        fan_out = [(1, 8), (2, 7), (3, 6), (4, 5)]
-        '''
-
-        idx = [[0, 7],[1, 6],[2, 5],[3, 4],]
-        fan = np.array(hull_bounds)[idx]
-        fan_vec = np.array([75*(p[0]-p[1])/np.linalg.norm(p[0]-p[1]) for p in fan])
-        
-        scaled_p0 =  fan_vec[0]+hull_bounds[0]
-        scaled_p1 =  fan_vec[1]+hull_bounds[1]
-        scaled_p2 =  fan_vec[2]+hull_bounds[2]
-        scaled_p3 =  fan_vec[3]+hull_bounds[3]
-        scaled_p4 = -fan_vec[3]+hull_bounds[4]
-        scaled_p5 = -fan_vec[2]+hull_bounds[5]
-        scaled_p6 = -fan_vec[1]+hull_bounds[6]
-        scaled_p7 = -fan_vec[0]+hull_bounds[7]
-
-
-        scaled_hull_bounds = [scaled_p0, scaled_p1,
-                              scaled_p2, scaled_p3,
-                              scaled_p4, scaled_p5,
-                              scaled_p6, scaled_p7]
-
-        return scaled_hull_bounds
-
-
-
-
     def interpret_data(self,prism):
         """
         Create veritex datas
@@ -75,7 +46,7 @@ class Fan:
         vertices = []
 
         hull_bounds = prism[0]
-        scaled_hull_bounds = self.scale_points(prism[0])
+        scaled_hull_bounds = self.arduino_data_manager.scale_hull_bounds(hull_bounds)
 
         p1 = scaled_hull_bounds[0]
         p2 = scaled_hull_bounds[1]

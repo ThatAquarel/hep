@@ -52,8 +52,9 @@ class Window:
 
 
 
-        self.pan_sensitivity = 0.001
-        self.angle_sensitivity = 0.01
+        self.pan_sensitivity   = 0.001
+        #self.angle_sensitivity = 0.01
+        self.angle_sensitivity = 0.001
 
         self.panning, self.angling = False, False
 
@@ -90,13 +91,9 @@ class Window:
             )
                 and not
             (
-                (
-                    self.zoom-self.scroll_amount*yoffset > -0.1
-                )
+                (self.zoom-self.scroll_amount*yoffset > -0.1)
                     and
-                (
-                    self.zoom-self.scroll_amount*yoffset < 0.1
-                )
+                (self.zoom-self.scroll_amount*yoffset < 0.1)
             )):
             self.zoom -= self.scroll_amount*yoffset
     
