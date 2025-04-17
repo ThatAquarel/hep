@@ -198,10 +198,14 @@ class Plane:
 #More towards the positive has a white strip, more towards the negative has a gray strip
 
     #Top
-                x_white = pt_selected[2][0][3][0] * 4 + pt_selected[2][0][4][0] * 2 + pt_selected[2][0][5][0]
-                y_white = pt_selected[2][1][3][0] * 4 + pt_selected[2][1][4][0] * 2 + pt_selected[2][1][5][0]
-                x_grey = pt_selected[2][0][3][1] * 4 + pt_selected[2][0][4][1] * 2 + pt_selected[2][0][5][1]
-                y_grey = pt_selected[2][1][3][1] * 4 + pt_selected[2][1][4][1] * 2 + pt_selected[2][1][5][1]
+                #x_white = pt_selected[2][0][3][0] * 4 + pt_selected[2][0][4][0] * 2 + pt_selected[2][0][5][0]
+                #y_white = pt_selected[2][1][3][0] * 4 + pt_selected[2][1][4][0] * 2 + pt_selected[2][1][5][0]
+                #x_grey  = pt_selected[2][0][3][1] * 4 + pt_selected[2][0][4][1] * 2 + pt_selected[2][0][5][1]
+                #y_grey  = pt_selected[2][1][3][1] * 4 + pt_selected[2][1][4][1] * 2 + pt_selected[2][1][5][1]
+                x_white = pt_selected[1][0][3][0] * 4 + pt_selected[1][0][4][0] * 2 + pt_selected[1][0][5][0]
+                y_white = pt_selected[1][1][3][0] * 4 + pt_selected[1][1][4][0] * 2 + pt_selected[1][1][5][0]
+                x_grey  = pt_selected[1][0][3][1] * 4 + pt_selected[1][0][4][1] * 2 + pt_selected[1][0][5][1]
+                y_grey  = pt_selected[1][1][3][1] * 4 + pt_selected[1][1][4][1] * 2 + pt_selected[1][1][5][1]
 
 
                     
@@ -247,10 +251,14 @@ class Plane:
 
             # bottom
 
-                x_white = pt_selected[2][0][2][0] * 4 + pt_selected[2][0][1][0] * 2 + pt_selected[2][0][0][0]
-                y_white = pt_selected[2][1][2][0] * 4 + pt_selected[2][1][1][0] * 2 + pt_selected[2][1][0][0]
-                x_grey = pt_selected[2][0][2][1] * 4 + pt_selected[2][0][1][1] * 2 + pt_selected[2][0][0][1]
-                y_grey = pt_selected[2][1][2][1] * 4 + pt_selected[2][1][1][1] * 2 + pt_selected[2][1][0][1]
+                #x_white = pt_selected[2][0][2][0] * 4 + pt_selected[2][0][1][0] * 2 + pt_selected[2][0][0][0]
+                #y_white = pt_selected[2][1][2][0] * 4 + pt_selected[2][1][1][0] * 2 + pt_selected[2][1][0][0]
+                #x_grey  = pt_selected[2][0][2][1] * 4 + pt_selected[2][0][1][1] * 2 + pt_selected[2][0][0][1]
+                #y_grey  = pt_selected[2][1][2][1] * 4 + pt_selected[2][1][1][1] * 2 + pt_selected[2][1][0][1]
+                x_white = pt_selected[1][0][2][0] * 4 + pt_selected[1][0][1][0] * 2 + pt_selected[1][0][0][0]
+                y_white = pt_selected[1][1][2][0] * 4 + pt_selected[1][1][1][0] * 2 + pt_selected[1][1][0][0]
+                x_grey  = pt_selected[1][0][2][1] * 4 + pt_selected[1][0][1][1] * 2 + pt_selected[1][0][0][1]
+                y_grey  = pt_selected[1][1][2][1] * 4 + pt_selected[1][1][1][1] * 2 + pt_selected[1][1][0][1]
                     
 
                 for layer in range(self.number_of_layers):

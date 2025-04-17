@@ -37,17 +37,36 @@ class Fan:
         # Build VAO and VBO
         self.vao, self.vbo = create_vao(self.data, return_vbo=True, store_normals=True)
 
-    def fanned_coords(self,pair):
-        """
-        transform the given coordinates into coordinates to be drawn
-        """
-        scale = 3
-        z_scale = 128
-        dx = (pair[0][0] - pair[1][0]) * scale
-        dy = (pair[0][1] - pair[1][1]) * scale
-        dz = (pair[0][2] - pair[1][2]) * scale
 
-        return [pair[0][0] + dx, pair[0][1] + dy, (pair[0][2] + dz)]
+    def scale_points(self, hull_bounds):
+        '''
+        hull_bounds = [1, 2, 3, 4, 5, 6, 7, 8]
+        fan_out = [(1, 8), (2, 7), (3, 6), (4, 5)]
+        '''
+
+        idx = [[0, 7],[1, 6],[2, 5],[3, 4],]
+        fan = np.array(hull_bounds)[idx]
+        fan_vec = np.array([75*(p[0]-p[1])/np.linalg.norm(p[0]-p[1]) for p in fan])
+        
+        scaled_p0 =  fan_vec[0]+hull_bounds[0]
+        scaled_p1 =  fan_vec[1]+hull_bounds[1]
+        scaled_p2 =  fan_vec[2]+hull_bounds[2]
+        scaled_p3 =  fan_vec[3]+hull_bounds[3]
+        scaled_p4 = -fan_vec[3]+hull_bounds[4]
+        scaled_p5 = -fan_vec[2]+hull_bounds[5]
+        scaled_p6 = -fan_vec[1]+hull_bounds[6]
+        scaled_p7 = -fan_vec[0]+hull_bounds[7]
+
+
+        scaled_hull_bounds = [scaled_p0, scaled_p1,
+                              scaled_p2, scaled_p3,
+                              scaled_p4, scaled_p5,
+                              scaled_p6, scaled_p7]
+
+        return scaled_hull_bounds
+
+
+
 
     def interpret_data(self,prism):
         """
@@ -55,20 +74,19 @@ class Fan:
         """
         vertices = []
 
-        p1 = self.fanned_coords(prism[1][0])
-        p2 = self.fanned_coords(prism[1][1])
-        p3 = self.fanned_coords(prism[1][2])
-        p4 = self.fanned_coords(prism[1][3])
+        hull_bounds = prism[0]
+        scaled_hull_bounds = self.scale_points(prism[0])
 
-        #tuple to list
-        
-        p5 = [prism[0][0][0],prism[0][0][1],prism[0][0][2]]
-        p6 = [prism[0][1][0],prism[0][1][1],prism[0][1][2]]
-        p7 = [prism[0][2][0],prism[0][2][1],prism[0][2][2]]
-        p8 = [prism[0][3][0],prism[0][3][1],prism[0][3][2]]
-        
-        
+        p1 = scaled_hull_bounds[0]
+        p2 = scaled_hull_bounds[1]
+        p3 = scaled_hull_bounds[2]
+        p4 = scaled_hull_bounds[3]
 
+        p5 = hull_bounds[0]
+        p6 = hull_bounds[1]
+        p7 = hull_bounds[2]
+        p8 = hull_bounds[3]     
+        
         # Front face
         vertices.append(p5)
         vertices.append(p1)
@@ -113,26 +131,19 @@ class Fan:
         # vertices.append(p7)
         # vertices.append(p8)
         
-        
-        #coords
-        p1 = [prism[0][4][0],prism[0][4][1],prism[0][4][2]]
-        p2 = [prism[0][5][0],prism[0][5][1],prism[0][5][2]]
-        p3 = [prism[0][6][0],prism[0][6][1],prism[0][6][2]]
-        p4 = [prism[0][7][0],prism[0][7][1],prism[0][7][2]]
 
 
-        #tuple to list
-        p5 = self.fanned_coords((prism[1][3][1],prism[1][3][0]))
-        p6 = self.fanned_coords((prism[1][2][1],prism[1][2][0]))
-        p7 = self.fanned_coords((prism[1][1][1],prism[1][1][0]))
-        p8 = self.fanned_coords((prism[1][0][1],prism[1][0][0]))
 
-        
-        # #scale z
-        # p1[2] = p1[2]/128
-        # p2[2] = p2[2]/128
-        # p3[2] = p3[2]/128
-        # p4[2] = p4[2]/128
+        p1 = hull_bounds[4]
+        p2 = hull_bounds[5]
+        p3 = hull_bounds[6]
+        p4 = hull_bounds[7]
+
+
+        p5 = scaled_hull_bounds[4]
+        p6 = scaled_hull_bounds[5]
+        p7 = scaled_hull_bounds[6]
+        p8 = scaled_hull_bounds[7]
         
 
         # Front face

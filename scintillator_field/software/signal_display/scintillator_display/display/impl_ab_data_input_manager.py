@@ -56,6 +56,19 @@ class Data:
 
         return n
     
+    
+    def format_print(self, value):
+        lsb = value & 0xFFFFFF
+        b1 = (lsb >> 16) & 0xFF
+        b2 = (lsb >> 8) & 0xFF
+        b3 = lsb & 0xFF
+
+        print("receive trigger: SiPM status")
+        print(f"    {b1:02x}          {b2:02x}          {b3:02x}")
+        print(f"    {b1:08b}    {b2:08b}    {b3:08b}")
+        print()
+    
+    
     def cook_data_into_scintillators(self, raw_data):
         """
         transform data ready to be interpreted by the display, then update self.data
@@ -72,48 +85,41 @@ class Data:
 
         return cooked_data
     
-    
-    def format_print(self, value):
-        lsb = value & 0xFFFFFF
-        b1 = (lsb >> 16) & 0xFF
-        b2 = (lsb >> 8) & 0xFF
-        b3 = lsb & 0xFF
+    def is_valid_data(self, data=None):
+        self.raw_data = self.get_data_from_arduino() if data==None else data
+        self.cooked_data = self.cook_data_into_scintillators(self.raw_data)
+        self.scintillator_bounds = self.detection_algorithm.scintillators_to_bounds(self.cooked_data)
 
-        print("receive trigger: SiPM status")
-        print(f"    {b1:02x}          {b2:02x}          {b3:02x}")
-        print(f"    {b1:08b}    {b2:08b}    {b3:08b}")
-        print()
-    
-    def impl_a_transform_data(self, raw_data):
-
-        cooked_data = self.cook_data_into_scintillators(raw_data)
-        self.cooked_data = cooked_data
-        
-        algorithmized = self.detection_algorithm.scintillators_to_bounds(cooked_data)
-
-        if self.impl == "b":
-            if algorithmized == None:
+        if self.impl == "a":
+            if not self.scintillator_bounds:
+                return
+            elif self.scintillator_bounds == None:
+                return
+        elif self.impl == "b":
+            if self.scintillator_bounds == None:
                 return False
             return True
         
-        if not algorithmized:
-            return
-        
-        if algorithmized == None:
-            return
+    
+    def transform_data_per_impl(self):
+        hull_bounds = self.scintillator_bounds[0]
 
-        self.detection_algorithm.reset_to_initial_values()
+        if self.impl == "a":
+            time = datetime.now()
 
-        time = datetime.now()
+            new_hull_bounds = self.transform_coordinates_impl_a(hull_bounds)
+            #new_fan_out_lines = self.transform_coordinates_fanned_impl_a(fan_out)
 
-        new_hull_bounds = self.transform_coordinates_impl_a(algorithmized[0])
-        new_fan_out_lines = self.transform_coordinates_fanned_impl_a(algorithmized[1])
+            bit24 = self.raw_data & 0xffffff
+            
+            #point = [new_hull_bounds, new_fan_out_lines, self.cooked_data, bit24, time]
+            point = [new_hull_bounds, self.cooked_data, bit24, time]
 
-        bit24 = raw_data & 0xffffff
-        
-        point = [new_hull_bounds, new_fan_out_lines, cooked_data, bit24, time]
-
-        self.data.append(point)
+            self.data.append(point)
+            
+        elif self.impl == "b":
+            hull_bounds = np.array(hull_bounds) - np.array([0, 0, 162/2])
+            return np.array(hull_bounds).astype(np.float32)#, np.array(fan_out).astype(np.float32)
 
 
     def transform_coordinates_impl_a(self,data):
@@ -133,20 +139,24 @@ class Data:
 
         return lst
 
-    def transform_coordinates_fanned_impl_a(self,data):
-        """
-        Transform the fanning part into my coordinate system
-        """
-        lst = []
-        for i, pair in enumerate(data):
-            lst.append(self.transform_coordinates_impl_a(pair))
-
-        return lst
+    #def transform_coordinates_fanned_impl_a(self,data):
+    #    """
+    #    Transform the fanning part into my coordinate system
+    #    """
+    #    lst = []
+    #    for i, pair in enumerate(data):
+    #        lst.append(self.transform_coordinates_impl_a(pair))
+    #
+    #    return lst
     
     def testing(self):
         if self.impl == "b":
             self.impl_b_testing = True
         elif self.impl == "a":
-            self.impl_a_transform_data(0b011011010110101011010110)
-            self.impl_a_transform_data(0b100110101101010101101001)
-            self.impl_a_transform_data(0b100101101010011101011001)
+            test_data = [0b011011010110101011010110,
+                    0b100110101101010101101001,
+                    0b100101101010011101011001,
+                    1431655765]
+            for data in test_data:
+                self.is_valid_data(data)
+                self.transform_data_per_impl()

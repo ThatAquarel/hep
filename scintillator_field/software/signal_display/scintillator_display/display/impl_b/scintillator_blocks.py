@@ -4,8 +4,10 @@ import numpy as np
 # from scintillator_field.display.display_1.vbo_vao_stuff import *
 from scintillator_display.display.impl_b.vbo_vao_stuff import *
 
+from scintillator_display.universal_values import MathDisplayValues
 
-class ScintillatorStructure:
+
+class ScintillatorStructure(MathDisplayValues):
     def __init__(self):
         #self.setup_structure(
         #                num_doubles      =               3, # 3 each
@@ -21,17 +23,17 @@ class ScintillatorStructure:
         #                in_between_space =               8, # 162 mm
         #                )
         self.setup_structure(
-                        num_doubles      =               3, # 3 each
+                        num_doubles      =               self.NUM_SCINTILLATOR_XY_PER_STRUCTURE, # 3 each
                         x_i              =               0,
                         y_i              =               0,
                         z_i              =               0,
-                        square_side_len  =               120, # mm
-                        width_per_one    =               10, # mm
-                        dead_space       =               2, # mm
+                        square_side_len  =               self.SQUARE_LEN, # mm
+                        width_per_one    =               self.SCINTILLATOR_THICKNESS, # mm
+                        dead_space       =               self.SPACE_BETWEEN_SCINTILLATORS, # mm
                         c1               = [1, 0.75, 0.75],
                         c2               = [0.75, 1, 0.75],
                         alpha            =             0.8,
-                        in_between_space =               162, # mm
+                        in_between_space =               self.SPACE_BETWEEN_STRUCTURES, # mm
                         )
         self.make_vao()
 
