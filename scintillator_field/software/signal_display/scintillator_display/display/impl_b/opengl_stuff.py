@@ -87,7 +87,7 @@ class OpenGLStuff:
 
         self.scintillator_structuce.draw_scintillator_structure()
 
-        #draw_vao(self.lines_vao, GL_LINES, self.lines.shape[0])
+        draw_vao(self.lines_vao, GL_LINES, self.lines.shape[0])
 
 
         pass

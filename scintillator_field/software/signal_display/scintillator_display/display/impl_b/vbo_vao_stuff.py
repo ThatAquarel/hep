@@ -3,6 +3,8 @@ from OpenGL.GLU import *
 
 import numpy as np
 
+import os
+
 
 def make_vbo_vao(data):
     n_per_vertice = 3

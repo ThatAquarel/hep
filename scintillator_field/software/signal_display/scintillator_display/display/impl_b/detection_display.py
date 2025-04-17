@@ -83,67 +83,32 @@ class DetectionHulls:
 
         return all_t
     
-    def scale_points(self, hull_bounds, fan_out):
+    def scale_points(self, hull_bounds):
         '''
         hull_bounds = [1, 2, 3, 4, 5, 6, 7, 8]
         fan_out = [(1, 8), (2, 7), (3, 6), (4, 5)]
         '''
 
-        vec = lambda p1, p2 : p1-p2
-
-        line_vectors = []
-        for line in fan_out:
-            vec_p1_p2 = vec(line[0], line[1])
-            unit_vec = vec_p1_p2/np.linalg.norm(vec_p1_p2)
-            line_vectors.append(75*unit_vec) # vec from p0 to p1
-
+        idx = [[0, 7],[1, 6],[2, 5],[3, 4],]
+        fan = np.array(hull_bounds)[idx]
+        fan_vec = np.array([75*(p[0]-p[1])/np.linalg.norm(p[0]-p[1]) for p in fan])
         
-        scaled_p0 = line_vectors[0]+hull_bounds[0]
-        scaled_p1 = line_vectors[1]+hull_bounds[1]
-        scaled_p2 = line_vectors[2]+hull_bounds[2]
-        scaled_p3 = line_vectors[3]+hull_bounds[3]
-        scaled_p4 = -line_vectors[3]+hull_bounds[4]
-        scaled_p5 = -line_vectors[2]+hull_bounds[5]
-        scaled_p6 = -line_vectors[1]+hull_bounds[6]
-        scaled_p7 = -line_vectors[0]+hull_bounds[7]
+        scaled_p0 =  fan_vec[0]+hull_bounds[0]
+        scaled_p1 =  fan_vec[1]+hull_bounds[1]
+        scaled_p2 =  fan_vec[2]+hull_bounds[2]
+        scaled_p3 =  fan_vec[3]+hull_bounds[3]
+        scaled_p4 = -fan_vec[3]+hull_bounds[4]
+        scaled_p5 = -fan_vec[2]+hull_bounds[5]
+        scaled_p6 = -fan_vec[1]+hull_bounds[6]
+        scaled_p7 = -fan_vec[0]+hull_bounds[7]
 
 
         scaled_hull_bounds = [scaled_p0, scaled_p1,
                               scaled_p2, scaled_p3,
                               scaled_p4, scaled_p5,
                               scaled_p6, scaled_p7]
-        
-        
-        scaled_fan_out = [
-            (scaled_p0, scaled_p7),
-            (scaled_p1, scaled_p6),
-            (scaled_p2, scaled_p5),
-            (scaled_p3, scaled_p4),
-        ]
 
-
-        return scaled_hull_bounds, scaled_fan_out
-
-
-    def get_hull_returns(self, scintillators_from_arduino):
-
-
-        # hull_bounds, fan_out = "do some stuff"
-
-        '''
-        hull_bounds = [1, 2, 3, 4, 5, 6, 7, 8]
-        == [TFL, TBL, TFR, TBR, BFL, BBL, BFR, BBR]
-
-        fan_out = [(1, 8), (2, 7), (3, 6), (4, 5)]
-        '''
-        scintillators = scintillators_from_arduino
-        
-        hull_bounds, fan_out = self.detection_algorithm.scintillators_to_bounds(scintillators)
-        hull_bounds = np.array(hull_bounds) - np.array([0, 0, 162/2])
-
-
-        return np.array(hull_bounds).astype(np.float32), np.array(fan_out).astype(np.float32)
-    
+        return scaled_hull_bounds
 
 
     def create_hull_data(self):
@@ -169,14 +134,14 @@ class DetectionHulls:
         '''
 
         if self.arduino.arduino_has_data():
-            data = self.arduino.get_data_from_arduino()
+            if self.arduino.is_valid_data():
+            # data = self.arduino.get_data_from_arduino()
             # data = 10843835
+                self.hull_bounds = self.arduino.transform_data_per_impl()
+            #if self.arduino.impl_a_transform_data(data):
+                #self.arduino.format_print(data)
+                #self.hull_bounds, self.fan_out = self.get_hull_returns(self.arduino.cooked_data)
 
-            if self.arduino.impl_a_transform_data(data):
-                self.arduino.format_print(data)
-                self.hull_bounds, self.fan_out = self.get_hull_returns(self.arduino.cooked_data)
-
-                #self.hull_bounds, self.fan_out = self.get_hull_returns(window)
                 '''
                 hull_bounds = [1, 2, 3, 4, 5, 6, 7, 8]
                 == [TFL, TBL, TFR, TBR, BFL, BBL, BFR, BBR]
@@ -198,7 +163,7 @@ class DetectionHulls:
                     p8 = self.vec3_to_vec7(self.hull_bounds[7], hull_colour, hull_opacity),
                 )
 
-                scaled_hull_bounds, scaled_fan_out = self.scale_points(self.hull_bounds, self.fan_out)
+                scaled_hull_bounds = self.scale_points(self.hull_bounds)
                 
                 top_triangle_fans = self.make_prism_triangles(
                     p1 = self.vec3_to_vec7(  self.hull_bounds[0], hull_colour, hull_opacity),

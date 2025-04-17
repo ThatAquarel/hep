@@ -151,13 +151,17 @@ class ParameterInterface:
                     return 
 
 
-            imgui.text(f"{self.pt_selected[4]}")
+            #imgui.text(f"{self.pt_selected[4]}")
+            imgui.text(f"{self.pt_selected[3]}")
             imgui.text(f"Coordinates: ({self.pt_selected[0]})")
-            imgui.text(f"Coordinates in Binary:{self.pt_selected[2]}")
-            imgui.text(f"Binary:{self.pt_selected[3]}")
+            #imgui.text(f"Coordinates in Binary:{self.pt_selected[2]}")
+            imgui.text(f"Coordinates in Binary:{self.pt_selected[1]}")
+            #imgui.text(f"Binary:{self.pt_selected[3]}")
+            imgui.text(f"Binary:{self.pt_selected[2]}")
 
             double = False
-            for xylist in self.pt_selected[2]:
+            #for xylist in self.pt_selected[2]:
+            for xylist in self.pt_selected[1]:
                 for pair in xylist:
                     if pair == (1,1):
                         double = True
@@ -174,7 +178,8 @@ class ParameterInterface:
         Options to select which datasets are chosen
         """
         for i in range(len(self.input_data)):
-            _, self.dataset_active[i] = imgui.checkbox(f"Datatest {i + 1}: {self.input_data[i][4]}", self.dataset_active[i])
+            #_, self.dataset_active[i] = imgui.checkbox(f"Datatest {i + 1}: {self.input_data[i][4]}", self.dataset_active[i])
+            _, self.dataset_active[i] = imgui.checkbox(f"Datatest {i + 1}: {self.input_data[i][3]}", self.dataset_active[i])
 
         
 

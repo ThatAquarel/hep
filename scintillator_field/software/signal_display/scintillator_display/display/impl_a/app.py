@@ -178,7 +178,8 @@ class App(CameraOrbitControls, ShaderRenderer):
             dt = current - start
             start = current
 
-        self.generate_csv()
+        if not self.test_2.debug:
+            self.generate_csv()
 
         glfw.terminate()
 
@@ -201,7 +202,9 @@ class App(CameraOrbitControls, ShaderRenderer):
 
         #chekc arduino if there's data; gather data if there is
         if self.test_2.arduino_has_data():
-            self.test_2.impl_a_transform_data(self.test_2.get_data_from_arduino())
+            if self.test_2.is_valid_data():
+                self.test_2.transform_data_per_impl()
+            #self.test_2.impl_a_transform_data(self.test_2.get_data_from_arduino())
         
 
 
@@ -257,10 +260,10 @@ class App(CameraOrbitControls, ShaderRenderer):
         """
         
         #df = pd.DataFrame(self.test.data,columns=["new_hull_bounds", "new_fan_out_lines", "cooked_data", "bit24", "time"])
-        df = pd.DataFrame(self.test_2.data,columns=["new_hull_bounds", "new_fan_out_lines", "cooked_data", "bit24", "time"])
+        df = pd.DataFrame(self.test_2.data,columns=["new_hull_bounds", "cooked_data", "bit24", "time"])
 
         df = df.drop("new_hull_bounds", axis=1)
-        df = df.drop("new_fan_out_lines", axis=1)
+        #df = df.drop("new_fan_out_lines", axis=1)
         df = df.drop("cooked_data", axis=1)
 
         #df.columns[0], df.columns[1] = df.columns[1], df.columns[0] 
