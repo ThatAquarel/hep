@@ -1,0 +1,14 @@
+[Unit]
+Description=SC Data collection
+After=network.target
+StartLimitIntervalSec=0
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+RuntimeMaxSec=3600
+User=hep
+ExecStart=/home/hep/.nvm/versions/node/v22.14.0/bin/lt --subdomain hep-testing-dawson-4096 --port 8080
+
+[Install]
+WantedBy=multi-user.target
