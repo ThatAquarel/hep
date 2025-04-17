@@ -82,33 +82,6 @@ class DetectionHulls:
         #all_t.extend(tT2) # hiding these 4 faces allows for seeing through convex hull
 
         return all_t
-    
-    def scale_points(self, hull_bounds):
-        '''
-        hull_bounds = [1, 2, 3, 4, 5, 6, 7, 8]
-        fan_out = [(1, 8), (2, 7), (3, 6), (4, 5)]
-        '''
-
-        idx = [[0, 7],[1, 6],[2, 5],[3, 4],]
-        fan = np.array(hull_bounds)[idx]
-        fan_vec = np.array([75*(p[0]-p[1])/np.linalg.norm(p[0]-p[1]) for p in fan])
-        
-        scaled_p0 =  fan_vec[0]+hull_bounds[0]
-        scaled_p1 =  fan_vec[1]+hull_bounds[1]
-        scaled_p2 =  fan_vec[2]+hull_bounds[2]
-        scaled_p3 =  fan_vec[3]+hull_bounds[3]
-        scaled_p4 = -fan_vec[3]+hull_bounds[4]
-        scaled_p5 = -fan_vec[2]+hull_bounds[5]
-        scaled_p6 = -fan_vec[1]+hull_bounds[6]
-        scaled_p7 = -fan_vec[0]+hull_bounds[7]
-
-
-        scaled_hull_bounds = [scaled_p0, scaled_p1,
-                              scaled_p2, scaled_p3,
-                              scaled_p4, scaled_p5,
-                              scaled_p6, scaled_p7]
-
-        return scaled_hull_bounds
 
 
     def create_hull_data(self):
@@ -163,7 +136,7 @@ class DetectionHulls:
                     p8 = self.vec3_to_vec7(self.hull_bounds[7], hull_colour, hull_opacity),
                 )
 
-                scaled_hull_bounds = self.scale_points(self.hull_bounds)
+                scaled_hull_bounds = self.arduino.scale_hull_bounds(self.hull_bounds)
                 
                 top_triangle_fans = self.make_prism_triangles(
                     p1 = self.vec3_to_vec7(  self.hull_bounds[0], hull_colour, hull_opacity),

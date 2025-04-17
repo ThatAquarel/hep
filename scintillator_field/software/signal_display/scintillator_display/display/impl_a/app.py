@@ -58,9 +58,9 @@ class App(CameraOrbitControls, ShaderRenderer):
         self.square = square.square(scale = self.scale)
         self.trajectory = trajectory.trajectory(scale = self.scale)
         self.axes = axes.Axes(self.scale,self.scale)
-        self.fan = fan.Fan(scale = self.scale)
 
         self.test_2 = ab_data_manager.Data(impl_constant=0.1, impl="a")
+        self.fan = fan.Fan(self.test_2, scale = self.scale)
 
 
         self.pt_selected = None
