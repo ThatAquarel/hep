@@ -18,20 +18,9 @@ class DetectionHulls:
         self.arduino = Data(impl_constant=1, impl="b")
         self.hull_vao = None
 
-    def make_points_from_xyz(self, low_x, high_x, low_y, high_y, low_z, high_z, colour, opacity):
-        p1 = np.array([low_x,  low_y,  low_z,  colour[0], colour[1], colour[2], opacity]) # base_point + (0,    0,    0)    # BFL
-        p2 = np.array([high_x, low_y,  low_z,  colour[0], colour[1], colour[2], opacity]) # base_point + (xlen, 0,    0)    # BFR
-        p3 = np.array([low_x,  high_y, low_z,  colour[0], colour[1], colour[2], opacity]) # base_point + (0,    ylen, 0)    # BBL
-        p4 = np.array([high_x, high_y, low_z,  colour[0], colour[1], colour[2], opacity]) # base_point + (xlen, ylen, 0)    # BBR
-        p5 = np.array([low_x,  low_y,  high_z, colour[0], colour[1], colour[2], opacity]) # base_point + (0,    0,    zlen) # TFL
-        p6 = np.array([high_x, low_y,  high_z, colour[0], colour[1], colour[2], opacity]) # base_point + (xlen, 0,    zlen) # TFR
-        p7 = np.array([low_x,  high_y, high_z, colour[0], colour[1], colour[2], opacity]) # base_point + (0,    ylen, zlen) # TBL
-        p8 = np.array([high_x, high_y, high_z, colour[0], colour[1], colour[2], opacity]) # base_point + (xlen, ylen, zlen) # TBR
-
-        return p1, p2, p3, p4, p5, p6, p7, p8
     
-    def vec3_to_vec7(self, p, colour, opacity):
-        return np.array([p[0], p[1], p[2], colour[0], colour[1], colour[2], opacity])
+    def vec3_to_vec7(self, p_xyz, colour, opacity):
+        return np.array([*p_xyz, *colour, opacity])
 
     def make_prism_triangles(self, p1, p2, p3, p4, p5, p6, p7, p8):
 
@@ -84,7 +73,7 @@ class DetectionHulls:
         return all_t
 
 
-    def create_hull_data(self):
+    def create_hull_data(self, hull_bounds):
         '''
 
         works with actual values of structure
@@ -104,77 +93,32 @@ class DetectionHulls:
         - make upwards fan
         - make downwards fan
 
+        hull_bounds = [1, 2, 3, 4, 5, 6, 7, 8]
+        == [TFL, TBL, TFR, TBR, BFL, BBL, BFR, BBR]
+
+        
         '''
 
-        if self.arduino.arduino_has_data():
-            if self.arduino.is_valid_data():
-            # data = self.arduino.get_data_from_arduino()
-            # data = 10843835
-                self.hull_bounds = self.arduino.transform_data_per_impl()
-            #if self.arduino.impl_a_transform_data(data):
-                #self.arduino.format_print(data)
-                #self.hull_bounds, self.fan_out = self.get_hull_returns(self.arduino.cooked_data)
+        hull_colour = [0.5, 0, 0.5]
+        hull_opacity = 0.8
+        vec7_hull_bounds = [self.vec3_to_vec7(p, hull_colour, hull_opacity) for p in hull_bounds]
 
-                '''
-                hull_bounds = [1, 2, 3, 4, 5, 6, 7, 8]
-                == [TFL, TBL, TFR, TBR, BFL, BBL, BFR, BBR]
+        self.hull_data = self.arduino.hull_setup_for_data_point_impl_a(vec7_hull_bounds)
 
-                fan_out = [(1, 8), (2, 7), (3, 6), (4, 5)]
-                '''
+        self.data_exists = True
+        self.new_data = True
 
-                hull_colour = [0.5, 0, 0.5]
-                hull_opacity = 0.8
-                
-                hull_prism_triangles = self.make_prism_triangles(
-                    p1 = self.vec3_to_vec7(self.hull_bounds[0], hull_colour, hull_opacity),
-                    p2 = self.vec3_to_vec7(self.hull_bounds[2], hull_colour, hull_opacity),
-                    p3 = self.vec3_to_vec7(self.hull_bounds[1], hull_colour, hull_opacity),
-                    p4 = self.vec3_to_vec7(self.hull_bounds[3], hull_colour, hull_opacity),
-                    p5 = self.vec3_to_vec7(self.hull_bounds[4], hull_colour, hull_opacity),
-                    p6 = self.vec3_to_vec7(self.hull_bounds[6], hull_colour, hull_opacity),
-                    p7 = self.vec3_to_vec7(self.hull_bounds[5], hull_colour, hull_opacity),
-                    p8 = self.vec3_to_vec7(self.hull_bounds[7], hull_colour, hull_opacity),
-                )
-
-                scaled_hull_bounds = self.arduino.scale_hull_bounds(self.hull_bounds)
-                
-                top_triangle_fans = self.make_prism_triangles(
-                    p1 = self.vec3_to_vec7(  self.hull_bounds[0], hull_colour, hull_opacity),
-                    p2 = self.vec3_to_vec7(  self.hull_bounds[2], hull_colour, hull_opacity),
-                    p3 = self.vec3_to_vec7(  self.hull_bounds[1], hull_colour, hull_opacity),
-                    p4 = self.vec3_to_vec7(  self.hull_bounds[3], hull_colour, hull_opacity),
-                    p5 = self.vec3_to_vec7(scaled_hull_bounds[0], hull_colour, hull_opacity),
-                    p6 = self.vec3_to_vec7(scaled_hull_bounds[2], hull_colour, hull_opacity),
-                    p7 = self.vec3_to_vec7(scaled_hull_bounds[1], hull_colour, hull_opacity),
-                    p8 = self.vec3_to_vec7(scaled_hull_bounds[3], hull_colour, hull_opacity),
-                )
-
-                bottom_triangle_fans = self.make_prism_triangles(
-                    p1 = self.vec3_to_vec7(scaled_hull_bounds[4], hull_colour, hull_opacity),
-                    p2 = self.vec3_to_vec7(scaled_hull_bounds[6], hull_colour, hull_opacity),
-                    p3 = self.vec3_to_vec7(scaled_hull_bounds[5], hull_colour, hull_opacity),
-                    p4 = self.vec3_to_vec7(scaled_hull_bounds[7], hull_colour, hull_opacity),
-                    p5 = self.vec3_to_vec7(  self.hull_bounds[4], hull_colour, hull_opacity),
-                    p6 = self.vec3_to_vec7(  self.hull_bounds[6], hull_colour, hull_opacity),
-                    p7 = self.vec3_to_vec7(  self.hull_bounds[5], hull_colour, hull_opacity),
-                    p8 = self.vec3_to_vec7(  self.hull_bounds[7], hull_colour, hull_opacity),
-                )
-
-                hull_data = []
-                hull_data.extend(hull_prism_triangles)
-                hull_data.extend(top_triangle_fans)
-                hull_data.extend(bottom_triangle_fans)
-                self.hull_data = np.array(hull_data).astype(np.float32)
-
-                self.data_exists = True
-                self.new_data = True
+        return self.hull_data
 
 
-    def create_hull_vao(self):
-        if self.hull_vao != None:
-            update_vbo_vao(self.hull_vbo, self.hull_vao)
+    def create_hull_vao(self, data, vbo=None, vao=None):
+        if vao != None:
+            update_vbo_vao(data, vbo, vao)
+            return vbo, vao
         else:
-            self.hull_vbo, self.hull_vao = make_vbo_vao(self.hull_data)
+            vbo, vao = make_vbo_vao(data)
+            return vbo, vao
     
-    def draw_hull(self):
-        draw_vao(self.hull_vao, GL_TRIANGLES, self.hull_data.shape[0])
+    def draw_hull(self, vao=None, n=None):
+        #draw_vao(self.hull_vao, GL_TRIANGLES, self.hull_data.shape[0])
+        draw_vao(vao, GL_TRIANGLES, n)

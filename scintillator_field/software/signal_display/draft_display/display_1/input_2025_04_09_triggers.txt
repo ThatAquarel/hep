@@ -1,0 +1,163 @@
+receive trigger: SiPM status
+    fd          fe          5e
+    11111101    11111110    01011110
+
+receive trigger: SiPM status
+    fd          ff          6d
+    11111101    11111111    01101101
+
+receive trigger: SiPM status
+    fb          bc          1d
+    11111011    10111100    00011101
+
+receive trigger: SiPM status
+    f5          7d          1d
+    11110101    01111101    00011101
+
+receive trigger: SiPM status
+    75          7e          4d
+    01110101    01111110    01001101
+
+receive trigger: SiPM status
+    be          7e          4e
+    10111110    01111110    01001110
+
+receive trigger: SiPM status
+    f9          f6          25
+    11111001    11110110    00100101
+
+receive trigger: SiPM status
+    bd          7c          5f
+    10111101    01111100    01011111
+
+receive trigger: SiPM status
+    fd          be          7d
+    11111101    10111110    01111101
+
+receive trigger: SiPM status
+    fd          5e          0d
+    11111101    01011110    00001101
+
+receive trigger: SiPM status
+    f9          df          5f
+    11111001    11011111    01011111
+
+receive trigger: SiPM status
+    7f          ff          4c
+    01111111    11111111    01001100
+
+receive trigger: SiPM status
+    75          7a          45
+    01110101    01111010    01000101
+
+receive trigger: SiPM status
+    f9          9e          0e
+    11111001    10011110    00001110
+
+receive trigger: SiPM status
+    fd          fc          2e
+    11111101    11111100    00101110
+
+receive trigger: SiPM status
+    59          bc          aa
+    01011001    10111100    10101010
+
+receive trigger: SiPM status
+    ff          7c          0c
+    11111111    01111100    00001100
+
+receive trigger: SiPM status
+    e6          7c          29
+    11100110    01111100    00101001
+
+receive trigger: SiPM status
+    fa          78          1a
+    11111010    01111000    00011010
+
+receive trigger: SiPM status
+    fb          ba          1c
+    11111011    10111010    00011100
+
+receive trigger: SiPM status
+    f7          9e          1d
+    11110111    10011110    00011101
+
+receive trigger: SiPM status
+    6f          bd          5f
+    01101111    10111101    01011111
+
+receive trigger: SiPM status
+    ff          ff          dd
+    11111111    11111111    11011101
+
+receive trigger: SiPM status
+    79          b6          4e
+    01111001    10110110    01001110
+
+receive trigger: SiPM status
+    79          74          4d
+    01111001    01110100    01001101
+
+receive trigger: SiPM status
+    7a          be          4e
+    01111010    10111110    01001110
+
+receive trigger: SiPM status
+    fd          b7          3e
+    11111101    10110111    00111110
+
+receive trigger: SiPM status
+    ff          fc          34
+    11111111    11111100    00110100
+
+receive trigger: SiPM status
+    fe          fa          57
+    11111110    11111010    01010111
+
+receive trigger: SiPM status
+    f5          7a          1e
+    11110101    01111010    00011110
+
+receive trigger: SiPM status
+    f9          7c          0e
+    11111001    01111100    00001110
+
+receive trigger: SiPM status
+    f7          9a          16
+    11110111    10011010    00010110
+
+receive trigger: SiPM status
+    f5          74          29
+    11110101    01110100    00101001
+
+receive trigger: SiPM status
+    fd          b8          3d
+    11111101    10111000    00111101
+
+receive trigger: SiPM status
+    f9          de          0b
+    11111001    11011110    00001011
+
+receive trigger: SiPM status
+    fe          7c          0a
+    11111110    01111100    00001010
+
+receive trigger: SiPM status
+    fb          74          2d
+    11111011    01110100    00101101
+
+receive trigger: SiPM status
+    fa          6f          3e
+    11111010    01101111    00111110
+
+receive trigger: SiPM status
+    db          bb          1e
+    11011011    10111011    00011110
+
+receive trigger: SiPM status
+    fd          7c          1f
+    11111101    01111100    00011111
+
+receive trigger: SiPM status
+    f5          fe          09
+    11110101    11111110    00001001

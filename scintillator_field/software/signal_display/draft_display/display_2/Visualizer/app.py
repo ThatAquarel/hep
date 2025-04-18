@@ -1,27 +1,29 @@
 import time
-from datetime import datetime
 
-# import glfw
-import scintillator_display.compat.glfw as glfw
+import glfw
+import numpy as np
 
 import glm
-# import imgui
-import scintillator_display.compat.imgui as imgui
+import imgui
+
+
+import graphics.elements.axes
+import graphics.elements.plane
+from graphics.orbit_controls import CameraOrbitControls
+from graphics.parameter_interface import ParameterInterface
+from graphics.shader_renderer import ShaderRenderer
+
+import graphics.elements.cube
+import graphics.elements.square
+import graphics.elements.trajectory
+import graphics.elements.fan
+import graphics.elements.axes
+
+import data_manager
 
 import pandas as pd
-
-import scintillator_display.display.impl_a.graphics as graphics
-import scintillator_display.display.impl_ab_data_input_manager as ab_data_manager
-
-import scintillator_display.display.impl_a.graphics.elements.axes as axes
-import scintillator_display.display.impl_a.graphics.elements.trajectory as trajectory
-import scintillator_display.display.impl_a.graphics.elements.fan_and_path as fan_and_path
-import scintillator_display.display.impl_a.graphics.elements.plane as plane
-
-from scintillator_display.display.impl_a.graphics.orbit_controls import CameraOrbitControls
-from scintillator_display.display.impl_a.graphics.parameter_interface import ParameterInterface
-from scintillator_display.display.impl_a.graphics.shader_renderer import ShaderRenderer
-
+import numpy as np
+from datetime import datetime
 
 class App(CameraOrbitControls, ShaderRenderer):
     def __init__(
@@ -53,12 +55,18 @@ class App(CameraOrbitControls, ShaderRenderer):
         self.scale = 12
 
         #setup elements
-        self.plane = plane.Plane(scale = self.scale)
-        self.trajectory = trajectory.trajectory(scale = self.scale)
-        self.axes = axes.Axes(self.scale,self.scale)
+        self.plane = graphics.elements.plane.Plane(scale = self.scale)
 
-        self.test_2 = ab_data_manager.Data(impl_constant=0.1, impl="a")
-        self.fan = fan_and_path.Fan(self.test_2, scale = self.scale)
+
+        self.square = graphics.elements.square.square(scale = self.scale)
+
+        self.trajectory = graphics.elements.trajectory.trajectory(scale = self.scale)
+
+        self.axes = graphics.elements.axes.Axes(self.scale,self.scale)
+
+        self.fan = graphics.elements.fan.Fan(scale = self.scale)
+
+        self.test = data_manager.test()
 
 
         self.pt_selected = None
@@ -176,8 +184,7 @@ class App(CameraOrbitControls, ShaderRenderer):
             dt = current - start
             start = current
 
-        if not self.test_2.debug:
-            self.generate_csv()
+        self.generate_csv()
 
         glfw.terminate()
 
@@ -199,18 +206,18 @@ class App(CameraOrbitControls, ShaderRenderer):
 
 
         #chekc arduino if there's data; gather data if there is
-        if self.test_2.arduino_has_data():
-            if self.test_2.is_valid_data():
-                self.test_2.transform_data_per_impl()
+        if self.test.has_data():
+            self.test.update_data(self.test.get_data_from_arduino())
         
 
 
         #input for drawing
-        self.ui.input_data = self.test_2.data.copy()
+        self.ui.input_data = self.test.data.copy()
 
         
         #draw elements
-        self.fan.draw(self.test_2.data.copy(), self.ui.dataset_active)
+        self.square.draw(self.test.data.copy(), self.ui.dataset_active)
+        self.fan.draw(self.test.data.copy(), self.ui.dataset_active)
 
         if self.ui.show_axes:
             self.axes.draw()
@@ -232,14 +239,12 @@ class App(CameraOrbitControls, ShaderRenderer):
 
 
 
-    # NOTE : these use the old self.test format for data from the old data_manager.py
-    # NOTE : now, one manager for impl a and b is used, with different function names
-    # NOTE : thus, the below code won't work immediately if uncommented
     # def on_click(self, window):
     #     # get 3D click coordinates
     #     rh = self.get_right_handed()
     #     self.x, self.y, self.z = self.get_click_point(window, rh)
         
+
     #     print(self.x, self.y, self.z)
     #     uncertainty = 1
     #     for i in range(len(self.test.data)):
@@ -255,16 +260,17 @@ class App(CameraOrbitControls, ShaderRenderer):
         Create csv file
         """
         
-        df = pd.DataFrame(self.test_2.data,columns=["new_hull_bounds", "cooked_data", "bit24", "time"])
+        df = pd.DataFrame(self.test.data,columns=["new_hull_bounds", "new_fan_out_lines", "cooked_data", "bit24", "time"])
 
         df = df.drop("new_hull_bounds", axis=1)
+        df = df.drop("new_fan_out_lines", axis=1)
         df = df.drop("cooked_data", axis=1)
 
+        #df.columns[0], df.columns[1] = df.columns[1], df.columns[0] 
         time = datetime.now()
-        time = ("").join([t if t != ":" else "." for t in str(time) ])
 
         try:
-            df.to_csv(f"scintillator_display/data/{time}.csv")   #Current directory is set to the "data" folder
+            df.to_csv(f"scintillator_field/display/display_2/Visualizer/data/{time}.csv")   #Current directory is set to the "data" folder
         except:
             df.to_csv(f"{time}.csv")
 
@@ -275,7 +281,8 @@ class App(CameraOrbitControls, ShaderRenderer):
         
 
 
-# run the app
-App((1280, 720), "Not Joule")
+def run():
+    # run the app
+    App((1280, 720), "Not Joule")
 
-# run()
+run()

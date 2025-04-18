@@ -74,16 +74,37 @@ class OpenGLStuff:
 
 
 
-        if self.detected_hulls.arduino.arduino_has_data():
-            self.detected_hulls.create_hull_data()
 
-        if self.detected_hulls.new_data:
-            self.detected_hulls.create_hull_vao()
 
-        self.detected_hulls.new_data = False
 
-        if self.detected_hulls.data_exists:
-            self.detected_hulls.draw_hull()
+
+
+
+
+
+        if not self.detected_hulls.arduino.debug:
+            if self.detected_hulls.arduino.arduino_has_data():
+                if self.detected_hulls.arduino.is_valid_data():
+                    hull_bounds = self.detected_hulls.arduino.transform_data_per_impl()
+                    self.detected_hulls.create_hull_data(hull_bounds)
+
+            if self.detected_hulls.new_data:
+                self.detected_hulls.create_hull_vao()
+
+            self.detected_hulls.new_data = False
+
+            if self.detected_hulls.data_exists:
+                self.detected_hulls.draw_hull()
+        
+        elif self.detected_hulls.arduino.debug:
+            for i, j in enumerate(window.imgui_stuff.data_boxes_checked):
+                if j==True:
+                    data = self.detected_hulls.create_hull_data(self.detected_hulls.arduino.data[i][0])
+                    vbo, vao = self.detected_hulls.create_hull_vao(data)
+                    self.detected_hulls.draw_hull(vao, data.shape[0])
+
+
+
 
         self.scintillator_structuce.draw_scintillator_structure()
 

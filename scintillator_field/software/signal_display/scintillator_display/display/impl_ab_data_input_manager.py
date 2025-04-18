@@ -8,12 +8,15 @@ import numpy as np
 
 from scintillator_display.math.convex_hull import ConvexHullDetection as Detection
 
+from scintillator_display.universal_values import MathDisplayValues
 
-class Data:
+
+class Data(MathDisplayValues):
     def __init__(self, impl_constant, impl, debug=True):
         self.debug = debug
         self.impl = impl # "a" or "b"
         self.data = []
+        self.impl_b_data_is_checked = []
         self.detection_algorithm = Detection(impl_constant=impl_constant)
 
 
@@ -34,16 +37,10 @@ class Data:
 
     def arduino_has_data(self):
         if self.debug:
-            if self.impl == "b":
-                return self.impl_b_testing
-            elif self.impl == "a":
-                return False
+            return False
         return self.arduino.in_waiting >= 8
     
     def get_data_from_arduino(self):
-        if self.debug:
-            self.impl_b_testing = False
-            return 1431655765
         """
         Gather the data from Arduino
         """
@@ -106,9 +103,9 @@ class Data:
         hull_bounds = [1, 2, 3, 4, 5, 6, 7, 8]
         '''
 
-        idx = [[0, 7],[1, 6],[2, 5],[3, 4],]
+        idx = [[0, 7],[1, 6],[2, 5],[3, 4]]
         fan = np.array(hull_bounds)[idx]
-        scale_factor = 75 if self.impl == "a" else 700
+        scale_factor = 75 if self.impl == "a" else 700 if self.impl == "b" else 0
         fan_vec = np.array([scale_factor*(p[0]-p[1])/np.linalg.norm(p[0]-p[1]) for p in fan])
         
         scaled_p0 =  fan_vec[0]+hull_bounds[0]
@@ -132,22 +129,26 @@ class Data:
     def transform_data_per_impl(self):
         hull_bounds = self.scintillator_bounds
 
+        time = datetime.now()
+
         if self.impl == "a":
-            time = datetime.now()
-
             new_hull_bounds = self.transform_coordinates_impl_a(hull_bounds)
-            #new_fan_out_lines = self.transform_coordinates_fanned_impl_a(fan_out)
-
-            bit24 = self.raw_data & 0xffffff
-            
-            #point = [new_hull_bounds, new_fan_out_lines, self.cooked_data, bit24, time]
-            point = [new_hull_bounds, self.cooked_data, bit24, time]
-
-            self.data.append(point)
-            
         elif self.impl == "b":
-            hull_bounds = np.array(hull_bounds) - np.array([0, 0, 162/2])
-            return np.array(hull_bounds).astype(np.float32)#, np.array(fan_out).astype(np.float32)
+            new_hull_bounds = np.array(hull_bounds) - np.array([0, 0, self.SPACE_BETWEEN_STRUCTURES/2])
+
+
+
+        bit24 = self.raw_data & 0xffffff
+                
+        point = [new_hull_bounds, self.cooked_data, bit24, time]
+
+        self.data.append(point)
+        self.impl_b_data_is_checked.append(False)
+
+        
+            
+        if self.impl == "b":
+            return np.array(new_hull_bounds).astype(np.float32)
 
 
     def transform_coordinates_impl_a(self,data):
@@ -155,27 +156,95 @@ class Data:
         transform into my coordinate system
         """
         translate_x = -self.detection_algorithm.n / 2
-        translate_y = -self.detection_algorithm.n/2
+        translate_y = -self.detection_algorithm.n / 2
         z_scale = 1
 
         lst = []
         for i, coordinates in enumerate(data):
             x = (coordinates[0] + translate_x) * -1
-            y = (coordinates[1] + translate_y) * 1
+            y = (coordinates[1] + translate_y) *  1
             z = (coordinates[2] + self.detection_algorithm.half_gap_size - self.detection_algorithm.inter_level_gap + self.detection_algorithm.plate_thickness) / z_scale
             lst.append((x,y,z))
 
         return lst
+    
+
+    def make_prism_triangles(self, p1, p2, p3, p4, p5, p6, p7, p8, show_top_bottom=False):
+
+        '''
+        one base has changing basepoints and x_increment of rod width
+        one base has fixed basepoint and square side length increment
+        z starts from box base z and add box z increment
+        '''
+
+        # front face
+        tf1 = [p1, p2, p5]
+        tf2 = [p2, p5, p6]
+
+        # back face
+        tb1 = [p3, p4, p7]
+        tb2 = [p4, p7, p8]
+        
+        # left face
+        tl1 = [p1, p3, p5]
+        tl2 = [p3, p5, p7]
+
+        # right face
+        tr1 = [p2, p4, p6]
+        tr2 = [p4, p6, p8]
+
+        all_t = []
+
+        all_t.extend(tf1)
+        all_t.extend(tf2)
+        all_t.extend(tb1)
+        all_t.extend(tb2)
+        all_t.extend(tl1)
+        all_t.extend(tl2)
+        all_t.extend(tr1)
+        all_t.extend(tr2)
+
+
+        if show_top_bottom:
+            # bottom face
+            tB1 = [p1, p2, p3]
+            tB2 = [p2, p3, p4]
+            # top face
+            tT1 = [p5, p6, p7]
+            tT2 = [p6, p7, p8]
+            all_t.extend(tB1)
+            all_t.extend(tB2)
+            all_t.extend(tT1)
+            all_t.extend(tT2)
+
+        return all_t    
+
+    def hull_setup_for_data_point_impl_a(self, hull_bounds, show_top_bottom=False):
+        vertices = []
+
+        scaled_hull_bounds = self.scale_hull_bounds(hull_bounds)
+        
+        centre_prism = self.make_prism_triangles(*hull_bounds, show_top_bottom)
+        vertices.extend(centre_prism)
+
+        top_triangle_fans = self.make_prism_triangles(*hull_bounds[:4], *scaled_hull_bounds[:4], show_top_bottom)
+        vertices.extend(top_triangle_fans)
+
+        bottom_triangle_fans = self.make_prism_triangles(*hull_bounds[4:], *scaled_hull_bounds[4:], show_top_bottom)
+        vertices.extend(bottom_triangle_fans)
+
+        vertices = np.array(vertices, dtype = np.float32)
+
+        return vertices
 
     
     def testing(self):
-        if self.impl == "b":
-            self.impl_b_testing = True
-        elif self.impl == "a":
-            test_data = [0b011011010110101011010110,
-                    0b100110101101010101101001,
-                    0b100101101010011101011001,
-                    1431655765]
-            for data in test_data:
-                self.is_valid_data(data)
-                self.transform_data_per_impl()
+        test_data = [
+                0b011011010110101011010110,
+                0b100110101101010101101001,
+                0b100101101010011101011001,
+                1431655765
+            ]
+        for data in test_data:
+            self.is_valid_data(data)
+            self.transform_data_per_impl()

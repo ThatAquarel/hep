@@ -1,35 +1,29 @@
-import time
-
-
-# import glfw
-import scintillator_display.compat.glfw as glfw
-
+import glfw
+from glfw.GLFW import *
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
+import imgui
+from imgui.integrations.glfw import GlfwRenderer
+
 import numpy as np
 
-# from scintillator_field.display.display_1.imgui_stuff import *
-from scintillator_display.display.impl_b.imgui_stuff import ImguiStuff
-
-# from scintillator_field.display.display_1.opengl_stuff import *
-from scintillator_display.display.impl_b.opengl_stuff import OpenGLStuff
-
+import time
 
 
 
 class Window:
     def __init__(self):
+        pass
 
-        self.start_time = time.time()
+    def set_window_values(self):
 
         # sets up basic window parameters
 
         self.render_distance = 1024
         
         self.width, self.height = 1924, 1028
-        #self.width, self.height = 800, 900
         #self.width, self.height = 750, 500
         self.aspect_ratio = self.width/self.height
 
@@ -46,23 +40,56 @@ class Window:
         self.pan_x, self.pan_y, self.pan_z = 0,0,0
         self.zoom = 14.1
         self.zoom = 231
-        self.zoom = 251
 
         #self.angle_x, self.angle_y, self.angle_z = (0,)*3
 
 
 
-        self.pan_sensitivity   = 0.001
-        #self.angle_sensitivity = 0.01
-        self.angle_sensitivity = 0.001
+        self.pan_sensitivity = 0.001
+        self.angle_sensitivity = 0.01
 
         self.panning, self.angling = False, False
 
+    def setup_imgui(self, window, appname):
+        self.appname = appname
+        imgui.create_context()
+        imgui.get_io().display_size = 100,100
+        self.imgui_use = GlfwRenderer(window, attach_callbacks=False)
+
+    def set_imgui_box_per_render(self, dt, paused):
+        imgui.new_frame()
+        imgui.begin(self.appname)
+
+        if not paused:
+            if dt != 0:
+                imgui.text(f'{1/dt:.4g} fps')
+        else:
+            imgui.text(f"paused ({1/dt:.4g} fps)")
+
+        imgui.text(f'{self.angle_x:.3g}, {self.angle_y:.3g}, {self.angle_z:.3g} : angles x, y, z')
+        imgui.text(f'{self.pan_x:.3g}, {self.pan_y:.3g}, {self.pan_z:.3g} : pan x, y, z')
+        imgui.text(f'{self.zoom:.3g} : zoom level')
+        imgui.text(f'{self.aspect_ratio:.3g} : aspect ratio')
+
+        imgui.end()
+
+    def imgui_in_use(self):
+        if self.imgui_use != None and imgui.get_io().want_capture_mouse:
+            return True
+        
+    def render_imgui_box(self):
+        imgui.render()
+        self.imgui_use.process_inputs()
+        self.imgui_use.render(imgui.get_draw_data())
+
     def build_window(self, window_name):
+
+        if not glfw.init():
+            return
         
         window = glfw.create_window(self.width, self.height, window_name, None, None)
         glfw.make_context_current(window)
-        # glfw.get_framebuffer_size(window)
+        glfw.get_framebuffer_size(window)
         self.set_callbacks(window)
 
         return window
@@ -85,17 +112,8 @@ class Window:
 
 
     def scroll_callbacks(self, window, xoffset, yoffset):
-        self.scroll_amount = self.zoom/27.5 if self.zoom/27.5 > 0.24 else 0.24
-        if ((
-            self.zoom-self.scroll_amount*yoffset != 0
-            )
-                and not
-            (
-                (self.zoom-self.scroll_amount*yoffset > -0.1)
-                    and
-                (self.zoom-self.scroll_amount*yoffset < 0.1)
-            )):
-            self.zoom -= self.scroll_amount*yoffset
+        if (self.zoom-0.24*yoffset != 0) and not ((self.zoom-0.24*yoffset > -0.1) & (self.zoom-0.24*yoffset < 0.1)):
+            self.zoom -= 0.24*yoffset
     
     def cursor_pos_callbacks(self, window, xpos, ypos):
         if self.panning:
@@ -107,8 +125,16 @@ class Window:
         if self.angling:
             dx = xpos - self.last_x
             dy = ypos - self.last_y
+
+
             self.angle_x += dy * self.angle_sensitivity * self.zoom
             self.angle_y += dx * self.angle_sensitivity * self.zoom
+
+
+
+            self.angle_x += dy * self.angle_sensitivity * self.zoom
+            self.angle_y += dx * self.angle_sensitivity * self.zoom
+
 
             self.angle_x %= 360
             self.angle_y %= 360
@@ -119,18 +145,18 @@ class Window:
     
     def mouse_callbacks(self, window, button, action, mods):
         # stops screen panning/rotating if imgui box is moving
-        if self.imgui_stuff.in_use():
+        if self.imgui_in_use():
             return
 
         if action == glfw.PRESS:
             if button == glfw.MOUSE_BUTTON_LEFT:
                 self.panning = True
-            elif button == glfw.MOUSE_BUTTON_RIGHT: # Dual-viewports: glfw namespace change
+            elif button == GLFW_MOUSE_BUTTON_RIGHT:
                 self.angling = True
         if action == glfw.RELEASE:
             if button == glfw.MOUSE_BUTTON_LEFT:
                 self.panning = False
-            elif button == glfw.MOUSE_BUTTON_RIGHT: # Dual-viewports: glfw namespace change
+            elif button == GLFW_MOUSE_BUTTON_RIGHT:
                 self.angling = False
     
     def key_callbacks(self, window, key, scancode, action, mods):
@@ -145,62 +171,23 @@ class Window:
             if (key == glfw.KEY_SPACE) and (self.paused) and (time.time()- pause_time > 0.01):
                 self.paused = False
 
-    def main(self):
-        if not glfw.init():
-            return
 
-        self.imgui_stuff = ImguiStuff()
-
-        appname = type(self).__name__
-        self.window = self.build_window(appname)
+    def set_opengl_values(self):
         
-        # glViewport(0, 0, self.width, self.height)
-        # will be changed to double viewport later
-
-
-        self.imgui_stuff.initiate_imgui(self.window, appname)
-
-        
-        # glClearColor(0.5, 0.5, 0.5, 1) # Dual-viewports: move to main render_loop
+        glClearColor(0.5, 0.5, 0.5, 1)
         glEnable(GL_DEPTH_TEST)
 
         # antialiasing (smoother lines)
         glEnable(GL_MULTISAMPLE)
-        # glEnable(GL_POINT_SMOOTH)  # Dual-viewports: remove for OpenGL 3.3 CORE COMPAT
+        glEnable(GL_POINT_SMOOTH)
 
         # opacity
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glEnable(GL_BLEND)
 
-        self.opengl_stuff_for_window = OpenGLStuff()
-        self.opengl_stuff_for_window.setup()
-
-        self.imgui_stuff.data_points = self.opengl_stuff_for_window.detected_hulls.arduino.data
-        self.imgui_stuff.data_boxes_checked = self.opengl_stuff_for_window.detected_hulls.arduino.impl_b_data_is_checked
-
-
-        self.dt = 0
-        self.current = time.time()
-
-        self.done = False
-        self.paused = False
-
-        while not (self.done or glfw.window_should_close(self.window)): # Dual-viewports: need reference to glfw.
-            self.render_loop()
-
-
-    def render_loop(self):
-        glClearColor(0.5, 0.5, 0.5, 1) # Dual-viewports: split color separation
+    def begin_render_loop_actions(self):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-        self.opengl_stuff_for_window.per_render_loop(self)
-
-        self.imgui_stuff.imgui_box(self.dt, self, self.opengl_stuff_for_window)
-        self.imgui_stuff.render_box()
-
-        end = time.time()
-        if end-self.current !=0:
-            self.dt = end-self.current
-        self.current = end
-        glfw.swap_buffers(self.window)
+    def end_render_loop_actions(self, window):
+        glfw.swap_buffers(window)
         glfw.poll_events()

@@ -1,21 +1,18 @@
-import time
-
-
-# import glfw
-import scintillator_display.compat.glfw as glfw
-
+import glfw
+from glfw.GLFW import *
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
+import imgui
+from imgui.integrations.glfw import GlfwRenderer
+
 import numpy as np
 
-# from scintillator_field.display.display_1.imgui_stuff import *
-from scintillator_display.display.impl_b.imgui_stuff import ImguiStuff
+from scintillator_field.display.display_1.imgui_stuff import *
+from scintillator_field.display.display_1.opengl_stuff import *
 
-# from scintillator_field.display.display_1.opengl_stuff import *
-from scintillator_display.display.impl_b.opengl_stuff import OpenGLStuff
-
+import time
 
 
 
@@ -52,9 +49,8 @@ class Window:
 
 
 
-        self.pan_sensitivity   = 0.001
-        #self.angle_sensitivity = 0.01
-        self.angle_sensitivity = 0.001
+        self.pan_sensitivity = 0.001
+        self.angle_sensitivity = 0.01
 
         self.panning, self.angling = False, False
 
@@ -62,7 +58,7 @@ class Window:
         
         window = glfw.create_window(self.width, self.height, window_name, None, None)
         glfw.make_context_current(window)
-        # glfw.get_framebuffer_size(window)
+        glfw.get_framebuffer_size(window)
         self.set_callbacks(window)
 
         return window
@@ -85,17 +81,8 @@ class Window:
 
 
     def scroll_callbacks(self, window, xoffset, yoffset):
-        self.scroll_amount = self.zoom/27.5 if self.zoom/27.5 > 0.24 else 0.24
-        if ((
-            self.zoom-self.scroll_amount*yoffset != 0
-            )
-                and not
-            (
-                (self.zoom-self.scroll_amount*yoffset > -0.1)
-                    and
-                (self.zoom-self.scroll_amount*yoffset < 0.1)
-            )):
-            self.zoom -= self.scroll_amount*yoffset
+        if (self.zoom-0.24*yoffset != 0) and not ((self.zoom-0.24*yoffset > -0.1) & (self.zoom-0.24*yoffset < 0.1)):
+            self.zoom -= 0.24*yoffset
     
     def cursor_pos_callbacks(self, window, xpos, ypos):
         if self.panning:
@@ -125,12 +112,12 @@ class Window:
         if action == glfw.PRESS:
             if button == glfw.MOUSE_BUTTON_LEFT:
                 self.panning = True
-            elif button == glfw.MOUSE_BUTTON_RIGHT: # Dual-viewports: glfw namespace change
+            elif button == GLFW_MOUSE_BUTTON_RIGHT:
                 self.angling = True
         if action == glfw.RELEASE:
             if button == glfw.MOUSE_BUTTON_LEFT:
                 self.panning = False
-            elif button == glfw.MOUSE_BUTTON_RIGHT: # Dual-viewports: glfw namespace change
+            elif button == GLFW_MOUSE_BUTTON_RIGHT:
                 self.angling = False
     
     def key_callbacks(self, window, key, scancode, action, mods):
@@ -161,12 +148,12 @@ class Window:
         self.imgui_stuff.initiate_imgui(self.window, appname)
 
         
-        # glClearColor(0.5, 0.5, 0.5, 1) # Dual-viewports: move to main render_loop
+        glClearColor(0.5, 0.5, 0.5, 1)
         glEnable(GL_DEPTH_TEST)
 
         # antialiasing (smoother lines)
         glEnable(GL_MULTISAMPLE)
-        # glEnable(GL_POINT_SMOOTH)  # Dual-viewports: remove for OpenGL 3.3 CORE COMPAT
+        glEnable(GL_POINT_SMOOTH)
 
         # opacity
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -175,9 +162,6 @@ class Window:
         self.opengl_stuff_for_window = OpenGLStuff()
         self.opengl_stuff_for_window.setup()
 
-        self.imgui_stuff.data_points = self.opengl_stuff_for_window.detected_hulls.arduino.data
-        self.imgui_stuff.data_boxes_checked = self.opengl_stuff_for_window.detected_hulls.arduino.impl_b_data_is_checked
-
 
         self.dt = 0
         self.current = time.time()
@@ -185,12 +169,12 @@ class Window:
         self.done = False
         self.paused = False
 
-        while not (self.done or glfw.window_should_close(self.window)): # Dual-viewports: need reference to glfw.
+        while not self.done:
             self.render_loop()
 
 
     def render_loop(self):
-        glClearColor(0.5, 0.5, 0.5, 1) # Dual-viewports: split color separation
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         self.opengl_stuff_for_window.per_render_loop(self)
