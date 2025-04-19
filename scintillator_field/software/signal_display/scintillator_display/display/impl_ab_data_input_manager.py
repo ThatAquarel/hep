@@ -6,16 +6,23 @@ from datetime import datetime
 import serial
 import numpy as np
 
+from OpenGL.GL import *
+
 from scintillator_display.math.convex_hull import ConvexHullDetection as Detection
 
 from scintillator_display.universal_values import MathDisplayValues
 
+from scintillator_display.display.vao_vbo import create_vao, update_vbo, draw_vao
 
 class Data(MathDisplayValues):
-    def __init__(self, impl_constant, impl, debug=True):
+    def __init__(self, impl_constant, impl, hull_colour, hull_opacity, store_normals, debug=True):
         self.debug = debug
         self.impl = impl # "a" or "b"
+        self.hull_colour = hull_colour
+        self.hull_opacity = hull_opacity
+        self.store_normals = store_normals
         self.data = []
+        self.impl_a_data_is_checked = []
         self.impl_b_data_is_checked = []
         self.detection_algorithm = Detection(impl_constant=impl_constant)
 
@@ -143,6 +150,7 @@ class Data(MathDisplayValues):
         point = [new_hull_bounds, self.cooked_data, bit24, time]
 
         self.data.append(point)
+        self.impl_a_data_is_checked.append(False)
         self.impl_b_data_is_checked.append(False)
 
         
@@ -167,6 +175,20 @@ class Data(MathDisplayValues):
             lst.append((x,y,z))
 
         return lst
+    
+
+    def make_points_from_high_low(self, xl, xh, yl, yh, zl, zh, colour=[], opacity=[]):
+        points = np.array([
+            np.array([xl, yl, zl, *colour, *opacity]), # base_point + (0,    0,    0)    # BFL
+            np.array([xh, yl, zl, *colour, *opacity]), # base_point + (xlen, 0,    0)    # BFR
+            np.array([xl, yh, zl, *colour, *opacity]), # base_point + (0,    ylen, 0)    # BBL
+            np.array([xh, yh, zl, *colour, *opacity]), # base_point + (xlen, ylen, 0)    # BBR
+            np.array([xl, yl, zh, *colour, *opacity]), # base_point + (0,    0,    zlen) # TFL
+            np.array([xh, yl, zh, *colour, *opacity]), # base_point + (xlen, 0,    zlen) # TFR
+            np.array([xl, yh, zh, *colour, *opacity]), # base_point + (0,    ylen, zlen) # TBL
+            np.array([xh, yh, zh, *colour, *opacity]), # base_point + (xlen, ylen, zlen) # TBR
+        ])
+        return points
     
 
     def make_prism_triangles(self, p1, p2, p3, p4, p5, p6, p7, p8, show_top_bottom=False):
@@ -219,7 +241,7 @@ class Data(MathDisplayValues):
 
         return all_t    
 
-    def hull_setup_for_data_point_impl_a(self, hull_bounds, show_top_bottom=False):
+    def hull_setup_for_data_point(self, hull_bounds, hull_colour, hull_opacity, show_top_bottom=False):
         vertices = []
 
         scaled_hull_bounds = self.scale_hull_bounds(hull_bounds)
@@ -235,8 +257,37 @@ class Data(MathDisplayValues):
 
         vertices = np.array(vertices, dtype = np.float32)
 
-        return vertices
+        if self.impl == "a":
+            vd = np.ones((len(vertices), 10), dtype=np.float32)
+            vd[:, :3]   = vertices
+            vd[:, 3:6]  = hull_colour
+            vd[:, 6]    = hull_opacity
+            vd[:, 7:10] = vertices
+        elif self.impl == "b":
+            vd = np.ones((len(vertices), 7), dtype=np.float32)
+            vd[:, :3]   = vertices
+            vd[:, 3:6]  = hull_colour
+            vd[:, 6]    = hull_opacity
 
+        return vd
+    
+
+    def create_hull_data_and_vao(self, hull_bounds):
+        hull_data = self.hull_setup_for_data_point(
+            hull_bounds, self.hull_colour, self.hull_opacity)
+        hull_vao = create_vao(hull_data, store_normals=self.store_normals)
+        n = hull_data.shape[0]
+        return hull_vao, n
+    
+    def draw_active_hulls(self, data_points, data_active):
+        if data_points == []:
+            return
+        else:
+            for i, j in enumerate(data_active):
+                if j == True:
+                    hull_bounds = data_points[i][0]
+                    vao, n = self.create_hull_data_and_vao(hull_bounds)
+                    draw_vao(vao, GL_TRIANGLES, n)
     
     def testing(self):
         test_data = [

@@ -10,12 +10,9 @@ import scintillator_display.compat.imgui as imgui
 
 import pandas as pd
 
-import scintillator_display.display.impl_a.graphics as graphics
-import scintillator_display.display.impl_ab_data_input_manager as ab_data_manager
+from  scintillator_display.display.impl_ab_data_input_manager import Data
+from scintillator_display.display.xyz_axes import Axes
 
-import scintillator_display.display.impl_a.graphics.elements.axes as axes
-import scintillator_display.display.impl_a.graphics.elements.trajectory as trajectory
-import scintillator_display.display.impl_a.graphics.elements.fan_and_path as fan_and_path
 import scintillator_display.display.impl_a.graphics.elements.plane as plane
 
 from scintillator_display.display.impl_a.graphics.orbit_controls import CameraOrbitControls
@@ -27,7 +24,6 @@ class App(CameraOrbitControls, ShaderRenderer):
     def __init__(
         self,
         window_size,
-        name,
         *orbit_control_args,
     ):
         """
@@ -43,31 +39,32 @@ class App(CameraOrbitControls, ShaderRenderer):
         super().__init__(*orbit_control_args)
 
         # initialize window
-        self.window = self.window_init(window_size, name)
+        self.window = self.window_init(window_size)
 
         # initialize ui
         self.ui = ParameterInterface(
             self.window,
         )
 
-        self.scale = 12
+        scale = 12
 
         #setup elements
-        self.plane = plane.Plane(scale = self.scale)
-        self.trajectory = trajectory.trajectory(scale = self.scale)
-        self.axes = axes.Axes(self.scale,self.scale)
 
-        self.test_2 = ab_data_manager.Data(impl_constant=0.1, impl="a")
-        self.fan = fan_and_path.Fan(self.test_2, scale = self.scale)
+        self.data_manager = Data(impl_constant=0.1, impl="a",
+                                 hull_colour=[1, 0, 0], hull_opacity=0.3,
+                                 store_normals=True)
+        self.plane = plane.Plane(data_manager=self.data_manager, scale=scale)
+        self.xyz_axes = Axes(l=scale/2)
 
 
         self.pt_selected = None
+        self.dataset_active = None
 
 
         # fall into rendering loop
         self.rendering_loop()
 
-    def window_init(self, window_size, name):
+    def window_init(self, window_size):
         # throw exception if glfw failed to init
         if not glfw.init():
             raise Exception("GLFW could not be initialized.")
@@ -80,7 +77,7 @@ class App(CameraOrbitControls, ShaderRenderer):
         #glfw.window_hint(glfw.SAMPLES, 4)
 
         # create window and context
-        window = glfw.create_window(*window_size, name, None, None)
+        window = glfw.create_window(*window_size, None, None, None)
         if not window:
             glfw.terminate()
             raise Exception("GLFW window could not be created.")
@@ -162,10 +159,9 @@ class App(CameraOrbitControls, ShaderRenderer):
 
             # call rendering
             self.on_render_frame()
-            self.ui.on_render_ui(self.window,self.pt_selected)
-
-            self.ui.impl.process_inputs()
-            self.ui.impl.render(imgui.get_draw_data())
+            #self.ui.on_render_ui(self.window,self.pt_selected)
+            #self.ui.impl.process_inputs()
+            #self.ui.impl.render(imgui.get_draw_data())
 
 
             glfw.swap_buffers(self.window)
@@ -176,7 +172,7 @@ class App(CameraOrbitControls, ShaderRenderer):
             dt = current - start
             start = current
 
-        if not self.test_2.debug:
+        if not self.data_manager.debug:
             self.generate_csv()
 
         glfw.terminate()
@@ -199,21 +195,23 @@ class App(CameraOrbitControls, ShaderRenderer):
 
 
         #chekc arduino if there's data; gather data if there is
-        if self.test_2.arduino_has_data():
-            if self.test_2.is_valid_data():
-                self.test_2.transform_data_per_impl()
+        if self.data_manager.arduino_has_data():
+            if self.data_manager.is_valid_data():
+                self.data_manager.transform_data_per_impl()
         
 
 
         #input for drawing
-        self.ui.input_data = self.test_2.data.copy()
+        self.ui.input_data = self.data_manager.data
+        self.dataset_active = self.data_manager.impl_a_data_is_checked
 
         
         #draw elements
-        self.fan.draw(self.test_2.data.copy(), self.ui.dataset_active)
+        #self.data_manager.draw_active_hulls(self.data_manager.data, self.ui.dataset_active)
+        self.data_manager.draw_active_hulls(self.data_manager.data, self.dataset_active)
 
         if self.ui.show_axes:
-            self.axes.draw()
+            self.xyz_axes.draw()
             
         self.plane.draw(self.ui.pt_selected)
     
@@ -255,7 +253,7 @@ class App(CameraOrbitControls, ShaderRenderer):
         Create csv file
         """
         
-        df = pd.DataFrame(self.test_2.data,columns=["new_hull_bounds", "cooked_data", "bit24", "time"])
+        df = pd.DataFrame(self.data_manager.data,columns=["new_hull_bounds", "cooked_data", "bit24", "time"])
 
         df = df.drop("new_hull_bounds", axis=1)
         df = df.drop("cooked_data", axis=1)
@@ -267,15 +265,3 @@ class App(CameraOrbitControls, ShaderRenderer):
             df.to_csv(f"scintillator_display/data/{time}.csv")   #Current directory is set to the "data" folder
         except:
             df.to_csv(f"{time}.csv")
-
-        
-
-
-
-        
-
-
-# run the app
-App((1280, 720), "Not Joule")
-
-# run()

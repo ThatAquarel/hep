@@ -1,6 +1,6 @@
 import numpy as np
 
-from scintillator_display.display.impl_a.graphics.vbo import create_vao, draw_vao
+from scintillator_display.display.vao_vbo import create_vao, draw_vao, update_vbo
 
 from OpenGL.GL import *
 
@@ -57,19 +57,19 @@ class Axes:
 
         # build gridlines
         offset = [np.min(x_range), np.min(y_range), 0]
-        self.x_vbo, self.x_n = self._build_gridline_vbo(
+        self.x_vao, self.x_n = self._build_gridline_vao(
             [1, 0, 2], offset, x_div, *x_range
-        )
-        self.y_vbo, self.y_n = self._build_gridline_vbo(
+        ) 
+        self.y_vao, self.y_n = self._build_gridline_vao(
             [0, 1, 2], offset, y_div, *y_range
         )
 
         # build XYZ axes lines
-        self.axes_vbo, self.axes_n = self._build_axes_vbo(*x_range, *y_range, *z_range)
+        self.axes_vao, self.axes_n = self._build_axes_vao(*x_range, *y_range, *z_range)
 
-    def _build_axes_vbo(self, x_min, x_max, y_min, y_max, z_min, z_max):
+    def _build_axes_vao(self, x_min, x_max, y_min, y_max, z_min, z_max):
         """
-        Build XYZ axes colored lines VBO
+        Build XYZ axes colored lines VAO
 
         :param x_min: x range min
         :param x_max: x range max
@@ -160,9 +160,9 @@ class Axes:
         # stack colors to coordinates
         return np.hstack((vertices, colors)).astype(np.float32)
 
-    def _build_gridline_vbo(self, axis_index, offset, s_div, s_min, s_max):
+    def _build_gridline_vao(self, axis_index, offset, s_div, s_min, s_max):
         """
-        Build gridline VBO
+        Build gridline VAO
 
         :param axis_index: Axis to draw, x:0, y:1
         :param offset: Translation offset in axis
@@ -174,9 +174,9 @@ class Axes:
 
         axes_s = self._build_scaled_gridlines(s_div, s_min, s_max)[:, axis_index]
         axes_s += offset
-        vbo_data = self._build_gridline_color(axes_s)
+        vao_data = self._build_gridline_color(axes_s)
 
-        return create_vao(vbo_data), len(axes_s)
+        return create_vao(vao_data), len(axes_s)
 
     def draw(self):
         """
@@ -184,8 +184,8 @@ class Axes:
         """
 
         # glLineWidth(0.25)
-        draw_vao(self.x_vbo, GL_LINES, self.x_n)
-        draw_vao(self.y_vbo, GL_LINES, self.y_n)
+        draw_vao(self.x_vao, GL_LINES, self.x_n)
+        draw_vao(self.y_vao, GL_LINES, self.y_n)
 
         # glLineWidth(2.0)
-        draw_vao(self.axes_vbo, GL_LINES, self.axes_n)
+        draw_vao(self.axes_vao, GL_LINES, self.axes_n)
