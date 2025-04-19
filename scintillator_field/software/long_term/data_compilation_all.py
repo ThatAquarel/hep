@@ -21,6 +21,8 @@ def parse_data(data_dir):
     for log_file in log_files:
         with open(log_file, "r") as handle:
             lines = np.array(handle.readlines())
+            lines = lines[lines != "start recorder\n"]
+
             trigger_data.append(lines[::4])
 
     n_triggers = sum([len(i) for i in trigger_data])
@@ -65,6 +67,20 @@ def sensor_p_analysis(df):
     bits = np.unpackbits(res, axis=1)
 
     sensor_on_time = np.mean(bits, axis=0)
+
+    reindex = np.array(
+        [
+            [5, 4, 7, 6],
+            [0, 1, 2, 3],
+            [8, 9, 10, 11],
+            [13, 12, 15, 14],
+            [16, 17, 18, 19],
+            [21, 20, 23, 22],
+        ]
+    )
+
+    sensor_on_time = sensor_on_time[reindex.flatten()]
+
     on_time_str = "".join(
         [
             f"{t * 100:4.1f}%{' | ' if (i % 8 == 7) else ' '}"
@@ -127,8 +143,10 @@ def graph_alt(df):
     midnight = current
     while midnight <= max_x:
         for i in range(3):
-            axs[i].axvline(midnight, color="blue", linestyle='--', linewidth=1)
-            axs[i].axvline(midnight + timedelta(hours=12), color="red", linestyle='--', linewidth=1)
+            axs[i].axvline(midnight, color="blue", linestyle="--", linewidth=1)
+            axs[i].axvline(
+                midnight + timedelta(hours=12), color="red", linestyle="--", linewidth=1
+            )
         midnight += timedelta(days=1)
 
     # Plot 3: Hits per second (non-log scale)
@@ -149,7 +167,9 @@ def graph_alt(df):
     sample_per_second = 10
     x_non_uniform = t[:-1]
     x_dt = x_non_uniform.max() - x_non_uniform.min()
-    x_uniform = np.linspace(x_non_uniform.min(), x_non_uniform.max(), int(x_dt * sample_per_second))
+    x_uniform = np.linspace(
+        x_non_uniform.min(), x_non_uniform.max(), int(x_dt * sample_per_second)
+    )
 
     y_signal = np.log(hits_per_sec)
     interpolator = interp(x_non_uniform, y_signal)
@@ -166,12 +186,12 @@ def graph_alt(df):
     axs[3].set(title="Interpolated Signal", ylabel="log(hit/s)")
 
     # Plot 5: Full FFT
-    axs[4].plot(freq[:len(freq)//2], np.abs(fft_result)[:len(freq)//2])
+    axs[4].plot(freq[: len(freq) // 2], np.abs(fft_result)[: len(freq) // 2])
     axs[4].set(title="FFT (Full Spectrum)", xlabel="Frequency (Hz)", ylabel="Amplitude")
 
     # Plot 6: Zoomed FFT
     scale = 1 << 16
-    axs[5].plot(freq[:len(freq)//scale], np.abs(fft_result)[:len(freq)//scale])
+    axs[5].plot(freq[: len(freq) // scale], np.abs(fft_result)[: len(freq) // scale])
     axs[5].axvline(1 / (3600 * 24), color="red", label="24h")
     axs[5].axvline(1 / (3600 * 12), color="green", label="12h")
     axs[5].axvline(1 / (3600 * 24 * 7), color="black", label="7d")
