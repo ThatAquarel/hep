@@ -29,7 +29,6 @@ def entrypoint():
 
     def impl_a_render():
         impl_a.on_render_frame()
-        impl_a.ui.on_render_ui(impl_a.window, impl_a.pt_selected)
 
     vm.set_vp_ratio(vp_a, ratio[1])
     vm.set_on_render(vp_a, impl_a_render)

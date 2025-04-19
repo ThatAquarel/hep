@@ -17,7 +17,9 @@ class Controls:
 
         self.width, self.height = 0, 0
 
-        self.checked = [False, False]
+        self.show_only_last_data_a = False
+        self.show_only_last_data_b = False
+        self.open_state = False
 
         # ffmpeg -i sc_bw.png -vf "scale=-1:48" hep_48.png
         self.hep = load_texture("hep_48.png")
@@ -32,9 +34,17 @@ class Controls:
     def activate_data_connection(self):
         self.data_points = self.impl_a.data_manager.data
         self.impl_a_checked = self.impl_a.data_manager.impl_a_data_is_checked
-        # self.impl_a_checked = self.impl_a.dataset_active
-        # self.impl_a_checked = self.impl_a.ui.dataset_active
-        self.impl_b_checked = self.impl_b.imgui_stuff.data_boxes_checked
+        self.impl_b_checked = self.impl_b.data_boxes_checked
+
+        self.debug_a = self.impl_a.data_manager.debug
+        self.debug_b = self.impl_b.opengl_stuff_for_window.arduino.debug
+
+        self.show_a_axes = self.impl_a.show_axes
+        self.show_b_axes = self.impl_b.opengl_stuff_for_window.show_axes
+    
+    def space_lines(self, n=1):
+        for i in range(n):
+            imgui.spacing()
 
     def on_render(self):
         glClearColor(0.0, 0.0, 0.0, 1.0)
@@ -63,44 +73,66 @@ class Controls:
 
         imgui.separator()
 
-        imgui.text("")
-        imgui.text("")
-        imgui.text("test")
+        self.space_lines(2)
+        fps = 1/self.impl_b.dt if self.impl_b.dt != 0 else 0
+        imgui.text(f'{fps:.1f} fps')
 
-        imgui.text("")
+        #expanded, _ = imgui.collapsing_header("view window info", True)
+        #if expanded:
+        #    imgui.text("2")
+
+
+        self.space_lines(3)
         imgui.text("activate in impl:")
         imgui.text(" a    b")
         imgui.separator()
 
-        _, self.impl_a.data_manager.debug = imgui.checkbox(
-            " ", self.impl_a.data_manager.debug
-        )
+        _, self.debug_a = imgui.checkbox(" ##A", self.debug_a)
         imgui.same_line()
-        _, self.impl_b.opengl_stuff_for_window.arduino.debug = imgui.checkbox(
-            "debug mode", self.impl_b.opengl_stuff_for_window.arduino.debug
-        )
+        _, self.debug_b = imgui.checkbox(
+            "debug mode", self.debug_b)
 
         imgui.separator()
 
-        if (
-            self.data_points != []
-            and self.impl_a_checked != []
-            and self.impl_b_checked != []
-        ):
-            for i, j in enumerate(self.data_points):
-                print(self.impl_a_checked, self.impl_b_checked)
-                _, self.impl_a_checked[i] = imgui.checkbox(
-                    f"##{i}_IMPL_A", self.impl_a_checked[i]
-                )
-                imgui.same_line()
-                _, self.impl_b_checked[i] = imgui.checkbox(
-                    f"{j[-1]}##{i}_IMPL_B", self.impl_b_checked[i]
-                )
+        _, self.show_only_last_data_a = imgui.checkbox(" ##B", self.show_only_last_data_a)
+        imgui.same_line()
+        _, self.show_only_last_data_b = imgui.checkbox(
+            "show only most recent data", self.show_only_last_data_b)
+        
+        if self.show_only_last_data_a:
+            for i in range(len(self.impl_a_checked)):
+                self.impl_a_checked[i] = False
+            self.impl_a_checked[-1] = True
+        if self.show_only_last_data_b:
+            for i in range(len(self.impl_b_checked)):
+                self.impl_b_checked[i] = False
+            self.impl_b_checked[-1] = True
+        
+        imgui.separator()
 
-        # for i in range(5):
-        #    _, self.checked[0] = imgui.checkbox(" ", self.checked[0])
-        #    imgui.same_line()
-        #    _, self.checked[1] = imgui.checkbox("same line test", self.checked[1])
-        # imgui.drag_float2("test", *(4, 8))
+        _, self.show_a_axes = imgui.checkbox(" ##C", self.show_a_axes)
+        self.impl_a.show_axes = self.show_a_axes
+        imgui.same_line()
+        _, self.show_b_axes = imgui.checkbox(
+            "show xyz axes", self.show_b_axes)
+        self.impl_b.opengl_stuff_for_window.show_axes = self.show_b_axes
+
+        imgui.separator()
+
+        if (self.data_points != []
+            and self.impl_a_checked != []
+            and self.impl_b_checked != []):
+            for i, j in enumerate(self.data_points):
+                _, self.impl_a_checked[i] = imgui.checkbox(f" ##{i}_IMPL_A", self.impl_a_checked[i])
+                imgui.same_line()
+                _, self.impl_b_checked[i] = imgui.checkbox(f"{j[-2]}, {j[-1]}##{i}_IMPL_B", self.impl_b_checked[i])
+
+        if any(self.impl_a_checked):
+            i = max(i for i, v in enumerate(self.impl_a_checked) if v == True)
+            self.last_pt_a_selected = self.data_points[i]
+        else:
+            self.last_pt_a_selected = None
+        self.impl_a.pt_selected = self.last_pt_a_selected
+
 
         imgui.end()

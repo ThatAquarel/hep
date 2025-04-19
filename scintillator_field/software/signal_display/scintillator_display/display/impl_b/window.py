@@ -10,8 +10,6 @@ from OpenGL.GLU import *
 
 import numpy as np
 
-# from scintillator_field.display.display_1.imgui_stuff import *
-from scintillator_display.display.impl_b.imgui_stuff import ImguiStuff
 
 # from scintillator_field.display.display_1.opengl_stuff import *
 from scintillator_display.display.impl_b.opengl_stuff import OpenGLStuff
@@ -58,6 +56,8 @@ class Window:
 
         self.panning, self.angling = False, False
 
+        self.data_boxes_checked = []
+
     def build_window(self, window_name):
         
         window = glfw.create_window(self.width, self.height, window_name, None, None)
@@ -86,15 +86,11 @@ class Window:
 
     def scroll_callbacks(self, window, xoffset, yoffset):
         self.scroll_amount = self.zoom/27.5 if self.zoom/27.5 > 0.24 else 0.24
-        if ((
-            self.zoom-self.scroll_amount*yoffset != 0
-            )
+        if ((self.zoom-self.scroll_amount*yoffset != 0)
                 and not
-            (
-                (self.zoom-self.scroll_amount*yoffset > -0.1)
-                    and
-                (self.zoom-self.scroll_amount*yoffset < 0.1)
-            )):
+            ((self.zoom-self.scroll_amount*yoffset > -0.1)
+                and
+             (self.zoom-self.scroll_amount*yoffset < 0.1))):
             self.zoom -= self.scroll_amount*yoffset
     
     def cursor_pos_callbacks(self, window, xpos, ypos):
@@ -118,9 +114,6 @@ class Window:
         self.last_x, self.last_y = xpos, ypos
     
     def mouse_callbacks(self, window, button, action, mods):
-        # stops screen panning/rotating if imgui box is moving
-        if self.imgui_stuff.in_use():
-            return
 
         if action == glfw.PRESS:
             if button == glfw.MOUSE_BUTTON_LEFT:
@@ -149,17 +142,10 @@ class Window:
         if not glfw.init():
             return
 
-        self.imgui_stuff = ImguiStuff()
 
         appname = type(self).__name__
         self.window = self.build_window(appname)
         
-        # glViewport(0, 0, self.width, self.height)
-        # will be changed to double viewport later
-
-
-        self.imgui_stuff.initiate_imgui(self.window, appname)
-
         
         # glClearColor(0.5, 0.5, 0.5, 1) # Dual-viewports: move to main render_loop
         glEnable(GL_DEPTH_TEST)
@@ -175,9 +161,7 @@ class Window:
         self.opengl_stuff_for_window = OpenGLStuff()
         self.opengl_stuff_for_window.setup()
 
-        self.imgui_stuff.data_points = self.opengl_stuff_for_window.arduino.data
-        self.imgui_stuff.data_boxes_checked = self.opengl_stuff_for_window.arduino.impl_b_data_is_checked
-
+        self.data_boxes_checked = self.opengl_stuff_for_window.arduino.impl_b_data_is_checked
 
         self.dt = 0
         self.current = time.time()
@@ -194,9 +178,6 @@ class Window:
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         self.opengl_stuff_for_window.per_render_loop(self)
-
-        self.imgui_stuff.imgui_box(self.dt, self, self.opengl_stuff_for_window)
-        self.imgui_stuff.render_box()
 
         end = time.time()
         if end-self.current !=0:
