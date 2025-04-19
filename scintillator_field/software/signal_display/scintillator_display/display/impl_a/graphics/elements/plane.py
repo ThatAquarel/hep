@@ -1,13 +1,15 @@
 import numpy as np
 from OpenGL.GL import GL_TRIANGLES
 
-from scintillator_display.display.impl_a.graphics.vbo import create_vao, draw_vao, update_vbo
+from scintillator_display.display.vao_vbo import create_vao, draw_vao, update_vbo
+
 
 
 
 class Plane:
-    def __init__(self, scale=1.0):
+    def __init__(self, data_manager, scale=1.0):
 
+        self.data_manager = data_manager
         self.scale = scale
 
         self.number_of_layers = 6
@@ -68,51 +70,12 @@ class Plane:
                     x2 = -unit + i * strip_length       #-s
                     y1 = -unit      #-s
                     y2 = unit    #s
-                    
-                # Front face
-                vertices.append([x2, y1, z1])
-                vertices.append([x1, y1, z1])
-                vertices.append([x1, y2, z1])
-                vertices.append([x2, y1, z1])
-                vertices.append([x1, y2, z1])
-                vertices.append([x2, y2, z1])
-                # Back face
-                vertices.append([x2, y1, z2])
-                vertices.append([x2, y2, z2])
-                vertices.append([x1, y2, z2])
-                vertices.append([x2, y1, z2])
-                vertices.append([x1, y2, z2])
-                vertices.append([x1, y1, z2])
-                # Left face
-                vertices.append([x2, y1, z2])
-                vertices.append([x2, y1, z1])
-                vertices.append([x2, y2, z1])
-                vertices.append([x2, y1, z2])
-                vertices.append([x2, y2, z1])
-                vertices.append([x2, y2, z2])
-                # Right face
-                vertices.append([x1, y1, z2])
-                vertices.append([x1, y2, z2])
-                vertices.append([x1, y2, z1])
-                vertices.append([x1, y1, z2])
-                vertices.append([x1, y2, z1])
-                vertices.append([x1, y1, z1])
-                # Top face
-                vertices.append([x2, y2, z2])
-                vertices.append([x2, y2, z1])
-                vertices.append([x1, y2, z1])
-                vertices.append([x2, y2, z2])
-                vertices.append([x1, y2, z1])
-                vertices.append([x1, y2, z2])
-                # Bottom face
-                vertices.append([x2, y1, z2])
-                vertices.append([x1, y1, z2])
-                vertices.append([x1, y1, z1])
-                vertices.append([x2, y1, z2])
-                vertices.append([x1, y1, z1])
-                vertices.append([x2, y1, z1])
 
-        #vertices = np.array(vertices, dtype = np.float32)
+                points = self.data_manager.make_points_from_high_low(
+                    x1, x2, y1, y2, z1, z2)
+
+                vertices.extend(self.data_manager.make_prism_triangles(*points, show_top_bottom=True))
+
 
         #Up plane
         middle_gap = 162 * 0.1
@@ -136,48 +99,11 @@ class Plane:
                     y1 = -unit      #-s
                     y2 = unit    #s
                     
-                # Front face
-                vertices.append([x2, y1, z1])
-                vertices.append([x1, y1, z1])
-                vertices.append([x1, y2, z1])
-                vertices.append([x2, y1, z1])
-                vertices.append([x1, y2, z1])
-                vertices.append([x2, y2, z1])
-                # Back face
-                vertices.append([x2, y1, z2])
-                vertices.append([x2, y2, z2])
-                vertices.append([x1, y2, z2])
-                vertices.append([x2, y1, z2])
-                vertices.append([x1, y2, z2])
-                vertices.append([x1, y1, z2])
-                # Left face
-                vertices.append([x2, y1, z2])
-                vertices.append([x2, y1, z1])
-                vertices.append([x2, y2, z1])
-                vertices.append([x2, y1, z2])
-                vertices.append([x2, y2, z1])
-                vertices.append([x2, y2, z2])
-                # Right face
-                vertices.append([x1, y1, z2])
-                vertices.append([x1, y2, z2])
-                vertices.append([x1, y2, z1])
-                vertices.append([x1, y1, z2])
-                vertices.append([x1, y2, z1])
-                vertices.append([x1, y1, z1])
-                # Top face
-                vertices.append([x2, y2, z2])
-                vertices.append([x2, y2, z1])
-                vertices.append([x1, y2, z1])
-                vertices.append([x2, y2, z2])
-                vertices.append([x1, y2, z1])
-                vertices.append([x1, y2, z2])
-                # Bottom face
-                vertices.append([x2, y1, z2])
-                vertices.append([x1, y1, z2])
-                vertices.append([x1, y1, z1])
-                vertices.append([x2, y1, z2])
-                vertices.append([x1, y1, z1])
-                vertices.append([x2, y1, z1])
+
+                points = self.data_manager.make_points_from_high_low(
+                    x1, x2, y1, y2, z1, z2)
+
+                vertices.extend(self.data_manager.make_prism_triangles(*points, show_top_bottom=True))
 
         vertices = np.array(vertices, dtype = np.float32)
 
@@ -191,21 +117,20 @@ class Plane:
             y_grey = -1
             self.set_colour_default()
         else:
+                cooked_data = pt_selected[1]
+                x_scintillators = cooked_data[0]
+                y_scintillators = cooked_data[1]
         
-#In here 111111 means that all of the positives light up(more towards positive x or y, white)
-#000000 means that all of the negative(more towards the negative x or y, grey)
+        #In here 111111 means that all of the positives light up(more towards positive x or y, white)
+        #000000 means that all of the negative(more towards the negative x or y, grey)
 
-#More towards the positive has a white strip, more towards the negative has a gray strip
+        #More towards the positive has a white strip, more towards the negative has a gray strip
 
-    #Top
-                #x_white = pt_selected[2][0][3][0] * 4 + pt_selected[2][0][4][0] * 2 + pt_selected[2][0][5][0]
-                #y_white = pt_selected[2][1][3][0] * 4 + pt_selected[2][1][4][0] * 2 + pt_selected[2][1][5][0]
-                #x_grey  = pt_selected[2][0][3][1] * 4 + pt_selected[2][0][4][1] * 2 + pt_selected[2][0][5][1]
-                #y_grey  = pt_selected[2][1][3][1] * 4 + pt_selected[2][1][4][1] * 2 + pt_selected[2][1][5][1]
-                x_white = pt_selected[1][0][3][0] * 4 + pt_selected[1][0][4][0] * 2 + pt_selected[1][0][5][0]
-                y_white = pt_selected[1][1][3][0] * 4 + pt_selected[1][1][4][0] * 2 + pt_selected[1][1][5][0]
-                x_grey  = pt_selected[1][0][3][1] * 4 + pt_selected[1][0][4][1] * 2 + pt_selected[1][0][5][1]
-                y_grey  = pt_selected[1][1][3][1] * 4 + pt_selected[1][1][4][1] * 2 + pt_selected[1][1][5][1]
+            #Top
+                x_white = x_scintillators[3][0] * 4 + x_scintillators[4][0] * 2 + x_scintillators[5][0]
+                y_white = y_scintillators[3][0] * 4 + y_scintillators[4][0] * 2 + y_scintillators[5][0]
+                x_grey  = x_scintillators[3][1] * 4 + x_scintillators[4][1] * 2 + x_scintillators[5][1]
+                y_grey  = y_scintillators[3][1] * 4 + y_scintillators[4][1] * 2 + y_scintillators[5][1]
 
 
                     
@@ -251,14 +176,10 @@ class Plane:
 
             # bottom
 
-                #x_white = pt_selected[2][0][2][0] * 4 + pt_selected[2][0][1][0] * 2 + pt_selected[2][0][0][0]
-                #y_white = pt_selected[2][1][2][0] * 4 + pt_selected[2][1][1][0] * 2 + pt_selected[2][1][0][0]
-                #x_grey  = pt_selected[2][0][2][1] * 4 + pt_selected[2][0][1][1] * 2 + pt_selected[2][0][0][1]
-                #y_grey  = pt_selected[2][1][2][1] * 4 + pt_selected[2][1][1][1] * 2 + pt_selected[2][1][0][1]
-                x_white = pt_selected[1][0][2][0] * 4 + pt_selected[1][0][1][0] * 2 + pt_selected[1][0][0][0]
-                y_white = pt_selected[1][1][2][0] * 4 + pt_selected[1][1][1][0] * 2 + pt_selected[1][1][0][0]
-                x_grey  = pt_selected[1][0][2][1] * 4 + pt_selected[1][0][1][1] * 2 + pt_selected[1][0][0][1]
-                y_grey  = pt_selected[1][1][2][1] * 4 + pt_selected[1][1][1][1] * 2 + pt_selected[1][1][0][1]
+                x_white = x_scintillators[2][0] * 4 + x_scintillators[1][0] * 2 + x_scintillators[0][0]
+                y_white = y_scintillators[2][0] * 4 + y_scintillators[1][0] * 2 + y_scintillators[0][0]
+                x_grey  = x_scintillators[2][1] * 4 + x_scintillators[1][1] * 2 + x_scintillators[0][1]
+                y_grey  = y_scintillators[2][1] * 4 + y_scintillators[1][1] * 2 + y_scintillators[0][1]
                     
 
                 for layer in range(self.number_of_layers):
@@ -321,20 +242,3 @@ class Plane:
         self.set_colour(pt_selected)
         update_vbo(self.vbo, self.data)
         draw_vao(self.vao, GL_TRIANGLES, self.n)
-
-    # def set_color(self, new_color):
-    #     """
-    #     Update cube color.
-    #     """
-    #     self.data[:, 3:6] = new_color
-    #     update_vbo(self.vbo, self.data)
-
-    # def draw(self, positions, sizes):
-    #     """
-    #     Draw multiple cubes.
-    #     """
-    #     if not len(positions):
-    #         return
-        
-    #     for pos, size in zip(positions, sizes):
-    #         self._draw_cube(size, pos)

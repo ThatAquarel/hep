@@ -87,7 +87,8 @@ class ParameterInterface:
 
 
         self.show_axes = True
-        self.latest = True
+        #self.latest = True
+        self.latest = False
 
         self.pt_selected = None
 
@@ -112,6 +113,7 @@ class ParameterInterface:
     @property
     def impl(self):
         return self._imgui_impl
+    
     
     @ui_section("Status", top_margin=False)
     def status(self):

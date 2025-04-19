@@ -175,8 +175,8 @@ class Window:
         self.opengl_stuff_for_window = OpenGLStuff()
         self.opengl_stuff_for_window.setup()
 
-        self.imgui_stuff.data_points = self.opengl_stuff_for_window.detected_hulls.arduino.data
-        self.imgui_stuff.data_boxes_checked = self.opengl_stuff_for_window.detected_hulls.arduino.impl_b_data_is_checked
+        self.imgui_stuff.data_points = self.opengl_stuff_for_window.arduino.data
+        self.imgui_stuff.data_boxes_checked = self.opengl_stuff_for_window.arduino.impl_b_data_is_checked
 
 
         self.dt = 0
