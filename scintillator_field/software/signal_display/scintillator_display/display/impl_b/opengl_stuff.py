@@ -42,6 +42,8 @@ class OpenGLStuff:
         self.new_data = False
 
 
+        self.show_axes = True
+
 
 
         pass
@@ -89,6 +91,7 @@ class OpenGLStuff:
 
         self.scintillator_structuce.draw_scintillator_structure()
 
-        self.xyz_axes.draw()
+        if self.show_axes:
+            self.xyz_axes.draw()
 
         pass

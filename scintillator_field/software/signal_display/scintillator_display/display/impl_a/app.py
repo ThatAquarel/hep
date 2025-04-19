@@ -59,6 +59,7 @@ class App(CameraOrbitControls, ShaderRenderer):
 
         self.pt_selected = None
         self.dataset_active = None
+        self.show_axes = True
 
 
         # fall into rendering loop
@@ -202,20 +203,17 @@ class App(CameraOrbitControls, ShaderRenderer):
 
 
         #input for drawing
-        self.ui.input_data = self.data_manager.data
         self.dataset_active = self.data_manager.impl_a_data_is_checked
 
         
         #draw elements
-        #self.data_manager.draw_active_hulls(self.data_manager.data, self.ui.dataset_active)
         self.data_manager.draw_active_hulls(self.data_manager.data, self.dataset_active)
 
-        if self.ui.show_axes:
+        if self.show_axes:
             self.xyz_axes.draw()
-            
-        self.plane.draw(self.ui.pt_selected)
+        
+        self.plane.draw(self.pt_selected)
     
-
         
         # shader: update lighting
         self.set_lighting_uniforms(
