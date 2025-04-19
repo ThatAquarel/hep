@@ -4,7 +4,11 @@ import scintillator_display.compat.imgui as imgui
 from OpenGL.GL import glClearColor, glClear, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT
 
 from .load_res import load_texture, load_font
-from scintillator_display.display.impl_a.graphics.parameter_interface import ui_section, ui_spacing
+from scintillator_display.display.impl_a.graphics.parameter_interface import (
+    ui_section,
+    ui_spacing,
+)
+
 
 class Controls:
     def __init__(self):
@@ -26,10 +30,10 @@ class Controls:
         self.width, self.height = width, height
 
     def activate_data_connection(self):
-        self.data_points    = self.impl_a.data_manager.data
+        self.data_points = self.impl_a.data_manager.data
         self.impl_a_checked = self.impl_a.data_manager.impl_a_data_is_checked
-        #self.impl_a_checked = self.impl_a.dataset_active
-        #self.impl_a_checked = self.impl_a.ui.dataset_active
+        # self.impl_a_checked = self.impl_a.dataset_active
+        # self.impl_a_checked = self.impl_a.ui.dataset_active
         self.impl_b_checked = self.impl_b.imgui_stuff.data_boxes_checked
 
     def on_render(self):
@@ -68,25 +72,35 @@ class Controls:
         imgui.text(" a    b")
         imgui.separator()
 
-        _, self.impl_a.data_manager.debug = imgui.checkbox(" ", self.impl_a.data_manager.debug)
+        _, self.impl_a.data_manager.debug = imgui.checkbox(
+            " ", self.impl_a.data_manager.debug
+        )
         imgui.same_line()
-        _, self.impl_b.opengl_stuff_for_window.arduino.debug = imgui.checkbox("debug mode", self.impl_b.opengl_stuff_for_window.arduino.debug)
+        _, self.impl_b.opengl_stuff_for_window.arduino.debug = imgui.checkbox(
+            "debug mode", self.impl_b.opengl_stuff_for_window.arduino.debug
+        )
 
         imgui.separator()
 
-
-        if self.data_points != [] and self.impl_a_checked != [] and self.impl_b_checked != []:
+        if (
+            self.data_points != []
+            and self.impl_a_checked != []
+            and self.impl_b_checked != []
+        ):
             for i, j in enumerate(self.data_points):
                 print(self.impl_a_checked, self.impl_b_checked)
-                _, self.impl_a_checked[i] = imgui.checkbox(" ", self.impl_a_checked[i])
+                _, self.impl_a_checked[i] = imgui.checkbox(
+                    f"##{i}_IMPL_A", self.impl_a_checked[i]
+                )
                 imgui.same_line()
-                _, self.impl_b_checked[i] = imgui.checkbox(f"{j[-1]}", self.impl_b_checked[i])
+                _, self.impl_b_checked[i] = imgui.checkbox(
+                    f"{j[-1]}##{i}_IMPL_B", self.impl_b_checked[i]
+                )
 
-        #for i in range(5):
+        # for i in range(5):
         #    _, self.checked[0] = imgui.checkbox(" ", self.checked[0])
         #    imgui.same_line()
         #    _, self.checked[1] = imgui.checkbox("same line test", self.checked[1])
-        #imgui.drag_float2("test", *(4, 8))
-
+        # imgui.drag_float2("test", *(4, 8))
 
         imgui.end()
