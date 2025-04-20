@@ -13,7 +13,7 @@ import pandas as pd
 from  scintillator_display.display.impl_ab_data_input_manager import Data
 from scintillator_display.display.xyz_axes import Axes
 
-import scintillator_field.software.signal_display.scintillator_display.display.impl_a.graphics.scintillator_structure as scintillator_structure
+import scintillator_display.display.impl_a.graphics.scintillator_structure as scintillator_structure
 
 from scintillator_display.display.camera_shader_controls import CameraShaderControls
 
@@ -38,7 +38,7 @@ class App():
         # initialize window
         self.window = self.window_init(window_size)
 
-        self.cam_shader = CameraShaderControls(angle_sensitivity=0.1,zoom=5, clear_colour=(0.87,)*3)
+        self.cam_shader = CameraShaderControls(angle_sensitivity=0.1,zoom=25, clear_colour=(0.87,)*3)
         scale = 12
 
         #setup elements
