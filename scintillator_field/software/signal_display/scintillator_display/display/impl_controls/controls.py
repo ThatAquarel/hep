@@ -5,6 +5,8 @@ from OpenGL.GL import glClearColor, glClear, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFE
 
 from .load_res import load_texture, load_font
 
+import time
+
 
 class Controls:
     def __init__(self):
@@ -23,6 +25,10 @@ class Controls:
         self.sc = load_texture("sc_64.png")
 
         self.font = load_font("Poppins-Regular.ttf", 24)
+
+        self.current = time.time()
+        self.dt = 0
+
 
     def window_size_callback(self, window, width, height):
         self.width, self.height = width, height
@@ -70,7 +76,7 @@ class Controls:
         imgui.separator()
 
         self.space_lines(2)
-        fps = 1/self.impl_b.dt if self.impl_b.dt != 0 else 0
+        fps = 1/self.dt if self.dt != 0 else 0
         imgui.text(f'{fps:.1f} fps')
 
         #expanded, _ = imgui.collapsing_header("view window info", True)
@@ -139,3 +145,8 @@ class Controls:
 
 
         imgui.end()
+
+        end = time.time()
+        self.dt = end-self.current
+        self.current = end
+

@@ -21,8 +21,6 @@ from scintillator_display.display.camera_shader_controls import CameraShaderCont
 class Window:
     def __init__(self):
 
-        self.start_time = time.time()
-
         self.cam_shader = CameraShaderControls(zoom=90)
         
         self.data_boxes_checked = []
@@ -123,9 +121,6 @@ class Window:
 
         self.data_boxes_checked = self.opengl_stuff_for_window.arduino.impl_b_data_is_checked
 
-        self.dt = 0
-        self.current = time.time()
-
         self.done = False
         self.paused = False
 
@@ -137,9 +132,5 @@ class Window:
 
         self.opengl_stuff_for_window.per_render_loop(self)
 
-        end = time.time()
-        if end-self.current !=0:
-            self.dt = end-self.current
-        self.current = end
         glfw.swap_buffers(self.window)
         glfw.poll_events()
