@@ -1,11 +1,8 @@
 import time
 from datetime import datetime
 
-# import glfw
 import scintillator_display.compat.glfw as glfw
 
-import glm
-# import imgui
 import scintillator_display.compat.imgui as imgui
 
 import pandas as pd
@@ -13,7 +10,7 @@ import pandas as pd
 from  scintillator_display.display.impl_ab_data_input_manager import Data
 from scintillator_display.display.xyz_axes import Axes
 
-import scintillator_display.display.impl_a.graphics.scintillator_structure as scintillator_structure
+import scintillator_display.display.impl_a.scintillator_structure as scintillator_structure
 
 from scintillator_display.display.camera_shader_controls import CameraShaderControls
 
@@ -88,7 +85,6 @@ class App():
 
         return window
     
-    # NOTE : FIX THESE
     
     def mouse_button_callback(self, window, button, action, mods):
         # filter for right clicks which are
@@ -170,9 +166,6 @@ class App():
         self.cam_shader.make_shader_program()
         self.cam_shader.setup_opengl()
 
-        start = time.time()
-        dt = 0
-
         # main rendering loop until user quits
         while not self.window_should_close():
 
@@ -183,11 +176,6 @@ class App():
 
             glfw.swap_buffers(self.window)
             glfw.poll_events()
-
-            # compute dt for integration
-            current = time.time()
-            dt = current - start
-            start = current
 
         if not self.data_manager.debug:
             self.generate_csv()

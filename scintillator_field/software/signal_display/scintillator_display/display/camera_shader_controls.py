@@ -206,5 +206,3 @@ class CameraShaderControls:
         self.set_uniform_float("diffuse_base"       , self.diffuse_base)
         self.set_uniform_float("specular_strength"  , self.specular_strength)
         self.set_uniform_float("specular_reflection", self.specular_reflection)
-
-
