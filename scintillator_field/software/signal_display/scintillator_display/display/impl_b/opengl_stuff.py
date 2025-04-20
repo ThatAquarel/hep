@@ -3,15 +3,17 @@ from OpenGL.GLU import *
 
 import numpy as np
 
-from scintillator_display.display.camera_shader_controls import CameraShaderControls
+from scintillator_display.display.impl_compatibility.camera_shader_controls import CameraShaderControls
 
 from scintillator_display.display.impl_b.scintillator_blocks import ScintillatorStructure
 
-from scintillator_display.display.vao_vbo import create_vao, update_vbo, draw_vao
+from scintillator_display.display.impl_compatibility.vao_vbo import create_vao, update_vbo, draw_vao
 
-from scintillator_display.display.xyz_axes import Axes
+from scintillator_display.display.impl_compatibility.xyz_axes import Axes
 
-from scintillator_display.display.impl_ab_data_input_manager import Data
+from scintillator_display.display.impl_compatibility.data_manager import Data
+
+from scintillator_display.compat.pyserial_singleton import ArduinoData
 
 class OpenGLStuff:
     def __init__(self, camera_shader:CameraShaderControls):
@@ -24,12 +26,14 @@ class OpenGLStuff:
 
         self.pt_selected = None
 
-        self.arduino = Data(impl_constant=1, impl="b",
+        self.arduino = ArduinoData()
+
+        self.data_manager = Data(impl_constant=1, impl="b",
                             hull_colour=[0.5, 0, 0.5], hull_opacity=0.8,
                             store_normals=True)
+        
 
-
-        self.scintillator_structure = ScintillatorStructure(self.arduino)
+        self.scintillator_structure = ScintillatorStructure(self.data_manager)
 
 
         self.cam_shader.make_shader_program()
@@ -60,27 +64,30 @@ class OpenGLStuff:
 
 
 
+        #if not self.data_manager.debug:
+        if self.arduino.arduino_has_data(self.data_manager.debug):
+            if self.data_manager.debug:
+                if not self.data_manager.test_data_created:
+                    self.data_manager.test_data_created = True
+                    data = self.data_manager.test_data
+                else:
+                    data = []
+            else:
+                data = self.arduino.get_data_from_arduino(self.data_manager.debug)
+            
+            for data_point in data:
+                self.data_manager.add_point(data_point)
 
+        #elif self.data_manager.debug:
+        #    if not self.data_manager.test_data_created:
+        #        for data in self.data_manager.test_data:
+        #            scintillator_bounds, cooked_data = self.data_manager.get_scintillator_bounds(data)
+        #            if scintillator_bounds != None:
+        #                self.data_manager.transform_data_per_impl(scintillator_bounds, cooked_data, data)
+        #    self.data_manager.test_data_created = True
 
-        if not self.arduino.debug:
-            #if self.detected_hulls.arduino.arduino_has_data():
-            #    if self.detected_hulls.arduino.is_valid_data():
-            #        hull_bounds = self.detected_hulls.arduino.transform_data_per_impl()
-            #        self.detected_hulls.create_hull_data(hull_bounds)
-            #
-            #if self.detected_hulls.new_data:
-            #    self.detected_hulls.create_hull_vao()
-            #
-            #self.detected_hulls.new_data = False
-            #
-            #if self.detected_hulls.data_exists:
-            #    self.detected_hulls.draw_hull()
-            pass
-            # NOTE : MUST FIX THIS
         
-        elif self.arduino.debug:
-            pass
-            self.arduino.draw_active_hulls(self.arduino.data, self.arduino.impl_b_data_is_checked)
+        self.data_manager.draw_active_hulls(self.data_manager.data, self.data_manager.impl_b_data_is_checked)
 
 
 

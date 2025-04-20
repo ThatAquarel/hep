@@ -7,21 +7,21 @@ import scintillator_display.compat.imgui as imgui
 
 import pandas as pd
 
-from  scintillator_display.display.impl_ab_data_input_manager import Data
-from scintillator_display.display.xyz_axes import Axes
+from scintillator_display.display.impl_compatibility.data_manager import Data
+from scintillator_display.compat.pyserial_singleton import ArduinoData
+
+
+from scintillator_display.display.impl_compatibility.xyz_axes import Axes
 
 import scintillator_display.display.impl_a.scintillator_structure as scintillator_structure
 
-from scintillator_display.display.camera_shader_controls import CameraShaderControls
+from scintillator_display.display.impl_compatibility.camera_shader_controls import CameraShaderControls
 
 from OpenGL.GL import *
 
 
 class App():
-    def __init__(
-        self,
-        window_size,
-    ):
+    def __init__(self):
         """
         Joule App: Main class for application
 
@@ -32,11 +32,12 @@ class App():
         """
 
 
-        # initialize window
-        self.window = self.window_init(window_size)
+
+        self.arduino = ArduinoData()
 
         self.cam_shader = CameraShaderControls(angle_sensitivity=0.1,zoom=25, clear_colour=(0.87,)*3)
         scale = 12
+
 
         #setup elements
 
@@ -53,38 +54,20 @@ class App():
         self.show_axes = True
 
 
-        # fall into rendering loop
-        self.rendering_loop()
+        self.cam_shader.make_shader_program()
+        self.cam_shader.setup_opengl()
 
 
-    def window_init(self, window_size):
-        # throw exception if glfw failed to init
-        if not glfw.init():
-            raise Exception("GLFW could not be initialized.")
+    def viewport_shenanigans(self, vm, ratio_num):
+        vp_a = vm.add_viewport(None, None)
+        vm.set_mouse_button_callback(vp_a, self.mouse_button_callback)
+        vm.set_cursor_pos_callback(  vp_a, self.cursor_pos_callback)
+        vm.set_scroll_callback(      vp_a, self.scroll_callback)
+        vm.set_window_size_callback( vp_a, self.resize_callback)
 
-        # enable multisampling (antialiasing) on glfw window
-        glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
-        glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
-        glfw.window_hint(glfw.OPENGL_FORWARD_COMPAT, glfw.TRUE)
-        glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
-        #glfw.window_hint(glfw.SAMPLES, 4)
+        vm.set_vp_ratio(vp_a, ratio_num)
+        vm.set_on_render(vp_a, self.on_render_frame)
 
-        # create window and context
-        window = glfw.create_window(*window_size, None, None, None)
-        if not window:
-            glfw.terminate()
-            raise Exception("GLFW window could not be created.")
-        glfw.make_context_current(window)
-
-        # wrapper callback functions to dispatch events to ui and camera
-        glfw.set_cursor_pos_callback(window, self.cursor_pos_callback)
-        glfw.set_mouse_button_callback(window, self.mouse_button_callback)
-        glfw.set_scroll_callback(window, self.scroll_callback)
-        glfw.set_framebuffer_size_callback(window, self.resize_callback)
-
-
-        return window
-    
     
     def mouse_button_callback(self, window, button, action, mods):
         # filter for right clicks which are
@@ -155,33 +138,6 @@ class App():
         # prevent a zero division error
         self.cam_shader.aspect_ratio = width / height if height > 0 else 1.0
 
-    def window_should_close(self):
-        return glfw.window_should_close(self.window)
-
-    def rendering_loop(self):
-        """
-        Main rendering loop for application
-        """
-
-        self.cam_shader.make_shader_program()
-        self.cam_shader.setup_opengl()
-
-        # main rendering loop until user quits
-        while not self.window_should_close():
-
-
-            # call rendering
-            self.on_render_frame()
-
-
-            glfw.swap_buffers(self.window)
-            glfw.poll_events()
-
-        if not self.data_manager.debug:
-            self.generate_csv()
-
-        glfw.terminate()
-
 
     
     def on_render_frame(self):
@@ -191,13 +147,18 @@ class App():
 
         self.cam_shader.begin_render_gl_actions()
 
-
-
-        #chekc arduino if there's data; gather data if there is
-        if self.data_manager.arduino_has_data():
-            if self.data_manager.is_valid_data():
-                self.data_manager.transform_data_per_impl()
-        
+        if self.arduino.arduino_has_data(self.data_manager.debug):
+            if self.data_manager.debug:
+                if not self.data_manager.test_data_created:
+                    self.data_manager.test_data_created = True
+                    data = self.data_manager.test_data
+                else:
+                    data = []
+            else:
+                data = self.arduino.get_data_from_arduino(self.data_manager.debug)
+            
+            for data_point in data:
+                self.data_manager.add_point(data_point)
 
 
         #input for drawing
@@ -211,23 +172,3 @@ class App():
             self.xyz_axes.draw()
         
         self.plane.draw(self.pt_selected)
-    
-        
-      
-    def generate_csv(self):
-        """
-        Create csv file
-        """
-        
-        df = pd.DataFrame(self.data_manager.data,columns=["new_hull_bounds", "cooked_data", "bit24", "time"])
-
-        df = df.drop("new_hull_bounds", axis=1)
-        df = df.drop("cooked_data", axis=1)
-
-        time = datetime.now()
-        time = ("").join([t if t != ":" else "." for t in str(time) ])
-
-        try:
-            df.to_csv(f"scintillator_display/data/{time}.csv")   #Current directory is set to the "data" folder
-        except:
-            df.to_csv(f"{time}.csv")
