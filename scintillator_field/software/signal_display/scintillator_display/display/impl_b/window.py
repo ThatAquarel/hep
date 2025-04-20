@@ -13,7 +13,7 @@ import numpy as np
 
 from scintillator_display.display.impl_b.opengl_stuff import OpenGLStuff
 
-from scintillator_display.display.camera_shader_controls import CameraShaderControls
+from scintillator_display.display.impl_compatibility.camera_shader_controls import CameraShaderControls
 
 
 
@@ -25,24 +25,27 @@ class Window:
         
         self.data_boxes_checked = []
 
-        self.pause_time = time.time()
-
-    def build_window(self, window_name):
         
-        window = glfw.create_window(self.cam_shader.width, self.cam_shader.height, window_name, None, None)
-        glfw.make_context_current(window)
-        # glfw.get_framebuffer_size(window)
-        self.set_callbacks(window)
+        self.opengl_stuff_for_window = OpenGLStuff(self.cam_shader)
+        self.opengl_stuff_for_window.setup()
 
-        return window
+        self.data_boxes_checked = self.opengl_stuff_for_window.data_manager.impl_b_data_is_checked
 
-    def set_callbacks(self, window):
-        glfw.set_key_callback(window, self.key_callbacks)
-        glfw.set_mouse_button_callback(window, self.mouse_callbacks)
-        glfw.set_cursor_pos_callback(window, self.cursor_pos_callbacks)
-        glfw.set_scroll_callback(window, self.scroll_callbacks)
-        glfw.set_window_size_callback(window, self.window_callbacks)
-    
+        self.done = False
+        self.paused = False
+
+
+    def viewport_shenanigans(self, vm, ratio_num):
+        vp_b = vm.add_viewport(self.cam_shader.width, self.cam_shader.height)
+        vm.set_mouse_button_callback(vp_b, self.mouse_callbacks)
+        vm.set_cursor_pos_callback(  vp_b, self.cursor_pos_callbacks)
+        vm.set_scroll_callback(      vp_b, self.scroll_callbacks)
+        vm.set_window_size_callback( vp_b, self.window_callbacks)
+
+        vm.set_vp_ratio(vp_b, ratio_num)
+        vm.set_on_render(vp_b, self.render_loop)
+
+
     def window_callbacks(self, window, width, height):
         if not (width==0 or height==0):
             self.cam_shader.width, self.cam_shader.height = width, height
@@ -95,42 +98,8 @@ class Window:
                 self.cam_shader.panning = False
             elif button == glfw.MOUSE_BUTTON_RIGHT: # Dual-viewports: glfw namespace change
                 self.cam_shader.angling = False
-    
-    def key_callbacks(self, window, key, scancode, action, mods):
-        if action == glfw.PRESS:
-            if key == glfw.KEY_ESCAPE:
-                glfw.terminate()
-                self.done = True
-            if (key == glfw.KEY_SPACE) and (not self.paused):
-                self.paused = True
-                self.pause_time = time.time()
-            if (key == glfw.KEY_SPACE) and (self.paused) and (time.time()- self.pause_time > 0.01):
-                self.paused = False
-
-    def main(self):
-        if not glfw.init():
-            return
-
-
-        appname = type(self).__name__
-        self.window = self.build_window(appname)
-        
-
-        self.opengl_stuff_for_window = OpenGLStuff(self.cam_shader)
-        self.opengl_stuff_for_window.setup()
-
-        self.data_boxes_checked = self.opengl_stuff_for_window.arduino.impl_b_data_is_checked
-
-        self.done = False
-        self.paused = False
-
-        while not (self.done or glfw.window_should_close(self.window)): # Dual-viewports: need reference to glfw.
-            self.render_loop()
 
 
     def render_loop(self):
 
         self.opengl_stuff_for_window.per_render_loop(self)
-
-        glfw.swap_buffers(self.window)
-        glfw.poll_events()

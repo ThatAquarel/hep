@@ -52,6 +52,8 @@ class ViewportManager:
             glfw.swap_buffers(self.window)
             glfw.poll_events()
 
+        self.end_csv()
+
         glDisable(GL_SCISSOR_TEST)
         glfw.terminate()
 

@@ -9,9 +9,9 @@ import time
 
 
 class Controls:
-    def __init__(self):
-        self.window = glfw.create_window(None, None, None, None, None)
-        glfw.set_window_size_callback(self.window, self.window_size_callback)
+    def __init__(self, impl_a, impl_b):
+
+        self.activate_data_connection(impl_a, impl_b)
 
         self.width, self.height = 0, 0
 
@@ -29,17 +29,25 @@ class Controls:
         self.current = time.time()
         self.dt = 0
 
+    
+    def viewport_shenanigans(self, vm, ratio_num):
+        vp_controls = vm.add_viewport(None, None)
+        vm.set_vp_ratio(vp_controls, ratio_num)
+        vm.set_on_render(vp_controls, self.on_render)
+        vm.set_window_size_callback(vp_controls, self.window_size_callback)
+
 
     def window_size_callback(self, window, width, height):
         self.width, self.height = width, height
 
-    def activate_data_connection(self):
-        self.data_points = self.impl_a.data_manager.data
+    def activate_data_connection(self, impl_a, impl_b):
+        self.impl_a, self.impl_b = impl_a, impl_b
+        self.data_points    = self.impl_a.data_manager.data
         self.impl_a_checked = self.impl_a.data_manager.impl_a_data_is_checked
         self.impl_b_checked = self.impl_b.data_boxes_checked
 
         self.debug_a = self.impl_a.data_manager.debug
-        self.debug_b = self.impl_b.opengl_stuff_for_window.arduino.debug
+        self.debug_b = self.impl_b.opengl_stuff_for_window.data_manager.debug
 
         self.show_a_axes = self.impl_a.show_axes
         self.show_b_axes = self.impl_b.opengl_stuff_for_window.show_axes
@@ -93,6 +101,9 @@ class Controls:
         imgui.same_line()
         _, self.debug_b = imgui.checkbox(
             "debug mode", self.debug_b)
+        self.impl_a.data_manager.debug = self.debug_a
+        self.impl_b.opengl_stuff_for_window.data_manager.debug = self.debug_b
+
 
         imgui.separator()
 
@@ -110,14 +121,16 @@ class Controls:
         _, self.show_only_last_data_b = imgui.checkbox(
             "show only most recent data", self.show_only_last_data_b)
         
-        if self.show_only_last_data_a:
-            for i in range(len(self.impl_a_checked)):
-                self.impl_a_checked[i] = False
-            self.impl_a_checked[-1] = True
-        if self.show_only_last_data_b:
-            for i in range(len(self.impl_b_checked)):
-                self.impl_b_checked[i] = False
-            self.impl_b_checked[-1] = True
+        if self.impl_a_checked != []:
+            if self.show_only_last_data_a:
+                for i in range(len(self.impl_a_checked)):
+                    self.impl_a_checked[i] = False
+                self.impl_a_checked[-1] = True
+        if self.impl_b_checked != []:
+            if self.show_only_last_data_b:
+                for i in range(len(self.impl_b_checked)):
+                    self.impl_b_checked[i] = False
+                self.impl_b_checked[-1] = True
         
         imgui.separator()
 

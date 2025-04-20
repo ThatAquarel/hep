@@ -10,41 +10,14 @@ def entrypoint():
 
     ratio = [1, 2, 2]
 
-    impl_controls = Controls()
-    impl_a = IMPL_A((1, 1))
+    impl_a = IMPL_A()
     impl_b = IMPL_B()
-    impl_controls.impl_a = impl_a
-    impl_controls.impl_b = impl_b
+    impl_controls = Controls(impl_a, impl_b)
 
+    viewports = [impl_controls, impl_a, impl_b]
+    for i, vp in enumerate(viewports):
+        vp.viewport_shenanigans(vm, ratio[i])
 
-    # impl controls
-    vp_controls = impl_controls.window
-
-    vm.set_vp_ratio(vp_controls, ratio[0])
-    vm.set_on_render(vp_controls, impl_controls.on_render)
-
-
-    # impl_a
-    vp_a = impl_a.window
-
-    def impl_a_render():
-        impl_a.on_render_frame()
-
-    vm.set_vp_ratio(vp_a, ratio[1])
-    vm.set_on_render(vp_a, impl_a_render)
-
-
-    # impl_b
-    impl_b.main()
-    vp_b = impl_b.window
-
-    def impl_b_render():
-        impl_b.render_loop()
-
-    vm.set_vp_ratio(vp_b, ratio[2])
-    vm.set_on_render(vp_b, impl_b_render)
-
+    vm.end_csv = impl_a.data_manager.generate_data_csv
     
-    impl_controls.activate_data_connection()
-
     vm.render_loop()
