@@ -8,7 +8,7 @@ import os
 class CameraShaderControls:
     def __init__(self,
                  angle_sensitivity=0.001,
-                 zoom=251,
+                 zoom=50,
                  clear_colour=(0.5,)*3):
         
         

@@ -22,13 +22,6 @@ out vec4 fragColor;
 
 void main() {
 
-    // fragColor = vec4(vertex_color, 1.0);
-
-    // A HUGE THANK YOU TO: https://learnopengl.com/Lighting/Basic-Lighting
-    // THE IDEAS/FORMULAS OF LINES 22 to 36 ARE FROM THAT TUTORIAL
-    // quite a bit of modifications were made, though
-    // since the current rendering architecture is different
-
     // ambient lighting
     vec3 ambient = ambient_strength * light_color;
 

@@ -23,7 +23,7 @@ class Window:
 
         self.start_time = time.time()
 
-        self.cam_shader = CameraShaderControls()
+        self.cam_shader = CameraShaderControls(zoom=90)
         
         self.data_boxes_checked = []
 

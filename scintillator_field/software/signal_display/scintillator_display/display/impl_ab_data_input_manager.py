@@ -303,7 +303,8 @@ class Data(MathDisplayValues):
                 0b011011010110101011010110,
                 0b100110101101010101101001,
                 0b100101101010011101011001,
-                1431655765
+                1431655765,
+                #2**33 - 1
             ]
         for data in test_data:
             self.is_valid_data(data)
