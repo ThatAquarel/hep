@@ -6,6 +6,8 @@ from OpenGL.GL.shaders import compileShader, compileProgram
 
 import scintillator_display.display.impl_a.graphics.shaders as shaders
 
+import numpy as np
+
 
 class ShaderRenderer:
     def __init__(self, **kwargs):
@@ -113,7 +115,11 @@ class ShaderRenderer:
         """
 
         location = glGetUniformLocation(self._shader, name)
-        glUniform3fv(location, 1, glm.value_ptr(glm_vec3))
+        try:
+            glUniform3fv(location, 1, glm.value_ptr(glm_vec3))
+        except:
+            glUniform3fv(location, 1, glm_vec3)
+
 
     def _uniform_mat4(self, name, glm_mat4):
         """
@@ -124,20 +130,20 @@ class ShaderRenderer:
         """
 
         location = glGetUniformLocation(self._shader, name)
-        glUniformMatrix4fv(location, 1, GL_TRUE, glm.value_ptr(glm_mat4))
+        try:
+            glUniformMatrix4fv(location, 1, GL_TRUE, glm.value_ptr(glm_mat4))
+        except:
+            glUniformMatrix4fv(location, 1, GL_TRUE, glm_mat4)
+
 
     def render_setup(self):
         """
         Setup rendering pipeline on program initialize
         """
 
-        vao = glGenVertexArrays(1)
-        glBindVertexArray(vao)
 
         # load shader pipeline
         self._shader = self._load_shader()
-
-        glBindVertexArray(0)
 
         # enable depth to compute visual occlusion of objects
         glEnable(GL_DEPTH_TEST)
@@ -191,16 +197,18 @@ class ShaderRenderer:
         # which accelerates 3D point transformation with GPU
 
         self._uniform_mat4("world_transform", self.get_right_handed())
-        self._uniform_mat4("cam_projection", cam_projection)
         self._uniform_mat4("cam_transform", cam_transform)
+        self._uniform_mat4("cam_projection", cam_projection)
 
         # if cam_transform transforms points into the camera's view
         # then the inverse of cam_transform describes the camera's
         # position with respect to the points
-        cam_transform_inv = glm.inverse(cam_transform)
+        #cam_transform_inv = glm.inverse(cam_transform)
 
         # compute the camera's view position
-        view_pos = glm.vec3(cam_transform_inv * self._view_vec)
+        #view_pos = glm.vec3(cam_transform_inv * self._view_vec)
+
+        view_pos = np.linalg.inv(cam_transform) * self._view_vec
 
         # see joule/graphics/shaders/fragment.glsl
         #   uniform vec3 view_pos;

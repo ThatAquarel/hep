@@ -71,6 +71,9 @@ class Data(MathDisplayValues):
         print(f"    {b1:02x}          {b2:02x}          {b3:02x}")
         print(f"    {b1:08b}    {b2:08b}    {b3:08b}")
         print()
+
+    def num_to_raw_binary(self, num):
+        return np.array([(num & (2**i)) >> i for i in range(24)])
     
     
     def cook_data_into_scintillators(self, raw_data):
@@ -83,7 +86,7 @@ class Data(MathDisplayValues):
         [(22,23),(18,19),(15,14),(11,10),(2,3),(6,7),],
         ]
 
-        k = np.array([(raw_data & (2**i)) >> i for i in range(24)])[f_sc_idx]
+        k = self.num_to_raw_binary(raw_data)[f_sc_idx]
 
         cooked_data = [[(int(k[0]), int(k[1])) for k in k[0]], [(int(k[0]), int(k[1])) for k in k[1]]]
 
@@ -257,17 +260,23 @@ class Data(MathDisplayValues):
 
         vertices = np.array(vertices, dtype = np.float32)
 
-        if self.impl == "a":
-            vd = np.ones((len(vertices), 10), dtype=np.float32)
-            vd[:, :3]   = vertices
-            vd[:, 3:6]  = hull_colour
-            vd[:, 6]    = hull_opacity
-            vd[:, 7:10] = vertices
-        elif self.impl == "b":
-            vd = np.ones((len(vertices), 7), dtype=np.float32)
-            vd[:, :3]   = vertices
-            vd[:, 3:6]  = hull_colour
-            vd[:, 6]    = hull_opacity
+        vd = np.ones((len(vertices), 10), dtype=np.float32)
+        vd[:, :3]   = vertices
+        vd[:, 3:6]  = hull_colour
+        vd[:, 6]    = hull_opacity
+        vd[:, 7:10] = vertices
+
+        #if self.impl == "a":
+        #    vd = np.ones((len(vertices), 10), dtype=np.float32)
+        #    vd[:, :3]   = vertices
+        #    vd[:, 3:6]  = hull_colour
+        #    vd[:, 6]    = hull_opacity
+        #    vd[:, 7:10] = vertices
+        #elif self.impl == "b":
+        #    vd = np.ones((len(vertices), 7), dtype=np.float32)
+        #    vd[:, :3]   = vertices
+        #    vd[:, 3:6]  = hull_colour
+        #    vd[:, 6]    = hull_opacity
 
         return vd
     

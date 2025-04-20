@@ -20,7 +20,13 @@ void main() {
     // the camera's panning and rotations
     mat4 t = world_transform * cam_transform;
     // 3D points are transformed, then projected onto a 2D screen
-    gl_Position = vec4(position, 1.0) * t * cam_projection;
+    
+    //gl_Position = vec4(position, 1.0) * t * cam_projection;
+
+    //gl_Position = vec4(position, 1.0) * world_transform * cam_transform * cam_projection;
+    gl_Position = cam_projection * cam_transform * world_transform * vec4(position, 1.0);
+
+
 
     // pass these parameters down to the fragment shader
     // the color of each point

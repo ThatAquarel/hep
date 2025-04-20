@@ -11,8 +11,9 @@ from OpenGL.GLU import *
 import numpy as np
 
 
-# from scintillator_field.display.display_1.opengl_stuff import *
 from scintillator_display.display.impl_b.opengl_stuff import OpenGLStuff
+
+from scintillator_display.display.camera_shader_controls import CameraShaderControls
 
 
 
@@ -22,45 +23,15 @@ class Window:
 
         self.start_time = time.time()
 
-        # sets up basic window parameters
-
-        self.render_distance = 1024
+        self.cam_shader = CameraShaderControls()
         
-        self.width, self.height = 1924, 1028
-        #self.width, self.height = 800, 900
-        #self.width, self.height = 750, 500
-        self.aspect_ratio = self.width/self.height
-
-        self.angle_x, self.angle_y, self.angle_z = 0, 0, 45
-        self.pan_x, self.pan_y, self.pan_z = 0, 0, 0
-
-        self.last_x, self.last_y = 0, 0
-        self.zoom = 5
-        
-
-
-        # self.angle_x, self.angle_y, self.angle_z = 67.3, -73.1, 45
-        self.angle_x, self.angle_y, self.angle_z = 15,-45,0
-        self.pan_x, self.pan_y, self.pan_z = 0,0,0
-        self.zoom = 14.1
-        self.zoom = 231
-        self.zoom = 251
-
-        #self.angle_x, self.angle_y, self.angle_z = (0,)*3
-
-
-
-        self.pan_sensitivity   = 0.001
-        #self.angle_sensitivity = 0.01
-        self.angle_sensitivity = 0.001
-
-        self.panning, self.angling = False, False
-
         self.data_boxes_checked = []
+
+        self.pause_time = time.time()
 
     def build_window(self, window_name):
         
-        window = glfw.create_window(self.width, self.height, window_name, None, None)
+        window = glfw.create_window(self.cam_shader.width, self.cam_shader.height, window_name, None, None)
         glfw.make_context_current(window)
         # glfw.get_framebuffer_size(window)
         self.set_callbacks(window)
@@ -76,66 +47,66 @@ class Window:
     
     def window_callbacks(self, window, width, height):
         if not (width==0 or height==0):
-            self.width, self.height = width, height
-            self.zoom = self.zoom*self.aspect_ratio*self.height/self.width
-            self.aspect_ratio = width/height
+            self.cam_shader.width, self.cam_shader.height = width, height
+            self.cam_shader.zoom = self.cam_shader.zoom*self.cam_shader.aspect_ratio*self.cam_shader.height/self.cam_shader.width
+            self.cam_shader.aspect_ratio = width/height
 
             glViewport(0, 0, width, height)
             # will be changed to double viewport later
 
 
     def scroll_callbacks(self, window, xoffset, yoffset):
-        self.scroll_amount = self.zoom/27.5 if self.zoom/27.5 > 0.24 else 0.24
-        if ((self.zoom-self.scroll_amount*yoffset != 0)
+        scroll_amount = self.cam_shader.zoom/27.5 if self.cam_shader.zoom/27.5 > 0.24 else 0.24
+
+        if ((self.cam_shader.zoom-scroll_amount*yoffset != 0)
                 and not
-            ((self.zoom-self.scroll_amount*yoffset > -0.1)
+            ((self.cam_shader.zoom-scroll_amount*yoffset > -0.1)
                 and
-             (self.zoom-self.scroll_amount*yoffset < 0.1))):
-            self.zoom -= self.scroll_amount*yoffset
+             (self.cam_shader.zoom-scroll_amount*yoffset < 0.1))):
+            self.cam_shader.zoom -= scroll_amount*yoffset
     
     def cursor_pos_callbacks(self, window, xpos, ypos):
-        if self.panning:
-            dx = xpos - self.last_x
-            dy = ypos - self.last_y
-            self.pan_x += dx * self.pan_sensitivity * self.zoom
-            self.pan_y -= dy * self.pan_sensitivity * self.zoom
+        if self.cam_shader.panning:
+            dx = xpos - self.cam_shader.last_x
+            dy = ypos - self.cam_shader.last_y
+            self.cam_shader.pan_x += dx * self.cam_shader.pan_sensitivity * self.cam_shader.zoom
+            self.cam_shader.pan_y -= dy * self.cam_shader.pan_sensitivity * self.cam_shader.zoom
 
-        if self.angling:
-            dx = xpos - self.last_x
-            dy = ypos - self.last_y
-            self.angle_x += dy * self.angle_sensitivity * self.zoom
-            self.angle_y += dx * self.angle_sensitivity * self.zoom
+        if self.cam_shader.angling:
+            dx = xpos - self.cam_shader.last_x
+            dy = ypos - self.cam_shader.last_y
+            self.cam_shader.angle_x += dy * self.cam_shader.angle_sensitivity * self.cam_shader.zoom
+            self.cam_shader.angle_y += dx * self.cam_shader.angle_sensitivity * self.cam_shader.zoom
 
-            self.angle_x %= 360
-            self.angle_y %= 360
-            self.angle_z %= 360
+            self.cam_shader.angle_x %= 360
+            self.cam_shader.angle_y %= 360
+            self.cam_shader.angle_z %= 360
 
 
-        self.last_x, self.last_y = xpos, ypos
+        self.cam_shader.last_x, self.cam_shader.last_y = xpos, ypos
     
     def mouse_callbacks(self, window, button, action, mods):
 
         if action == glfw.PRESS:
             if button == glfw.MOUSE_BUTTON_LEFT:
-                self.panning = True
+                self.cam_shader.panning = True
             elif button == glfw.MOUSE_BUTTON_RIGHT: # Dual-viewports: glfw namespace change
-                self.angling = True
+                self.cam_shader.angling = True
         if action == glfw.RELEASE:
             if button == glfw.MOUSE_BUTTON_LEFT:
-                self.panning = False
+                self.cam_shader.panning = False
             elif button == glfw.MOUSE_BUTTON_RIGHT: # Dual-viewports: glfw namespace change
-                self.angling = False
+                self.cam_shader.angling = False
     
     def key_callbacks(self, window, key, scancode, action, mods):
-        global pause_time
         if action == glfw.PRESS:
             if key == glfw.KEY_ESCAPE:
                 glfw.terminate()
                 self.done = True
             if (key == glfw.KEY_SPACE) and (not self.paused):
                 self.paused = True
-                pause_time = time.time()
-            if (key == glfw.KEY_SPACE) and (self.paused) and (time.time()- pause_time > 0.01):
+                self.pause_time = time.time()
+            if (key == glfw.KEY_SPACE) and (self.paused) and (time.time()- self.pause_time > 0.01):
                 self.paused = False
 
     def main(self):
@@ -146,19 +117,8 @@ class Window:
         appname = type(self).__name__
         self.window = self.build_window(appname)
         
-        
-        # glClearColor(0.5, 0.5, 0.5, 1) # Dual-viewports: move to main render_loop
-        glEnable(GL_DEPTH_TEST)
 
-        # antialiasing (smoother lines)
-        glEnable(GL_MULTISAMPLE)
-        # glEnable(GL_POINT_SMOOTH)  # Dual-viewports: remove for OpenGL 3.3 CORE COMPAT
-
-        # opacity
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        glEnable(GL_BLEND)
-
-        self.opengl_stuff_for_window = OpenGLStuff()
+        self.opengl_stuff_for_window = OpenGLStuff(self.cam_shader)
         self.opengl_stuff_for_window.setup()
 
         self.data_boxes_checked = self.opengl_stuff_for_window.arduino.impl_b_data_is_checked
@@ -174,8 +134,6 @@ class Window:
 
 
     def render_loop(self):
-        glClearColor(0.5, 0.5, 0.5, 1) # Dual-viewports: split color separation
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         self.opengl_stuff_for_window.per_render_loop(self)
 

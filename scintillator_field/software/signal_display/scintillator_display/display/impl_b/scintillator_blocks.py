@@ -30,7 +30,7 @@ class ScintillatorStructure(MathDisplayValues):
         self.make_vao()
 
 
-    def make_prism_triangles(self, low_x, high_x, low_y, high_y, low_z, high_z, colour, opacity):      
+    def make_prism_triangles(self, low_x, high_x, low_y, high_y, low_z, high_z, colour=[], opacity=[]):      
         points = self.arduino.make_points_from_high_low(
             low_x, high_x, low_y, high_y, low_z, high_z, colour, opacity)
 
@@ -51,11 +51,11 @@ class ScintillatorStructure(MathDisplayValues):
         width_per_one = width_per_one
         dead_space = dead_space
 
-        c1 = c1
-        c2 = c2
+        self.c1 = c1
+        self.c2 = c2
         alpha = alpha
 
-        all_data = []
+        vertices_colours_opacity = []
 
         ''''''
         allz = []
@@ -79,9 +79,9 @@ class ScintillatorStructure(MathDisplayValues):
 
                 z_start = base_z
 
-                colour = c1 if rod%2==0 else c2
+                colour = self.c1 if rod%2==0 else self.c2
 
-                all_data.extend(
+                vertices_colours_opacity.extend(
                     self.make_prism_triangles(
                         low_x=s,
                         high_x=s+dist_bpoints,
@@ -89,8 +89,8 @@ class ScintillatorStructure(MathDisplayValues):
                         high_y=base_y+square_side_len,
                         low_z=z_start,
                         high_z=z_start+z_change,
-                        colour=colour,
-                        opacity=alpha
+                        #colour=colour,
+                        #opacity=alpha
                         )
                 )
 
@@ -105,9 +105,9 @@ class ScintillatorStructure(MathDisplayValues):
 
                 z_start = base_z+width_per_one+dead_space
                 
-                colour = c1 if rod%2==0 else c2
+                colour = self.c1 if rod%2==0 else self.c2
 
-                all_data.extend(
+                vertices_colours_opacity.extend(
                     self.make_prism_triangles(
                         low_x=base_x,
                         high_x=base_x+square_side_len,
@@ -115,8 +115,8 @@ class ScintillatorStructure(MathDisplayValues):
                         high_y=s+dist_bpoints,
                         low_z=z_start,
                         high_z=z_start+z_change,
-                        colour=colour,
-                        opacity=alpha
+                        #colour=colour,
+                        #opacity=alpha
                         )
                 )
                 allz.extend((z_start, z_start+z_change))
@@ -133,31 +133,6 @@ class ScintillatorStructure(MathDisplayValues):
 
             num_rods = 2**(double+1)
 
-            "xy"
-            basepoints = np.linspace(base_x, base_x+square_side_len, num_rods, endpoint=False)
-            dist_bpoints = basepoints[1]-basepoints[0]
-
-            for rod, s in enumerate(basepoints):
-
-                z_start = base_z
-
-                colour = c1 if rod%2==0 else c2
-
-                all_data.extend(
-                    self.make_prism_triangles(
-                        low_x=s,
-                        high_x=s+dist_bpoints,
-                        low_y=base_y,
-                        high_y=base_y+square_side_len,
-                        low_z=z_start,
-                        high_z=z_start+z_change,
-                        colour=colour,
-                        opacity=alpha
-                        )
-                )
-                allz.extend((z_start, z_start+z_change))
-
-
             "yx"
             basepoints = np.linspace(base_y, base_y+square_side_len, num_rods, endpoint=False)
             dist_bpoints = basepoints[1]-basepoints[0]
@@ -166,9 +141,9 @@ class ScintillatorStructure(MathDisplayValues):
 
                 z_start = base_z+width_per_one+dead_space
                 
-                colour = c1 if rod%2==0 else c2
+                colour = self.c1 if rod%2==0 else self.c2
 
-                all_data.extend(
+                vertices_colours_opacity.extend(
                     self.make_prism_triangles(
                         low_x=base_x,
                         high_x=base_x+square_side_len,
@@ -176,19 +151,52 @@ class ScintillatorStructure(MathDisplayValues):
                         high_y=s+dist_bpoints,
                         low_z=z_start,
                         high_z=z_start+z_change,
-                        colour=colour,
-                        opacity=alpha
+                        #colour=colour,
+                        #opacity=alpha
                         )
                 )
                 allz.extend((z_start, z_start+z_change))
 
+            "xy"
+            basepoints = np.linspace(base_x, base_x+square_side_len, num_rods, endpoint=False)
+            dist_bpoints = basepoints[1]-basepoints[0]
+
+            for rod, s in enumerate(basepoints):
+
+                z_start = base_z
+
+                colour = self.c1 if rod%2==0 else self.c2
+
+                vertices_colours_opacity.extend(
+                    self.make_prism_triangles(
+                        low_x=s,
+                        high_x=s+dist_bpoints,
+                        low_y=base_y,
+                        high_y=base_y+square_side_len,
+                        low_z=z_start,
+                        high_z=z_start+z_change,
+                        #colour=colour,
+                        #opacity=alpha
+                        )
+                )
+                allz.extend((z_start, z_start+z_change))
+
+
+
         allz = np.array([allz])
+
+        all_data = np.ones((len(vertices_colours_opacity), 10), dtype=np.float32)
+        all_data[:, :3] = vertices_colours_opacity
+        all_data[:, 3:6] = colour
+        all_data[:, 6] = alpha
+        all_data[:, 7:] = vertices_colours_opacity
+
         # print(np.max(allz), np.min(allz))
         self.all_data = np.array(all_data).astype(np.float32)
 
 
     def make_vao(self):
-        self.triangles_vao = create_vao(self.all_data)
+        self.triangles_vao, self.triangles_vbo = create_vao(self.all_data, return_vbo=True, store_normals=True)
 
     def draw_scintillator_structure(self):
         draw_vao(self.triangles_vao, GL_TRIANGLES, self.all_data.shape[0])
