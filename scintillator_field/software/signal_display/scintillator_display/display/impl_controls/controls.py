@@ -4,10 +4,6 @@ import scintillator_display.compat.imgui as imgui
 from OpenGL.GL import glClearColor, glClear, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT
 
 from .load_res import load_texture, load_font
-from scintillator_display.display.impl_a.graphics.parameter_interface import (
-    ui_section,
-    ui_spacing,
-)
 
 
 class Controls:
@@ -17,8 +13,8 @@ class Controls:
 
         self.width, self.height = 0, 0
 
-        self.show_only_last_data_a = False
-        self.show_only_last_data_b = False
+        self.show_only_last_data_a = True
+        self.show_only_last_data_b = True
         self.open_state = False
 
         # ffmpeg -i sc_bw.png -vf "scale=-1:48" hep_48.png
@@ -94,6 +90,15 @@ class Controls:
 
         imgui.separator()
 
+        _, self.show_a_axes = imgui.checkbox(" ##C", self.show_a_axes)
+        self.impl_a.show_axes = self.show_a_axes
+        imgui.same_line()
+        _, self.show_b_axes = imgui.checkbox(
+            "show xyz axes", self.show_b_axes)
+        self.impl_b.opengl_stuff_for_window.show_axes = self.show_b_axes
+
+        imgui.separator()
+
         _, self.show_only_last_data_a = imgui.checkbox(" ##B", self.show_only_last_data_a)
         imgui.same_line()
         _, self.show_only_last_data_b = imgui.checkbox(
@@ -110,15 +115,6 @@ class Controls:
         
         imgui.separator()
 
-        _, self.show_a_axes = imgui.checkbox(" ##C", self.show_a_axes)
-        self.impl_a.show_axes = self.show_a_axes
-        imgui.same_line()
-        _, self.show_b_axes = imgui.checkbox(
-            "show xyz axes", self.show_b_axes)
-        self.impl_b.opengl_stuff_for_window.show_axes = self.show_b_axes
-
-        imgui.separator()
-
         if (self.data_points != []
             and self.impl_a_checked != []
             and self.impl_b_checked != []):
@@ -133,6 +129,13 @@ class Controls:
         else:
             self.last_pt_a_selected = None
         self.impl_a.pt_selected = self.last_pt_a_selected
+
+        if any(self.impl_b_checked):
+            i = max(i for i, v in enumerate(self.impl_b_checked) if v == True)
+            self.last_pt_b_selected = self.data_points[i]
+        else:
+            self.last_pt_b_selected = None
+        self.impl_b.opengl_stuff_for_window.pt_selected = self.last_pt_b_selected
 
 
         imgui.end()

@@ -50,5 +50,6 @@ def update_vbo(vbo, data):
 
 def draw_vao(vao, draw_type, n):
     glBindVertexArray(vao)
+    glPointSize(10)
     glDrawArrays(draw_type, 0, n)
     glBindVertexArray(0)

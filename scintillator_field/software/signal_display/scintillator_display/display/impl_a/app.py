@@ -13,18 +13,17 @@ import pandas as pd
 from  scintillator_display.display.impl_ab_data_input_manager import Data
 from scintillator_display.display.xyz_axes import Axes
 
-import scintillator_display.display.impl_a.graphics.elements.plane as plane
+import scintillator_field.software.signal_display.scintillator_display.display.impl_a.graphics.scintillator_structure as scintillator_structure
 
-from scintillator_display.display.impl_a.graphics.orbit_controls import CameraOrbitControls
-from scintillator_display.display.impl_a.graphics.parameter_interface import ParameterInterface
-from scintillator_display.display.impl_a.graphics.shader_renderer import ShaderRenderer
+from scintillator_display.display.camera_shader_controls import CameraShaderControls
+
+from OpenGL.GL import *
 
 
-class App(CameraOrbitControls, ShaderRenderer):
+class App():
     def __init__(
         self,
         window_size,
-        *orbit_control_args,
     ):
         """
         Joule App: Main class for application
@@ -35,17 +34,11 @@ class App(CameraOrbitControls, ShaderRenderer):
         :param name: Initial window name
         """
 
-        # init camera orbit controls and shader renderer
-        super().__init__(*orbit_control_args)
 
         # initialize window
         self.window = self.window_init(window_size)
 
-        # initialize ui
-        self.ui = ParameterInterface(
-            self.window,
-        )
-
+        self.cam_shader = CameraShaderControls(angle_sensitivity=0.1,zoom=5, clear_colour=(0.87,)*3)
         scale = 12
 
         #setup elements
@@ -53,8 +46,9 @@ class App(CameraOrbitControls, ShaderRenderer):
         self.data_manager = Data(impl_constant=0.1, impl="a",
                                  hull_colour=[1, 0, 0], hull_opacity=0.3,
                                  store_normals=True)
-        self.plane = plane.Plane(data_manager=self.data_manager, scale=scale)
-        self.xyz_axes = Axes(l=scale/2)
+        self.plane = scintillator_structure.Plane(data_manager=self.data_manager, scale=scale)
+        #self.xyz_axes = Axes(l=scale/2)
+        self.xyz_axes = Axes(l=4*scale)
 
 
         self.pt_selected = None
@@ -64,6 +58,7 @@ class App(CameraOrbitControls, ShaderRenderer):
 
         # fall into rendering loop
         self.rendering_loop()
+
 
     def window_init(self, window_size):
         # throw exception if glfw failed to init
@@ -90,31 +85,22 @@ class App(CameraOrbitControls, ShaderRenderer):
         glfw.set_scroll_callback(window, self.scroll_callback)
         glfw.set_framebuffer_size_callback(window, self.resize_callback)
 
-        glfw.set_key_callback(window, self.key_callback)
-        glfw.set_char_callback(window, self.char_callback)
-
-        # initially call window resize to rescale frame
-        self.camera_resize_callback(window, *window_size)
 
         return window
-
-    def key_callback(self, *args):
-        # forward ui keyboard callbacks
-        if self.ui.want_keyboard:
-            self.ui.impl.keyboard_callback(*args)
-
-    def char_callback(self, *args):
-        # forward ui keyboard callbacks
-        if self.ui.want_keyboard:
-            self.ui.impl.char_callback(*args)
-
+    
+    # NOTE : FIX THESE
+    
     def mouse_button_callback(self, window, button, action, mods):
-        # forward ui mouse callbacks
-        if self.ui.want_mouse:
+        # filter for right clicks which are
+        # for camera movements
+        if button != glfw.MOUSE_BUTTON_RIGHT:
             return
 
-        # forward camera mouse callbacks
-        self.camera_mouse_button_callback(window, button, action, mods)
+        # dragging when: right mouse button held
+        self.cam_shader.mouse_dragging = action == glfw.PRESS
+
+        # panning when: ctrl + right mouse button held
+        self.cam_shader.panning = glfw.get_key(window, glfw.KEY_LEFT_CONTROL) == glfw.PRESS
 
         # add ball: left click
         if button == glfw.MOUSE_BUTTON_LEFT and action == glfw.PRESS:
@@ -122,24 +108,56 @@ class App(CameraOrbitControls, ShaderRenderer):
             #self.on_click(window)
 
     def cursor_pos_callback(self, window, xpos, ypos):
-        # forward ui mouse callbacks
-        if self.ui.want_mouse:
-            return
+        if self.cam_shader.mouse_dragging:
 
-        # forward camera mouse callbacks
-        self.camera_cursor_pos_callback(window, xpos, ypos)
+            # change in mouse position over one frame
+            dx = xpos - self.cam_shader.last_x
+            dy = ypos - self.cam_shader.last_y
+
+            if self.cam_shader.panning:
+                # adjust pan according to zoom
+                # so that translation is always constant,
+                # independent of zoom
+                zoomed_pan = self.cam_shader.pan_sensitivity * self.cam_shader.zoom
+
+                # updates translation vector
+                # [1, -1] flips the y position as OpenGL's origin
+                # is at the bottom left corner instead of top left
+                self.cam_shader.pan_x += dx * zoomed_pan
+                self.cam_shader.pan_y -= dy * zoomed_pan
+            else:
+
+                # updates rotation vector
+                # [::-1] reverses the order, effectively mapping the
+                # x screen position onto the OpenGL's x rotation and
+                # y screen position onto the OpenGL's y rotation
+                self.cam_shader.angle_x += dy * self.cam_shader.angle_sensitivity
+                self.cam_shader.angle_y += dx * self.cam_shader.angle_sensitivity
+
+        # save previous to calculate the next delta
+        self.cam_shader.last_x, self.cam_shader.last_y = xpos, ypos
 
     def scroll_callback(self, window, xoffset, yoffset):
-        # forward ui mouse callbacks
-        if self.ui.want_mouse:
-            return
+        scroll_amount = self.cam_shader.zoom/27.5 if self.cam_shader.zoom/27.5 > 0.24 else 0.24
 
-        # forward camera mouse callbacks
-        self.camera_scroll_callback(window, xoffset, yoffset)
+        if ((self.cam_shader.zoom-scroll_amount*yoffset != 0)
+                and not
+            ((self.cam_shader.zoom-scroll_amount*yoffset > -0.1)
+                and
+             (self.cam_shader.zoom-scroll_amount*yoffset < 0.1))):
+            self.cam_shader.zoom -= scroll_amount*yoffset
 
     def resize_callback(self, window, width, height):
-        # forward camera window callback
-        self.camera_resize_callback(window, width, height)
+        # update rendering shape
+        glViewport(0, 0, width, height)
+        self.cam_shader.width, self.cam_shader.height = width, height
+
+        # compute aspect ratio, so that the render
+        # is not stretched if the window is stretched
+        # bugfix: on X11 Ubuntu 20.04, the height starts
+        # at zero when the window is first rendered, so we
+        # prevent a zero division error
+        self.cam_shader.aspect_ratio = width / height if height > 0 else 1.0
 
     def window_should_close(self):
         return glfw.window_should_close(self.window)
@@ -149,7 +167,8 @@ class App(CameraOrbitControls, ShaderRenderer):
         Main rendering loop for application
         """
 
-        self.render_setup()
+        self.cam_shader.make_shader_program()
+        self.cam_shader.setup_opengl()
 
         start = time.time()
         dt = 0
@@ -160,9 +179,6 @@ class App(CameraOrbitControls, ShaderRenderer):
 
             # call rendering
             self.on_render_frame()
-            #self.ui.on_render_ui(self.window,self.pt_selected)
-            #self.ui.impl.process_inputs()
-            #self.ui.impl.render(imgui.get_draw_data())
 
 
             glfw.swap_buffers(self.window)
@@ -185,14 +201,8 @@ class App(CameraOrbitControls, ShaderRenderer):
         Render frame event callback
         """
 
-        # setup frame rendering with OpenGL calls
-        self.frame_setup(self.ui.background_color)
+        self.cam_shader.begin_render_gl_actions()
 
-        # shader: update camera matrices
-        self.set_matrix_uniforms(
-            self.get_camera_projection(),
-            self.get_camera_transform(),
-        )
 
 
         #chekc arduino if there's data; gather data if there is
@@ -215,36 +225,6 @@ class App(CameraOrbitControls, ShaderRenderer):
         self.plane.draw(self.pt_selected)
     
         
-        # shader: update lighting
-        self.set_lighting_uniforms(
-            glm.vec3(*self.ui.light_color),
-            ambient_strength=self.ui.ambient_strength,
-            diffuse_strength=self.ui.diffuse_strength,
-            diffuse_base=self.ui.diffuse_base,
-            specular_strength=self.ui.specular_strength,
-            specular_reflection=self.ui.specular_reflection,
-        )
-
-
-
-
-    # NOTE : these use the old self.test format for data from the old data_manager.py
-    # NOTE : now, one manager for impl a and b is used, with different function names
-    # NOTE : thus, the below code won't work immediately if uncommented
-    # def on_click(self, window):
-    #     # get 3D click coordinates
-    #     rh = self.get_right_handed()
-    #     self.x, self.y, self.z = self.get_click_point(window, rh)
-        
-    #     print(self.x, self.y, self.z)
-    #     uncertainty = 1
-    #     for i in range(len(self.test.data)):
-    #         #To see if the mouse position matches 
-    #         if self.ui.dataset_active[i]:
-    #             for pt in range(len(self.test.data[i])):     #test.data -> datasets -> cubes -> vertices or fan -> coords -> xyz values
-    #                 if (self.test.data[i][pt][0][0][0] <= (self.x + uncertainty)) and (self.test.data[i][pt][0][0][0] >= (self.x - uncertainty)):
-    #                     if (self.test.data[i][pt][0][0][1] <= (self.y + uncertainty)) and (self.test.data[i][pt][0][0][1] >= (self.y - uncertainty)):
-    #                         self.pt_selected = self.test.data[i][pt]
       
     def generate_csv(self):
         """
