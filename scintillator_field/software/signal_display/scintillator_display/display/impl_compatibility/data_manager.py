@@ -7,7 +7,7 @@ from OpenGL.GL import *
 
 from scintillator_display.math.convex_hull import ConvexHullDetection as Detection
 
-from scintillator_display.universal_values import MathDisplayValues
+from scintillator_display.compat.universal_values import MathDisplayValues
 
 from scintillator_display.display.impl_compatibility.vao_vbo import create_vao, update_vbo, draw_vao
 
