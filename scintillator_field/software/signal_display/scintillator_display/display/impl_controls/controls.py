@@ -44,13 +44,13 @@ class Controls:
         self.impl_a, self.impl_b = impl_a, impl_b
         self.data_points    = self.impl_a.data_manager.data
         self.impl_a_checked = self.impl_a.data_manager.impl_a_data_is_checked
-        self.impl_b_checked = self.impl_b.data_boxes_checked
+        self.impl_b_checked = self.impl_b.data_manager.impl_b_data_is_checked
 
         self.debug_a = self.impl_a.data_manager.debug
-        self.debug_b = self.impl_b.opengl_stuff_for_window.data_manager.debug
+        self.debug_b = self.impl_b.data_manager.debug
 
         self.show_a_axes = self.impl_a.show_axes
-        self.show_b_axes = self.impl_b.opengl_stuff_for_window.show_axes
+        self.show_b_axes = self.impl_b.show_axes
     
     def space_lines(self, n=1):
         for i in range(n):
@@ -102,7 +102,7 @@ class Controls:
         _, self.debug_b = imgui.checkbox(
             "debug mode", self.debug_b)
         self.impl_a.data_manager.debug = self.debug_a
-        self.impl_b.opengl_stuff_for_window.data_manager.debug = self.debug_b
+        self.impl_b.data_manager.debug = self.debug_b
 
 
         imgui.separator()
@@ -112,7 +112,7 @@ class Controls:
         imgui.same_line()
         _, self.show_b_axes = imgui.checkbox(
             "show xyz axes", self.show_b_axes)
-        self.impl_b.opengl_stuff_for_window.show_axes = self.show_b_axes
+        self.impl_b.show_axes = self.show_b_axes
 
         imgui.separator()
 
@@ -154,7 +154,7 @@ class Controls:
             self.last_pt_b_selected = self.data_points[i]
         else:
             self.last_pt_b_selected = None
-        self.impl_b.opengl_stuff_for_window.pt_selected = self.last_pt_b_selected
+        self.impl_b.pt_selected = self.last_pt_b_selected
 
 
         imgui.end()

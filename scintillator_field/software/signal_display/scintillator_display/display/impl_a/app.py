@@ -81,11 +81,6 @@ class App():
         # panning when: ctrl + right mouse button held
         self.cam_shader.panning = glfw.get_key(window, glfw.KEY_LEFT_CONTROL) == glfw.PRESS
 
-        # add ball: left click
-        if button == glfw.MOUSE_BUTTON_LEFT and action == glfw.PRESS:
-            pass
-            #self.on_click(window)
-
     def cursor_pos_callback(self, window, xpos, ypos):
         if self.cam_shader.mouse_dragging:
 
