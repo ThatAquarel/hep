@@ -1,4 +1,4 @@
-from scintillator_display.universal_values import MathDisplayValues
+from scintillator_display.compat.universal_values import MathDisplayValues
 '''
 
 Algorithm that takes in which scintillators lit up and returns a convex hull to bound the muon path

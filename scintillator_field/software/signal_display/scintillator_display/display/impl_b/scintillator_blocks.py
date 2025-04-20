@@ -6,7 +6,7 @@ from OpenGL.GLU import *
 
 from scintillator_display.display.impl_compatibility.vao_vbo import create_vao, update_vbo, draw_vao
 
-from scintillator_display.universal_values import MathDisplayValues
+from scintillator_display.compat.universal_values import MathDisplayValues
 
 from scintillator_display.display.impl_compatibility.data_manager import Data
 
