@@ -77,29 +77,34 @@ always @(posedge sys_clk_pll or negedge rst_n) begin
         sync1 <= S;         // First stage synchronizer
         sync2 <= sync1;     // Second stage synchronizer
 
-        // Latch the output based on the synchronized input
-        for (i = 0; i < 24; i = i + 1) begin
-            if (sync2[i])
-                Q[i] <= 1'b1;
-        end
+        // if not yet triggered
+        if (!trigger) begin
 
-        // empty data filter trigger
-        if (
-            diff[1:0]   != 2'b00 &&
-            diff[3:2]   != 2'b00 &&
-            diff[5:4]   != 2'b00 &&
-            diff[7:6]   != 2'b00 &&
-            diff[9:8]   != 2'b00 &&
-            diff[11:10] != 2'b00 &&
-            diff[13:12] != 2'b00 &&
-            diff[15:14] != 2'b00 &&
-            diff[17:16] != 2'b00 &&
-            diff[19:18] != 2'b00 &&
-            diff[21:20] != 2'b00 &&
-            diff[23:22] != 2'b00
-        ) begin
-            trigger <= 1'b1;
-        end
+            // if scintillator valid state
+            if (
+                sync2[1:0]   != 2'b00 &&
+                sync2[3:2]   != 2'b00 &&
+                sync2[5:4]   != 2'b00 &&
+                sync2[7:6]   != 2'b00 &&
+                sync2[9:8]   != 2'b00 &&
+                sync2[11:10] != 2'b00 &&
+                sync2[13:12] != 2'b00 &&
+                sync2[15:14] != 2'b00 &&
+                sync2[17:16] != 2'b00 &&
+                sync2[19:18] != 2'b00 &&
+                sync2[21:20] != 2'b00 &&
+                sync2[23:22] != 2'b00
+            ) begin
+                // set trigger
+                trigger <= 1'b1;
+
+                // copy to reg Q
+                for (i = 0; i < 24; i = i + 1) begin
+                    if (sync2[i])
+                        Q[i] <= 1'b1;
+                end
+            end
+        end 
 
         // previous spi signal
         // spi_clk_prev <= spi_clk;
@@ -134,11 +139,6 @@ always @(posedge sys_clk_pll or negedge rst_n) begin
             bit_count <= 0;
             spi_miso <= 0;
         end
-
-        // if ((spi_cs_sync2 == 1) && (spi_cs_sync1 == 0)) begin
-        //     bit_count <= 0;
-        //     spi_miso <= 0;
-        // end
     end
 end
 
