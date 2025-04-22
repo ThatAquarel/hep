@@ -1,0 +1,62 @@
+# Assign parallel input data lines
+
+# shifter set 1
+set_io S[23] 139
+set_io S[22] 144
+set_io S[21] 143
+set_io S[20] 142
+set_io S[19] 141
+set_io S[18] 64
+set_io S[17] 63
+set_io S[16] 62
+
+# shifter set 2
+    #set_io S[15] 61
+    #set_io S[14] 60
+    #set_io S[13] 58
+    #set_io S[12] 56
+    #set_io S[11] 52
+    #set_io S[10] 50
+    #set_io S[9] 138 # 49 blocked for PLL
+    #set_io S[8] 48  #
+
+set_io S[15] 61 #
+set_io S[14] 60 #
+set_io S[13] 58 #
+set_io S[12] 56 #
+
+set_io S[11] 50 #
+set_io S[10] 138 # 49 blocked for PLL
+set_io S[9] 52  #
+set_io S[8] 48  #
+
+# shifter set 3
+set_io S[7] 47  #
+set_io S[6] 45  #
+set_io S[5] 39  #
+set_io S[4] 44  #
+set_io S[3] 43  #
+set_io S[2] 42  #
+set_io S[1] 41  #
+set_io S[0] 38  #
+
+
+# PLL signals
+set_io sys_clk 73
+set_io sys_clk_pll 1
+set_io sys_clk_pll_lock 114
+
+
+# stm32 data signals
+set_io rst_n 34
+set_io trigger 8
+
+set_io spi_cs 7
+set_io spi_miso 2
+set_io spi_clk 4
+
+
+# debug signals
+set_io counter_0 9
+set_io counter_1 3
+set_io trigger_led 113
