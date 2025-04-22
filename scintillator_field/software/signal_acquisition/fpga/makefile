@@ -7,6 +7,11 @@ build: $(VERILOG_FILES)
 	@icepack latching_register.asc latching_register.bin
 
 
+buildu: $(VERILOG_FILES)
+	@yosys -p 'synth_ice40 -top top -json latching_register.json' $(VERILOG_FILES)
+	@nextpnr-ice40 --up5k --package sg48 --json latching_register.json --pcf latching_register_up5k_sg48.pcf --asc latching_register.asc
+	@icepack latching_register.asc latching_register.bin
+
 synth: $(VERILOG_FILES)
 	@yosys -p 'synth_ice40 -top top -json latching_register.json' $(VERILOG_FILES)
 
