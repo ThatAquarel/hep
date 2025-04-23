@@ -4222,7 +4222,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "R"
+		(property "Value" "33.2k 0.1%"
 			(at 111.76 80.0099 0)
 			(effects
 				(font
@@ -4258,7 +4258,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" ""
+		(property "LCSC" "C850963"
 			(at 109.22 78.74 0)
 			(effects
 				(font
@@ -4885,7 +4885,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "R"
+		(property "Value" "1k 0.1%"
 			(at 111.76 90.1699 0)
 			(effects
 				(font
@@ -4921,7 +4921,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" ""
+		(property "LCSC" "C852624"
 			(at 109.22 88.9 0)
 			(effects
 				(font
