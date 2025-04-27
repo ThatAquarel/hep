@@ -3,19 +3,21 @@ from OpenGL.GL import GL_TRIANGLES
 
 from scintillator_display.display.impl_compatibility.vao_vbo import create_vao, draw_vao, update_vbo
 
+from scintillator_display.compat.universal_values import MathDisplayValues
 
 
 
-class Plane:
-    def __init__(self, data_manager, scale=1.0):
+class Plane(MathDisplayValues):
+    def __init__(self, data_manager, scale=1.0, true_scaler=0.1):
 
         self.data_manager = data_manager
         self.scale = scale
+        self.true_scaler = true_scaler
 
-        self.number_of_layers = 6
+        self.number_of_layers = self.NUM_SCINTILLATORS_PER_STRUCTURE
         
         #generate the vertices
-        self.vertices = self.generate_plane_vertices(self.scale)
+        self.vertices = self.generate_plane_vertices(size=self.scale)
         self.n = len(self.vertices)
         
         # Preallocate data buffer for position, color, and normals
@@ -39,37 +41,40 @@ class Plane:
         Generate vertices for the plane
         """
 
-        #size = 2
+        x_i, y_i, z_i = 0, 0, 0
+
         unit = size / 2
         
         vertices = []
 
-        z_ratio = 10/size * 0.1     #aka plate thickness
+        relative_plate_thickness = self.SCINTILLATOR_THICKNESS * self.true_scaler
 
-        offset = 2 #??? idk it's just off
+        relative_layer_gap = self.SPACE_BETWEEN_SCINTILLATORS * self.true_scaler 
 
-        layer_gap = 2 * 0.1     
+        middle_gap = self.SPACE_BETWEEN_STRUCTURES * self.true_scaler
+    
 
         #Lower plane
-        for layer in range(2,2+self.number_of_layers):
-            number_of_strips = 2** (layer//2)
-
+        for i, layer in enumerate(range(2,2+self.number_of_layers)):
+            number_of_strips = 2**(layer//2)
             strip_length = size / number_of_strips
-            z1 = (layer) * size * -z_ratio +  offset - layer_gap * (layer - 2) #z
-            z2 = (layer + 1) * size * -z_ratio  + offset - layer_gap * (layer - 2)        #-z
+
+
+            z1 = z_i - relative_plate_thickness * (i+0) - relative_layer_gap * i
+            z2 = z_i - relative_plate_thickness * (i+1) - relative_layer_gap * i
 
             for i in range(number_of_strips):
                 if layer % 2 == 1:   #axis = y
-                    x1 = -unit       #s
-                    x2 = unit      #-s
-                    y1 = -unit + (i+1) * strip_length       #-s
-                    y2 = -unit + (i) * strip_length      #s        #-z
+                    x1 = x_i-unit       #s
+                    x2 = x_i+unit      #-s
+                    y1 = y_i-unit + (i+1) * strip_length       #-s
+                    y2 = y_i-unit + (i) * strip_length      #s        #-z
                     
                 else: #axis = x
-                    x1 = -unit + (i+1) * strip_length       #s
-                    x2 = -unit + i * strip_length       #-s
-                    y1 = -unit      #-s
-                    y2 = unit    #s
+                    x1 = x_i-unit + (i+1) * strip_length       #s
+                    x2 = x_i-unit + i * strip_length       #-s
+                    y1 = y_i-unit      #-s
+                    y2 = y_i+unit    #s
 
                 points = self.data_manager.make_points_from_high_low(
                     x1, x2, y1, y2, z1, z2)
@@ -78,26 +83,28 @@ class Plane:
 
 
         #Up plane
-        middle_gap = 162 * 0.1
-        for layer in range(2,2+self.number_of_layers):
+        for i, layer in enumerate(range(2,2+self.number_of_layers)):
             number_of_strips = 2** (layer//2)
 
             strip_length = size / number_of_strips
-            z1 = layer * size * z_ratio - offset + middle_gap + layer_gap * (layer - 2)      #z
-            z2 = (layer + 1) * size * z_ratio  - offset + middle_gap + layer_gap * (layer - 2)       #-z
+
+
+            z1 = z_i + middle_gap + relative_plate_thickness * (i+0) + relative_layer_gap * i
+            z2 = z_i + middle_gap + relative_plate_thickness * (i+1) + relative_layer_gap * i
+
 
             for i in range(number_of_strips):
                 if layer % 2 == 0:   #axis = y
-                    x1 = -unit       #s
-                    x2 = unit      #-s
-                    y1 = -unit + (i) * strip_length      #s        #-z
-                    y2 = -unit + (i+1) * strip_length       #-s
+                    x1 = x_i-unit       #s
+                    x2 = x_i+unit      #-s
+                    y1 = y_i-unit + (i) * strip_length      #s        #-z
+                    y2 = y_i-unit + (i+1) * strip_length       #-s
                     
                 else: #axis = x
-                    x1 = -unit + (i+1) * strip_length       #s
-                    x2 = -unit + i * strip_length       #-s
-                    y1 = -unit      #-s
-                    y2 = unit    #s
+                    x1 = x_i-unit + (i+1) * strip_length       #s
+                    x2 = x_i-unit + i * strip_length       #-s
+                    y1 = y_i-unit      #-s
+                    y2 = y_i+unit    #s
                     
 
                 points = self.data_manager.make_points_from_high_low(

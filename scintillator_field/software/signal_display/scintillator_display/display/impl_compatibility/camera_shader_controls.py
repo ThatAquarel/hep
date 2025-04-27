@@ -5,11 +5,24 @@ from OpenGL.GL.shaders import compileShader, compileProgram
 
 import os
 
-class CameraShaderControls:
+from scintillator_display.compat.universal_values import MathDisplayValues
+
+class CameraShaderControls(MathDisplayValues):
     def __init__(self,
                  angle_sensitivity=0.001,
                  zoom=50,
-                 clear_colour=(0.5,)*3):
+                 clear_colour=(0.5,)*3,
+                 offset=np.array([0,0,0])):
+        
+        self.zero_offset = offset
+
+
+        self.right_handed = np.array([
+            [1,0,0,0],
+            [0,0,1,0],
+            [0,1,0,0],
+            [0,0,0,1],
+        ])
         
         
         self.set_initial_camera_values(angle_sensitivity, zoom, clear_colour)
@@ -44,16 +57,22 @@ class CameraShaderControls:
         self.specular_reflection = 16.0
 
 
-    def transformation_matrix(self, t=(0,0,0), r=(0,0,0)):
-        tx, ty, tz = t
-        drx, dry, drz = r # degrees
-        rrx, rry, rrz = np.radians(drx), np.radians(dry), np.radians(drz),
+
+
+    
+    def translate(self, x, y, z):
 
         translation = np.array([
-            [1, 0, 0, tx],
-            [0, 1, 0, ty],
-            [0, 0, 1, tz],
+            [1, 0, 0, x],
+            [0, 1, 0, y],
+            [0, 0, 1, z],
             [0, 0, 0, 1]])
+        
+        return translation
+    
+    def rotate(self, r):
+
+        rrx, rry, rrz = np.radians(r[0]), np.radians(r[1]), np.radians(r[2])
         
         rot_x = np.array([
             [1,            0,           0, 0],
@@ -74,9 +93,31 @@ class CameraShaderControls:
             [          0,            0, 0, 1],])
 
         
-        transformation_matrix = translation @ rot_x @ rot_y @ rot_z
+        return rot_x @ rot_y @ rot_z
+    
+    
+        
 
-        return transformation_matrix
+    
+    def rotate_around_p(self, p=(0,0,0), r=(0,0,0)):
+
+        # p in form (x_offset, y_offset, z_offset)
+        # NOTE : for some reason, y and z switch in calculations
+        # thus, p gets deconstructed as :
+        px, pz, py = p
+
+        #re_translate =   self.translate(px, py, pz) @ self.right_handed
+        #anti_translate = self.translate(-px, -py, -pz) @ self.right_handed
+
+        return_to_pos =   self.translate(px, py, pz)
+        translate_to_zero = self.translate(-px, -py, -pz)
+
+        rotate = self.rotate(r)
+
+        k = return_to_pos @ rotate @ translate_to_zero
+
+        return k
+
 
     def get_orthographic_projection(self):
         
@@ -96,20 +137,15 @@ class CameraShaderControls:
         return orthographic_projection
 
     def get_camera_tranform(self):
-        camera_transform = self.transformation_matrix(
-            t=(self.pan_x, self.pan_y, self.pan_z),
-            r=(self.angle_x, self.angle_y, self.angle_z)
-        )
-        return camera_transform
+
+        camera_rotation = self.rotate_around_p(p=self.zero_offset, r=(self.angle_x, self.angle_y, self.angle_z))
+        camera_pan = self.translate(self.pan_x, self.pan_y, self.pan_z)
+
+        return camera_pan @ camera_rotation
 
     def get_world_transform(self):
-        right_handed = np.array([
-            [1,0,0,0],
-            [0,0,1,0],
-            [0,1,0,0],
-            [0,0,0,1],
-        ])
-        return right_handed
+        world_transform = self.right_handed
+        return world_transform
 
     def get_vertex_shader_text(self):
         this_file_path = os.path.abspath(__file__)

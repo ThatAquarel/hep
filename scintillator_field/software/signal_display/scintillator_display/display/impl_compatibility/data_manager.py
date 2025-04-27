@@ -11,9 +11,13 @@ from scintillator_display.compat.universal_values import MathDisplayValues
 
 from scintillator_display.display.impl_compatibility.vao_vbo import create_vao, update_vbo, draw_vao
 
+from scintillator_display.display.impl_compatibility.camera_shader_controls import CameraShaderControls
+
 class Data(MathDisplayValues):
     def __init__(self, impl_constant, impl, hull_colour, hull_opacity, store_normals, debug=True):
         
+        self.matrices = CameraShaderControls()
+
         self.debug = debug
 
         self.impl = impl # "a" or "b"
@@ -26,13 +30,46 @@ class Data(MathDisplayValues):
         self.detection_algorithm = Detection(impl_constant=impl_constant)
 
         self.test_data_created = False
+
+        
+
+        k = 0b101001100101010110101010
+        f_sc_idx = [
+        [(20,21),(16,17),(13,12),(9,8),(0,1),(5,4),],
+        [(22,23),(18,19),(15,14),(11,10),(2,3),(6,7),],
+        ]
+
         self.test_data = [
                 0b011011010110101011010110,
                 0b100110101101010101101001,
                 0b100101101010011101011001,
                 1431655765,
-                #2**33 - 1
+                #2**33 - 1,
+                0b101010101010101010101010,
+                k, # = 0b101001 100101 010110 101010
+
+                0b100110101010011001011001,
+                0b011001011001101010100110,
+                0b011001011010100101100101,
+                0b100110100101011010011010,
             ]
+        
+        yellow_colour_terms =  {
+            '''
+             01 : 12 green red # x
+             23 : 11 red green # y
+             45 : 10 green red # x
+              67 : 9 green red # y
+              89 : 8 red green # x
+            1011 : 7 red green # y
+            1213 : 5 red green # y
+            1415 : 4 green red # x
+            1617 : 3 green red # y
+            1819 : 2 red green # x
+            2021 : 1 green red # y
+            2223 : 6 green red # x
+            '''
+        }
 
 
     def num_to_raw_binary(self, num):
@@ -48,6 +85,11 @@ class Data(MathDisplayValues):
         [(21,20),(16,17),(13,12),(8,9),(0,1),(5,4),],
         [(22,23),(18,19),(15,14),(11,10),(2,3),(6,7),],
         ]
+
+        #f_sc_idx = [
+        #[(20,21),(16,17),(13,12),(9,8),(0,1),(5,4),],
+        #[(22,23),(18,19),(15,14),(11,10),(2,3),(6,7),],
+        #]
 
         k = self.num_to_raw_binary(raw_data)[f_sc_idx]
 
@@ -78,13 +120,42 @@ class Data(MathDisplayValues):
         if self.impl == "a":
             new_hull_bounds = self.transform_coordinates_impl_a(hull_bounds)
         elif self.impl == "b":
+            #rotate = self.matrices.rotate_around_p(p=(
+            #    self.SQUARE_LEN/2, -self.SPACE_BETWEEN_STRUCTURES/2, self.SQUARE_LEN/2
+            #), r=(0,0,90))
+            # #rotate = self.matrices.rotate(r=(0,0,90))
             new_hull_bounds = np.array(hull_bounds) - np.array([0, 0, self.SPACE_BETWEEN_STRUCTURES/2])
+            #print(new_hull_bounds.shape)
+            #n = np.ones((len(new_hull_bounds), 4))
+            #n[:, :3] = new_hull_bounds
+            #n[:, 3] = 1
+            ##print(n)
+            #new_hull_bounds = n @ rotate
+            #new_hull_bounds = new_hull_bounds[:, :3]
+            ##x = 120 - np.abs(new_hull_bounds[:, 0])
+            ##x = 120 - (new_hull_bounds[:, 0])
+            #x = new_hull_bounds[:, 0]
+            #y = new_hull_bounds[:, 1]
+            ##z = new_hull_bounds[:, 2]
+            ##y = np.abs(new_hull_bounds[:, 1])
+            #x = new_hull_bounds[:, 0] + self.SQUARE_LEN
+            #y = new_hull_bounds[:, 1] + self.SQUARE_LEN
+            ##z = new_hull_bounds[:, 2]
+
+            #z = new_hull_bounds[:, 2] + self.SPACE_BETWEEN_STRUCTURES/2
+            #z = -1*z
+            #z = z - self.SPACE_BETWEEN_STRUCTURES/2
+
+            #new_hull_bounds = np.array([x,y,z]).T
+
 
 
 
         bit24 = raw_data & 0xffffff
                 
         point = [new_hull_bounds, cooked_data, bit24, time, self.debug]
+
+        #print(point)
 
         self.data.append(point)
         self.impl_a_data_is_checked.append(False)
@@ -135,16 +206,16 @@ class Data(MathDisplayValues):
         return scaled_hull_bounds
     
 
-    def make_points_from_high_low(self, xl, xh, yl, yh, zl, zh, colour=[], opacity=[]):
+    def make_points_from_high_low(self, xl, xh, yl, yh, zl, zh, ):
         points = np.array([
-            np.array([xl, yl, zl, *colour, *opacity]), # base_point + (0,    0,    0)    # BFL
-            np.array([xh, yl, zl, *colour, *opacity]), # base_point + (xlen, 0,    0)    # BFR
-            np.array([xl, yh, zl, *colour, *opacity]), # base_point + (0,    ylen, 0)    # BBL
-            np.array([xh, yh, zl, *colour, *opacity]), # base_point + (xlen, ylen, 0)    # BBR
-            np.array([xl, yl, zh, *colour, *opacity]), # base_point + (0,    0,    zlen) # TFL
-            np.array([xh, yl, zh, *colour, *opacity]), # base_point + (xlen, 0,    zlen) # TFR
-            np.array([xl, yh, zh, *colour, *opacity]), # base_point + (0,    ylen, zlen) # TBL
-            np.array([xh, yh, zh, *colour, *opacity]), # base_point + (xlen, ylen, zlen) # TBR
+            np.array([xl, yl, zl]), # base_point + (0,    0,    0)    # BFL
+            np.array([xh, yl, zl]), # base_point + (xlen, 0,    0)    # BFR
+            np.array([xl, yh, zl]), # base_point + (0,    ylen, 0)    # BBL
+            np.array([xh, yh, zl]), # base_point + (xlen, ylen, 0)    # BBR
+            np.array([xl, yl, zh]), # base_point + (0,    0,    zlen) # TFL
+            np.array([xh, yl, zh]), # base_point + (xlen, 0,    zlen) # TFR
+            np.array([xl, yh, zh]), # base_point + (0,    ylen, zlen) # TBL
+            np.array([xh, yh, zh]), # base_point + (xlen, ylen, zlen) # TBR
         ])
         return points
     
