@@ -7,6 +7,8 @@ import scintillator_display.compat.imgui as imgui
 
 import pandas as pd
 
+import numpy as np
+
 from scintillator_display.display.impl_compatibility.data_manager import Data
 from scintillator_display.compat.pyserial_singleton import ArduinoData
 
@@ -19,8 +21,10 @@ from scintillator_display.display.impl_compatibility.camera_shader_controls impo
 
 from OpenGL.GL import *
 
+from scintillator_display.compat.universal_values import MathDisplayValues
 
-class App():
+
+class App(MathDisplayValues):
     def __init__(self):
         """
         Joule App: Main class for application
@@ -32,19 +36,26 @@ class App():
         """
 
 
+        self.true_scaler = 0.1
+        #self.true_scaler = 1
+        scale = self.SQUARE_LEN * self.true_scaler
+
+        self.zeroes_offset = np.array([
+            0, 0, self.SPACE_BETWEEN_STRUCTURES * self.true_scaler / 2
+            ])
+
 
         self.arduino = ArduinoData()
 
-        self.cam_shader = CameraShaderControls(angle_sensitivity=0.1,zoom=25, clear_colour=(0.87,)*3)
-        scale = 12
+        self.cam_shader = CameraShaderControls(angle_sensitivity=0.1,zoom=25, clear_colour=(0.87,)*3, offset=self.zeroes_offset)
 
 
         #setup elements
 
-        self.data_manager = Data(impl_constant=0.1, impl="a",
+        self.data_manager = Data(impl_constant=self.true_scaler, impl="a",
                                  hull_colour=[1, 0, 0], hull_opacity=0.3,
                                  store_normals=True)
-        self.plane = scintillator_structure.Plane(data_manager=self.data_manager, scale=scale)
+        self.plane = scintillator_structure.Plane(data_manager=self.data_manager, scale=scale, true_scaler=self.true_scaler)
         #self.xyz_axes = Axes(l=scale/2)
         self.xyz_axes = Axes(l=4*scale)
 

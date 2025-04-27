@@ -21,10 +21,17 @@ from scintillator_display.display.impl_compatibility.data_manager import Data
 
 from scintillator_display.compat.pyserial_singleton import ArduinoData
 
+from scintillator_display.compat.universal_values import MathDisplayValues
 
-class Window:
+
+class Window(MathDisplayValues):
     def __init__(self):
-        self.cam_shader = CameraShaderControls(zoom=90)
+
+        self.zeroes_offset = np.array([
+            self.SQUARE_LEN/2, self.SQUARE_LEN/2, -self.SPACE_BETWEEN_STRUCTURES/2
+            ])
+
+        self.cam_shader = CameraShaderControls(zoom=90, offset=self.zeroes_offset)
         self.arduino = ArduinoData()
         self.data_manager = Data(impl_constant=1, impl="b",
                             hull_colour=[0.5, 0, 0.5], hull_opacity=0.8,
@@ -39,6 +46,19 @@ class Window:
 
         self.pt_selected = None
         self.show_axes = True
+
+
+
+        self.point = np.array([60, 60, -81, 1, 1, 1, 1]).astype(np.float32)
+        self.p_vao = create_vao(self.point)
+
+        self.line = np.array([
+            [0,0,   0,1,1,1,1],
+            [0,0,-162,1,1,1,1],
+            [0, 1, -162, 1,1,1,1],]).astype(np.float32)
+        self.l_vao = create_vao(self.line)
+
+
 
 
     def viewport_shenanigans(self, vm, ratio_num):
@@ -131,7 +151,6 @@ class Window:
         self.scintillator_structure.reset_scintillator_colour()        
         if self.pt_selected != None:
             self.scintillator_structure.recolour_for_point(self.pt_selected)
-
         self.scintillator_structure.renew_vbo()
         self.scintillator_structure.draw_scintillator_structure()
 
@@ -139,3 +158,7 @@ class Window:
 
         if self.show_axes:
             self.xyz_axes.draw()
+
+
+        draw_vao(self.p_vao, GL_POINTS, 1)
+        #draw_vao(self.l_vao, GL_TRIANGLES, 3)
