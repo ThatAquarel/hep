@@ -29,14 +29,18 @@ class ArduinoData:
 
         self.connected_to_arduino = True
 
-    def arduino_has_data(self, debug):
-        if debug:
+    def arduino_has_data(self, mode):
+        if mode=='debug':
             return True
-        if not debug and not self.connected_to_arduino:
+        elif mode=='demo':
+            return True
+        elif mode=='data' and not self.connected_to_arduino:
             self.connect_to_arduino()
+        #elif mode!='debug' and not self.connected_to_arduino:
+        #    self.connect_to_arduino()
         return self.arduino.in_waiting >= 8
     
-    def get_data_from_arduino(self, debug):
+    def get_data_from_arduino(self):
         """
         Gather the data from Arduino
         """

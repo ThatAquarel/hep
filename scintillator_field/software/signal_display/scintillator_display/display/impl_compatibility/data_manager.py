@@ -14,11 +14,14 @@ from scintillator_display.display.impl_compatibility.vao_vbo import create_vao, 
 from scintillator_display.display.impl_compatibility.camera_shader_controls import CameraShaderControls
 
 class Data(MathDisplayValues):
-    def __init__(self, impl_constant, impl, hull_colour, hull_opacity, store_normals, debug=True):
+    def __init__(self, impl_constant, impl, hull_colour, hull_opacity, store_normals, mode=('data', 'debug', 'demo')):
         
         self.matrices = CameraShaderControls()
 
-        self.debug = debug
+        if mode == ('data', 'debug', 'demo'):
+            mode='debug'
+
+        self.mode = mode
 
         self.impl = impl # "a" or "b"
         self.hull_colour = hull_colour
@@ -38,6 +41,9 @@ class Data(MathDisplayValues):
         [(20,21),(16,17),(13,12),(9,8),(0,1),(5,4),],
         [(22,23),(18,19),(15,14),(11,10),(2,3),(6,7),],
         ]
+
+        reversed_items = [5, 8, 10, 4, 7]
+        
 
         self.test_data = [
                 0b011011010110101011010110,
@@ -153,7 +159,7 @@ class Data(MathDisplayValues):
 
         bit24 = raw_data & 0xffffff
                 
-        point = [new_hull_bounds, cooked_data, bit24, time, self.debug]
+        point = [new_hull_bounds, cooked_data, bit24, time, self.mode]
 
         #print(point)
 
