@@ -153,15 +153,15 @@ class App(MathDisplayValues):
 
         self.cam_shader.begin_render_gl_actions()
 
-        if self.arduino.arduino_has_data(self.data_manager.debug):
-            if self.data_manager.debug:
+        if self.arduino.arduino_has_data(self.data_manager.mode):
+            if self.data_manager.mode!='data':
                 if not self.data_manager.test_data_created:
                     self.data_manager.test_data_created = True
                     data = self.data_manager.test_data
                 else:
                     data = []
             else:
-                data = self.arduino.get_data_from_arduino(self.data_manager.debug)
+                data = self.arduino.get_data_from_arduino()
             
             for data_point in data:
                 self.data_manager.add_point(data_point)

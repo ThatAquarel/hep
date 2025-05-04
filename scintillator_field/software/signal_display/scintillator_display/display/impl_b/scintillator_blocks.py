@@ -204,10 +204,10 @@ class ScintillatorStructure(MathDisplayValues):
                         high_z=z_start-z_change,
                         )
                 )
-            print()
+            #print()
 
         colours = np.array(colours)
-        print(colours.shape)
+        #print(colours.shape)
         m = np.stack((colours,)*36, axis=1)
         m = m.reshape(56*36,3)
         
@@ -351,6 +351,8 @@ class ScintillatorStructure(MathDisplayValues):
 
         #order_added = [6,5,4,3,2,1,8,7,10,9,12,11]
         order_added = [6,5,4,3,2,1,7,8,9,10,11,12]
+        reversed_items = [5, 8, 10, 4, 7]
+
 
 
         nk = {
@@ -463,7 +465,6 @@ class ScintillatorStructure(MathDisplayValues):
 #
                 #n = num_to_colour
                 #nn = n+j_num
-
 
                 for mn in nk_s:
                     #print(i, r, (ra, rb), mn, (a, b), nk_s)
