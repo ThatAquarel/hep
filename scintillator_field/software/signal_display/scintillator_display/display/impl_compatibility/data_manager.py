@@ -13,12 +13,16 @@ from scintillator_display.display.impl_compatibility.vao_vbo import create_vao, 
 
 from scintillator_display.display.impl_compatibility.camera_shader_controls import CameraShaderControls
 
+import os
+
+import time
+
 class Data(MathDisplayValues):
     def __init__(self, impl_constant, impl, hull_colour, hull_opacity, store_normals, mode=('data', 'debug', 'demo')):
         
         self.matrices = CameraShaderControls()
 
-        if mode == ('data', 'debug', 'demo'):
+        if mode not in ('data', 'debug', 'demo'):
             mode='debug'
 
         self.mode = mode
@@ -27,12 +31,11 @@ class Data(MathDisplayValues):
         self.hull_colour = hull_colour
         self.hull_opacity = hull_opacity
         self.store_normals = store_normals
-        self.data = []
-        self.impl_a_data_is_checked = []
-        self.impl_b_data_is_checked = []
+        self.reset_data_checks()
         self.detection_algorithm = Detection(impl_constant=impl_constant)
 
         self.test_data_created = False
+
 
         
 
@@ -76,6 +79,74 @@ class Data(MathDisplayValues):
             2223 : 6 green red # x
             '''
         }
+
+        this_file_path = os.path.abspath(__file__)
+        lst_f_path = this_file_path.split(os.sep)
+
+        display_dir = lst_f_path[:-3]
+        display_dir.append('data')
+        display_dir.append('input_2025_04_09_triggers.txt')
+        data_path = os.sep.join(display_dir)
+
+        with open(data_path) as f:
+            data_lines = f.readlines()
+
+            number_data = ["".join([i for i in line if i.isnumeric()]) for line in data_lines]
+            scintillator_data = [int(num, 2) for num in number_data if len(num)==24]
+
+
+        for binary in scintillator_data:
+            self.add_point(binary)
+
+
+        self.demo_2025_04_09_data = self.data
+        self.demo_2025_04_09_is_checked = self.impl_data_is_checked
+        self.demo_index = 4
+        self.most_recent_demo_update = time.time()
+        self.demo_wait_time = 2
+
+        self.reset_data_checks()
+
+
+
+    def reset_data_checks(self):
+        self.data = []
+        self.impl_data_is_checked = []
+
+
+
+    def update_data(self, arduino):
+
+        if self.mode == 'data':
+            if arduino.arduino_has_data():
+                data = arduino.get_data_from_arduino()
+                for data_point in data:
+                    self.add_point(data_point)
+
+        elif self.mode == 'debug':
+            if self.data == []:
+                debug_data = self.test_data
+                for data_point in debug_data:
+                    self.add_point(data_point)
+
+        elif self.mode == 'demo':
+
+            if time.time()-self.most_recent_demo_update>self.demo_wait_time:
+                self.demo_index+=1
+                self.most_recent_demo_update=time.time()
+
+            start = (self.demo_index-4)%len(self.demo_2025_04_09_data)
+            end =   (self.demo_index+5)%len(self.demo_2025_04_09_data)
+            self.data = self.demo_2025_04_09_data[start:end] # center + 4 on each side
+            if any(self.impl_data_is_checked):
+                pass # center + 4 on each side
+            else:
+                self.impl_data_is_checked = self.demo_2025_04_09_is_checked[start:end] 
+
+
+
+        else:
+            raise Exception('invadid mode')
 
 
     def num_to_raw_binary(self, num):
@@ -161,11 +232,9 @@ class Data(MathDisplayValues):
                 
         point = [new_hull_bounds, cooked_data, bit24, time, self.mode]
 
-        #print(point)
 
         self.data.append(point)
-        self.impl_a_data_is_checked.append(False)
-        self.impl_b_data_is_checked.append(False)
+        self.impl_data_is_checked.append(False)
 
     def transform_coordinates_impl_a(self,data):
         """

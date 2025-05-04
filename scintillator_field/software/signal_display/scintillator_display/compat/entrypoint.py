@@ -14,10 +14,13 @@ def entrypoint():
     impl_b = IMPL_B()
     impl_controls = Controls(impl_a, impl_b)
 
+    #exit()
+
     viewports = [impl_controls, impl_a, impl_b]
     for i, vp in enumerate(viewports):
         vp.viewport_shenanigans(vm, ratio[i])
 
+    vm.generate_csv = False
     vm.end_csv = impl_a.data_manager.generate_data_csv
     
     vm.render_loop()
