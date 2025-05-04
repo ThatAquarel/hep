@@ -131,20 +131,13 @@ class Window(MathDisplayValues):
         self.cam_shader.begin_render_gl_actions()
 
 
-        if self.arduino.arduino_has_data(self.data_manager.mode):
-            if self.data_manager.mode!='data':
-                if not self.data_manager.test_data_created:
-                    self.data_manager.test_data_created = True
-                    data = self.data_manager.test_data
-                else:
-                    data = []
-            else:
-                data = self.arduino.get_data_from_arduino()
-            
-            for data_point in data:
-                self.data_manager.add_point(data_point)
 
-        self.data_manager.draw_active_hulls(self.data_manager.data, self.data_manager.impl_b_data_is_checked)
+
+        self.data_manager.update_data(self.arduino)
+
+            
+
+        self.data_manager.draw_active_hulls(self.data_manager.data, self.data_manager.impl_data_is_checked)
 
 
 

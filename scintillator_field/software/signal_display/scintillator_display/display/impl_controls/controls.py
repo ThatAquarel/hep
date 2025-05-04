@@ -31,24 +31,30 @@ class Controls:
         self.current = time.time()
         self.dt = 0
 
-        self.mode_a_selected = 1
-        self.mode_b_selected = 1
-        self.data_a_type_shown = 'newest'
-        self.data_b_type_shown = 'newest'
+
+        initial_state = {
+            'data':0,
+            'debug':1,
+            'demo':2,
+        }
         self.drop_downs = [
-            ['##m2', self.mode_a_selected, self.impl_a],
-            ['##m3', self.mode_b_selected, self.impl_b],
+            ['##m2', initial_state[self.impl_a.data_manager.mode], self.impl_a],
+            ['##m3', initial_state[self.impl_b.data_manager.mode], self.impl_b],
         ]
         self.xyz_axes = [
             ['##xyz1', not self.show_a_axes, self.impl_a], # "not" needed to begin on show
             ['##xyz2', not self.show_b_axes, self.impl_b], # "not" needed to begin on show
         ]
         self.data_shown = [
-            ['##state1', 0, self.data_a_type_shown],
-            ['##state2', 0, self.data_b_type_shown],
+            ['##state1', 0, 'newest'],
+            ['##state2', 0, 'newest'],
         ]
         self.checked_data = [self.impl_a_checked, self.impl_b_checked]
         self.point_info = [self.data_points_a, self.data_points_b]
+
+
+
+
 
 
 
@@ -65,11 +71,10 @@ class Controls:
 
     def activate_data_connection(self, impl_a, impl_b):
         self.impl_a, self.impl_b = impl_a, impl_b
-        self.data_points    = self.impl_a.data_manager.data
         self.data_points_a  = self.impl_a.data_manager.data
         self.data_points_b  = self.impl_b.data_manager.data
-        self.impl_a_checked = self.impl_a.data_manager.impl_a_data_is_checked
-        self.impl_b_checked = self.impl_b.data_manager.impl_b_data_is_checked
+        self.impl_a_checked = self.impl_a.data_manager.impl_data_is_checked
+        self.impl_b_checked = self.impl_b.data_manager.impl_data_is_checked
 
         self.mode_a = self.impl_a.data_manager.mode
         self.mode_b = self.impl_b.data_manager.mode
@@ -131,7 +136,7 @@ class Controls:
             #xyz = ['hide', 'show']
             xy2 = [False, True]
             #xy2 = [True, False]
-            data_shown_types = ['newest', 'any', 'none']
+            data_shown_types = ['newest', 'any', 'none', 'middle']
             
 
             if row==0:
@@ -144,9 +149,20 @@ class Controls:
                     imgui.text("mode")
                 else:
                     column-=1
+
+                    initial_mode = modes[self.drop_downs[column][1]]
+
+
                     clicked, self.drop_downs[column][1] = imgui.combo(
                         self.drop_downs[column][0], self.drop_downs[column][1], modes)
                     self.drop_downs[column][2].data_manager.mode = modes[self.drop_downs[column][1]]
+
+                    new_mode = modes[self.drop_downs[column][1]]
+
+                    if initial_mode != new_mode:
+                        self.drop_downs[column][2].data_manager.reset_data_checks()
+                        self.checked_data[column] = self.drop_downs[column][2].data_manager.impl_data_is_checked
+                        self.point_info[column] = self.drop_downs[column][2].data_manager.data
 
             elif row==2:
                 if column==0:
@@ -168,9 +184,9 @@ class Controls:
 
 
 
-            if column == 0:
-                #imgui.separator()
-                pass
+            if self.drop_downs[column-1][2].data_manager.mode == 'demo':
+                # locks demo into middle row
+                self.data_shown[column-1][1:] = [3, 'middle']
             
 
         imgui.separator()
@@ -196,21 +212,39 @@ class Controls:
         
         def set_data_choices(row, column):
 
+
+            self.checked_data = [self.impl_a.data_manager.impl_data_is_checked,
+                                self.impl_b.data_manager.impl_data_is_checked]
+            self.point_info = [self.impl_a.data_manager.data,
+                            self.impl_b.data_manager.data]
+
+
             len_info = [len(self.point_info[0]), len(self.point_info[1])]
 
+            #if row-1<=len_info[column//2]:
+            if c%2==0: # checkbox
+                _, self.checked_data[column//2][row-1] = imgui.checkbox(
+                    f"##{row}{column}", self.checked_data[column//2][row-1])
+            else: # point info
+                imgui.text(f'{self.point_info[column//2][row-1][-3]}')
+
             if self.data_shown[column//2][-1] == 'newest':
-                if row==len_info[column//2]-1: # -1 to zero index it
+                if row==len_info[column//2]: # -1 to zero index it
                     self.checked_data[column//2][row-1] = True
                 else:
                     self.checked_data[column//2][row-1] = False
 
-            if row-1<=len_info[column//2]:
-                if c%2==0: # checkbox
-                    _, self.checked_data[column//2][row-1] = imgui.checkbox(
-                        f"##{row}{column}", self.checked_data[column//2][row-1])
-                else: # point info
-                    imgui.text(f'{self.point_info[column//2][row-1][-3]}')
+            elif self.data_shown[column//2][-1] == 'middle':
+                self.checked_data[column//2] = [
+                    *(False,)*4, True, *(False,)*4]
 
+            elif self.data_shown[column//2][-1] == 'none':
+                self.checked_data[column//2][row-1] = False
+
+            impls[column//2].data_manager.impl_data_is_checked = self.checked_data[column//2]
+
+
+            
                 
             if any(self.checked_data[column//2]):
                 i = max(i for i, v in enumerate(self.checked_data[column//2]) if v == True)
@@ -219,13 +253,17 @@ class Controls:
                 impls[column//2].pt_selected = None
 
 
+
+
+
             pass
 
         impls = [self.impl_a, self.impl_b]
         header = ['impl_a', 'point_a', 'impl_b', 'point_b']
 
 
-        table_height = np.maximum(len(self.impl_a_checked), len(self.impl_b_checked))
+        #table_height = np.maximum(len(self.impl_a_checked), len(self.impl_b_checked))
+        table_height = np.maximum(len(self.checked_data[0]), len(self.checked_data[1]))+1
         if table_height != 0:
             imgui.text("shown data points")
             imgui.separator()
@@ -242,7 +280,8 @@ class Controls:
                     if r==0:
                         imgui.text(header[c])
                     else:
-                        set_data_choices(r, c)
+                        if r-1 < len(self.checked_data[c//2]):
+                            set_data_choices(r, c)
 
 
         imgui.end()

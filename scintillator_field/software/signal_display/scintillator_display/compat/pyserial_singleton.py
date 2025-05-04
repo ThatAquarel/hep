@@ -29,12 +29,8 @@ class ArduinoData:
 
         self.connected_to_arduino = True
 
-    def arduino_has_data(self, mode):
-        if mode=='debug':
-            return True
-        elif mode=='demo':
-            return True
-        elif mode=='data' and not self.connected_to_arduino:
+    def arduino_has_data(self):
+        if not self.connected_to_arduino:
             self.connect_to_arduino()
         #elif mode!='debug' and not self.connected_to_arduino:
         #    self.connect_to_arduino()
