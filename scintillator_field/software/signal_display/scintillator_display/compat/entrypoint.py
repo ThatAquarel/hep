@@ -12,12 +12,9 @@ def entrypoint():
 
     impl_a = IMPL_A(init_mode='demo')
     impl_b = IMPL_B(init_mode='demo')
-    impl_controls = Controls(impl_a, impl_b)
-
-    #exit()
+    impl_controls = Controls(impl_a, impl_b, vm)
 
     viewports = [impl_controls, impl_a, impl_b]
-    vm.controls_index = 0
     for i, vp in enumerate(viewports):
         vp.viewport_shenanigans(vm, ratio[i])
 

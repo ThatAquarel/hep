@@ -9,9 +9,13 @@ import time
 
 import numpy as np
 
+from scintillator_display.compat.viewport_manager import ViewportManager
+
 
 class Controls:
-    def __init__(self, impl_a, impl_b):
+    def __init__(self, impl_a, impl_b, vm):
+
+        self.vm = vm
 
         self.activate_data_connection(impl_a, impl_b)
 
@@ -124,7 +128,9 @@ class Controls:
         fps = 1/self.dt if self.dt != 0 else 0
         imgui.text(f'{fps:.1f} fps')
         pause_text = 'paused' if paused else 'not paused'
-        imgui.button(f'{pause_text}')
+        clicked = imgui.button(f'{pause_text}')
+        if clicked:
+            self.vm.paused = not paused
 
         #expanded, _ = imgui.collapsing_header("view window info", True)
         #if expanded:

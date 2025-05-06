@@ -47,12 +47,6 @@ class ViewportManager:
             imgui.new_frame()
 
 
-            ##if not self.paused:
-            #for i, vp in enumerate(self.viewports):
-            #    if (not self.paused) or (i == self.controls_index):
-            #        glViewport(vp.xpos, vp.ypos, vp.width, vp.height)
-            #        glScissor(vp.xpos, vp.ypos, vp.width, vp.height)
-            #        vp.on_render()
             for i, vp in enumerate(self.viewports):
                 glViewport(vp.xpos, vp.ypos, vp.width, vp.height)
                 glScissor(vp.xpos, vp.ypos, vp.width, vp.height)
