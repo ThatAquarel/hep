@@ -241,11 +241,14 @@ class Plane(MathDisplayValues):
 
 
 
-    def draw(self, pt_selected):
+    def draw(self, pt_selected, show_colour):
         """
         Draw the planes
         """
         
-        self.set_colour(pt_selected)
+        if show_colour:
+            self.set_colour(pt_selected)
+        else:
+            self.set_colour_default()
         update_vbo(self.vbo, self.data)
         draw_vao(self.vao, GL_TRIANGLES, self.n)

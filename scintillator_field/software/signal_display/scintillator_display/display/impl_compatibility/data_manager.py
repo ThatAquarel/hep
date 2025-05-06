@@ -18,12 +18,10 @@ import os
 import time
 
 class Data(MathDisplayValues):
-    def __init__(self, impl_constant, impl, hull_colour, hull_opacity, store_normals, mode=('data', 'debug', 'demo')):
+    def __init__(self, impl_constant, impl, hull_colour, hull_opacity, store_normals, mode):
         
         self.matrices = CameraShaderControls()
 
-        if mode not in ('data', 'debug', 'demo'):
-            mode='debug'
 
         self.mode = mode
 
@@ -85,15 +83,35 @@ class Data(MathDisplayValues):
 
         display_dir = lst_f_path[:-3]
         display_dir.append('data')
-        display_dir.append('input_2025_04_09_triggers.txt')
-        data_path = os.sep.join(display_dir)
 
-        with open(data_path) as f:
-            data_lines = f.readlines()
+        def demo_1():
+            display_dir.append('input_2025_04_09_triggers.txt')
+            data_path = os.sep.join(display_dir)
 
-            number_data = ["".join([i for i in line if i.isnumeric()]) for line in data_lines]
-            scintillator_data = [int(num, 2) for num in number_data if len(num)==24]
 
+            with open(data_path) as f:
+                data_lines = f.readlines()
+
+                # for old data txt
+                number_data = ["".join([i for i in line if i.isnumeric()]) for line in data_lines]            #number_data = ["".join([i for i in line if i.isnumeric()]) for line in data_lines]
+                scintillator_data = [int(num, 2) for num in number_data if len(num)==24]
+
+            return scintillator_data
+
+        def demo_2():
+
+            display_dir.append('sc_data.log.2025-04-22')
+            data_path = os.sep.join(display_dir)
+
+            with open(data_path) as f:
+                data_lines = f.readlines()
+
+                # for log files
+                scintillator_data = [int(line.split(",")[1]) for line in data_lines if "," in line]
+
+            return scintillator_data
+
+        scintillator_data = demo_1()
 
         for binary in scintillator_data:
             self.add_point(binary)
@@ -102,6 +120,9 @@ class Data(MathDisplayValues):
         self.demo_2025_04_09_data = self.data
         self.demo_2025_04_09_is_checked = self.impl_data_is_checked
         self.demo_index = 4
+        self.demo_index = 30
+        self.demo_index = 74
+        #self.demo_index = 100
         self.most_recent_demo_update = time.time()
         self.demo_wait_time = 2
 
@@ -135,13 +156,20 @@ class Data(MathDisplayValues):
                 self.demo_index+=1
                 self.most_recent_demo_update=time.time()
 
-            start = (self.demo_index-4)%len(self.demo_2025_04_09_data)
-            end =   (self.demo_index+5)%len(self.demo_2025_04_09_data)
-            self.data = self.demo_2025_04_09_data[start:end] # center + 4 on each side
+
+
+            def get_i_range(item):
+                # gets indices of list for modulo-ed demo index, plus 4 on either side
+                return [(self.demo_index+j)%len(item) for j in range(-4, 5+1)]
+
+
+            self.data = [self.demo_2025_04_09_data[i] for i in get_i_range(self.demo_2025_04_09_data)]
+
             if any(self.impl_data_is_checked):
                 pass # center + 4 on each side
             else:
-                self.impl_data_is_checked = self.demo_2025_04_09_is_checked[start:end] 
+                self.impl_data_is_checked = [self.demo_2025_04_09_is_checked[i] for i in get_i_range(self.demo_2025_04_09_is_checked)]
+
 
 
 
