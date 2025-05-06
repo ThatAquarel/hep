@@ -49,8 +49,15 @@ class Controls:
             ['##state1', 0, 'newest'],
             ['##state2', 0, 'newest'],
         ]
+        self.colours_shown = [
+            ['##cl1', 0, False],
+            ['##cl2', 1, True]
+        ]
         self.checked_data = [self.impl_a_checked, self.impl_b_checked]
         self.point_info = [self.data_points_a, self.data_points_b]
+
+        self.impls = [self.impl_a, self.impl_b]
+
 
 
 
@@ -86,7 +93,7 @@ class Controls:
         for i in range(n):
             imgui.spacing()
 
-    def on_render(self):
+    def on_render(self, paused):
         glClearColor(0.0, 0.0, 0.0, 1.0)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
@@ -116,6 +123,8 @@ class Controls:
         self.space_lines(2)
         fps = 1/self.dt if self.dt != 0 else 0
         imgui.text(f'{fps:.1f} fps')
+        pause_text = 'paused' if paused else 'not paused'
+        imgui.button(f'{pause_text}')
 
         #expanded, _ = imgui.collapsing_header("view window info", True)
         #if expanded:
@@ -137,6 +146,7 @@ class Controls:
             xy2 = [False, True]
             #xy2 = [True, False]
             data_shown_types = ['newest', 'any', 'none', 'middle']
+            colours = ['on', 'off']
             
 
             if row==0:
@@ -182,6 +192,18 @@ class Controls:
                         self.data_shown[column][0], self.data_shown[column][1], data_shown_types)
                     self.data_shown[column][2] = data_shown_types[self.data_shown[column][1]]
 
+            elif row==4:
+                if column==0:
+                    imgui.text("hits")
+                else:
+                    column -= 1
+                    clicked, self.colours_shown[column][1] = imgui.combo(
+                        self.colours_shown[column][0], self.colours_shown[column][1], colours)
+                    self.colours_shown[column][2] = not bool(self.colours_shown[column][1])
+                    self.impls[column].show_colour = self.colours_shown[column][2]
+
+
+
 
 
             if self.drop_downs[column-1][2].data_manager.mode == 'demo':
@@ -191,8 +213,7 @@ class Controls:
 
         imgui.separator()
         num_columns = 3
-        n_data = 0
-        num_rows = 4+n_data
+        num_rows = 5
 
         with imgui.begin_table("test", num_columns, imgui.TABLE_BORDERS_INNER_VERTICAL):
             imgui.table_setup_column("item", imgui.TABLE_COLUMN_WIDTH_FIXED)
@@ -241,16 +262,16 @@ class Controls:
             elif self.data_shown[column//2][-1] == 'none':
                 self.checked_data[column//2][row-1] = False
 
-            impls[column//2].data_manager.impl_data_is_checked = self.checked_data[column//2]
+            self.impls[column//2].data_manager.impl_data_is_checked = self.checked_data[column//2]
 
 
             
                 
             if any(self.checked_data[column//2]):
                 i = max(i for i, v in enumerate(self.checked_data[column//2]) if v == True)
-                impls[column//2].pt_selected = self.point_info[column//2][i]
+                self.impls[column//2].pt_selected = self.point_info[column//2][i]
             else:
-                impls[column//2].pt_selected = None
+                self.impls[column//2].pt_selected = None
 
 
 
@@ -258,8 +279,14 @@ class Controls:
 
             pass
 
-        impls = [self.impl_a, self.impl_b]
         header = ['impl_a', 'point_a', 'impl_b', 'point_b']
+        
+        
+        self.checked_data = [self.impl_a.data_manager.impl_data_is_checked,
+                                self.impl_b.data_manager.impl_data_is_checked]
+        self.point_info = [self.impl_a.data_manager.data,
+                            self.impl_b.data_manager.data]
+
 
 
         #table_height = np.maximum(len(self.impl_a_checked), len(self.impl_b_checked))

@@ -4,6 +4,8 @@ import imgui
 from OpenGL.GL import glViewport, glEnable, GL_SCISSOR_TEST, glScissor, glDisable
 from scintillator_display.compat.imgui_manager import ImguiManager
 
+import time
+
 
 class ViewportManager:
     _instance = None
@@ -18,6 +20,10 @@ class ViewportManager:
         if self._initialized:
             return
         self._initialized = True
+
+        self.pause_time = time.time()
+        self.paused = False
+        self.done = False
 
         self.width, self.height = (1280, 720)
         self.window = self.create_window((self.width, self.height), "Scintillating Chamber")
@@ -37,13 +43,20 @@ class ViewportManager:
         self.vp_resize(vp_resize_callback=True)
         glEnable(GL_SCISSOR_TEST)
 
-        while not glfw.window_should_close(self.window):
+        while (not glfw.window_should_close(self.window)) and (not self.done):
             imgui.new_frame()
 
-            for vp in self.viewports:
+
+            ##if not self.paused:
+            #for i, vp in enumerate(self.viewports):
+            #    if (not self.paused) or (i == self.controls_index):
+            #        glViewport(vp.xpos, vp.ypos, vp.width, vp.height)
+            #        glScissor(vp.xpos, vp.ypos, vp.width, vp.height)
+            #        vp.on_render()
+            for i, vp in enumerate(self.viewports):
                 glViewport(vp.xpos, vp.ypos, vp.width, vp.height)
                 glScissor(vp.xpos, vp.ypos, vp.width, vp.height)
-                vp.on_render()
+                vp.on_render(self.paused)
 
             imgui.render()
             self.imgui.impl.process_inputs()
@@ -83,6 +96,19 @@ class ViewportManager:
 
         glfw.set_key_callback(window, self._key_callback)
         glfw.set_char_callback(window, self._char_callback)
+
+        def pause_and_escape(window, key, scancode, action, mods):
+            if action == glfw.PRESS:
+                if key == glfw.KEY_ESCAPE:
+                    self.done = True
+                if (key == glfw.KEY_SPACE) and (not self.paused):
+                    self.paused = True
+                    self.pause_time = time.time()
+                if (key == glfw.KEY_SPACE) and (self.paused) and (time.time() - self.pause_time > 0.01):
+                    self.paused = False
+
+        # pause button
+        glfw.set_key_callback(window, pause_and_escape)
 
         return window
     

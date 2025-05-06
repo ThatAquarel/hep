@@ -25,7 +25,10 @@ from scintillator_display.compat.universal_values import MathDisplayValues
 
 
 class Window(MathDisplayValues):
-    def __init__(self):
+    def __init__(self, init_mode=('data', 'debug', 'demo')):
+
+        if init_mode not in ('data', 'debug', 'demo'):
+            init_mode='debug'
 
         self.zeroes_offset = np.array([
             self.SQUARE_LEN/2, self.SQUARE_LEN/2, -self.SPACE_BETWEEN_STRUCTURES/2
@@ -35,7 +38,8 @@ class Window(MathDisplayValues):
         self.arduino = ArduinoData()
         self.data_manager = Data(impl_constant=1, impl="b",
                             hull_colour=[0.5, 0, 0.5], hull_opacity=0.8,
-                            store_normals=True)
+                            store_normals=True,
+                            mode=init_mode)
         self.scintillator_structure = ScintillatorStructure(self.data_manager)
         self.xyz_axes = Axes(l=250)
 
@@ -57,6 +61,8 @@ class Window(MathDisplayValues):
             [0,0,-162,1,1,1,1],
             [0, 1, -162, 1,1,1,1],]).astype(np.float32)
         self.l_vao = create_vao(self.line)
+
+        self.show_colour = False
 
 
 
@@ -126,14 +132,15 @@ class Window(MathDisplayValues):
                 self.cam_shader.angling = False
 
 
-    def render_loop(self):
+    def render_loop(self, paused):
 
         self.cam_shader.begin_render_gl_actions()
 
 
 
 
-        self.data_manager.update_data(self.arduino)
+        if not paused:
+            self.data_manager.update_data(self.arduino)
 
             
 
@@ -141,9 +148,10 @@ class Window(MathDisplayValues):
 
 
 
-        self.scintillator_structure.reset_scintillator_colour()        
-        if self.pt_selected != None:
-            self.scintillator_structure.recolour_for_point(self.pt_selected)
+        self.scintillator_structure.reset_scintillator_colour()  
+        if self.show_colour:      
+            if self.pt_selected != None:
+                self.scintillator_structure.recolour_for_point(self.pt_selected)
         self.scintillator_structure.renew_vbo()
         self.scintillator_structure.draw_scintillator_structure()
 

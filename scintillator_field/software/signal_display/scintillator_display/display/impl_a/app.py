@@ -25,15 +25,10 @@ from scintillator_display.compat.universal_values import MathDisplayValues
 
 
 class App(MathDisplayValues):
-    def __init__(self):
-        """
-        Joule App: Main class for application
+    def __init__(self, init_mode=('data', 'debug', 'demo')):
 
-        Extends: CameraOrbitControls, ShaderRenderer
-
-        :param window_size: Initial window size (width, height)
-        :param name: Initial window name
-        """
+        if init_mode not in ('data', 'debug', 'demo'):
+            init_mode='debug'
 
 
         self.true_scaler = 0.1
@@ -54,7 +49,8 @@ class App(MathDisplayValues):
 
         self.data_manager = Data(impl_constant=self.true_scaler, impl="a",
                                  hull_colour=[1, 0, 0], hull_opacity=0.3,
-                                 store_normals=True)
+                                 store_normals=True,
+                                 mode=init_mode)
         self.plane = scintillator_structure.Plane(data_manager=self.data_manager, scale=scale, true_scaler=self.true_scaler)
         #self.xyz_axes = Axes(l=scale/2)
         self.xyz_axes = Axes(l=4*scale)
@@ -67,6 +63,8 @@ class App(MathDisplayValues):
 
         self.cam_shader.make_shader_program()
         self.cam_shader.setup_opengl()
+
+        self.show_colour = True
 
 
     def viewport_shenanigans(self, vm, ratio_num):
@@ -146,7 +144,7 @@ class App(MathDisplayValues):
 
 
     
-    def on_render_frame(self):
+    def on_render_frame(self, paused):
         """
         Render frame event callback
         """
@@ -155,7 +153,8 @@ class App(MathDisplayValues):
 
 
 
-        self.data_manager.update_data(self.arduino)
+        if not paused:
+            self.data_manager.update_data(self.arduino)
 
 
         #input for drawing
@@ -168,4 +167,4 @@ class App(MathDisplayValues):
         if self.show_axes:
             self.xyz_axes.draw()
         
-        self.plane.draw(self.pt_selected)
+        self.plane.draw(self.pt_selected, self.show_colour)
