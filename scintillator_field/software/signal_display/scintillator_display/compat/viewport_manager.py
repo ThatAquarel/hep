@@ -48,6 +48,7 @@ class ViewportManager:
 
 
             for i, vp in enumerate(self.viewports):
+                #print(vp.xpos, vp.ypos, vp.width, vp.height)
                 glViewport(vp.xpos, vp.ypos, vp.width, vp.height)
                 glScissor(vp.xpos, vp.ypos, vp.width, vp.height)
                 vp.on_render(self.paused)

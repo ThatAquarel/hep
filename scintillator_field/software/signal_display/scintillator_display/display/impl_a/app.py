@@ -156,13 +156,13 @@ class App(MathDisplayValues):
         if not paused:
             self.data_manager.update_data(self.arduino)
 
+        #if self.data_manager.mode == "debug":
+        #    print("app", len(self.data_manager.impl_data_is_checked))
 
-        #input for drawing
-        self.dataset_active = self.data_manager.impl_data_is_checked
 
         
         #draw elements
-        self.data_manager.draw_active_hulls(self.data_manager.data, self.dataset_active)
+        self.data_manager.draw_active_hulls(self.data_manager.data, self.data_manager.impl_data_is_checked)
 
         if self.show_axes:
             self.xyz_axes.draw()
