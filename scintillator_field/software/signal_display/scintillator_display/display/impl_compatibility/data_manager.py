@@ -17,6 +17,20 @@ import os
 
 import time
 
+
+class DataPoint:
+    def __init__(self, hull_bounds, cooked_data, bit24, time, mode, vao, draw_type, n):
+        self.hull_bounds = hull_bounds
+        self.scintillator_binary = cooked_data
+        self.int_number = bit24
+        self.trigger_time = time
+        self.display_mode = mode
+        self.hull_vao = vao
+        self.draw_type = draw_type
+        self.n_shapes = n
+
+
+
 class Data(MathDisplayValues):
     def __init__(self, impl_constant, impl, hull_colour, hull_opacity, store_normals, mode):
         
@@ -37,7 +51,7 @@ class Data(MathDisplayValues):
 
         
 
-        k = 0b101001100101010110101010
+        highest_vao = 0b101001100101010110101010
         f_sc_idx = [
         [(20,21),(16,17),(13,12),(9,8),(0,1),(5,4),],
         [(22,23),(18,19),(15,14),(11,10),(2,3),(6,7),],
@@ -53,7 +67,7 @@ class Data(MathDisplayValues):
                 1431655765,
                 #2**33 - 1,
                 0b101010101010101010101010,
-                k, # = 0b101001 100101 010110 101010
+                highest_vao, # = 0b101001 100101 010110 101010
 
                 0b100110101010011001011001,
                 0b011001011001101010100110,
@@ -93,7 +107,8 @@ class Data(MathDisplayValues):
                 data_lines = f.readlines()
 
                 # for old data txt
-                number_data = ["".join([i for i in line if i.isnumeric()]) for line in data_lines]            #number_data = ["".join([i for i in line if i.isnumeric()]) for line in data_lines]
+                number_data = ["".join([i for i in line if i.isnumeric()]) for line in data_lines]
+                #number_data = ["".join([i for i in line if i.isnumeric()]) for line in data_lines]
                 scintillator_data = [int(num, 2) for num in number_data if len(num)==24]
 
             return scintillator_data
@@ -111,22 +126,47 @@ class Data(MathDisplayValues):
 
             return scintillator_data
 
-        scintillator_data = demo_1()
 
-        for binary in scintillator_data:
-            self.add_point(binary)
-
-
-        self.demo_2025_04_09_data = self.data
-        self.demo_2025_04_09_is_checked = self.impl_data_is_checked
+        
+        self.demo_data, self.demo_is_checked = self.create_points_on_initialisation(demo_1())
         self.demo_index = 4
-        self.demo_index = 30
-        self.demo_index = 74
-        #self.demo_index = 100
         self.most_recent_demo_update = time.time()
         self.demo_wait_time = 2
 
+
+        self.debug_data, self.debug_is_checked = self.create_points_on_initialisation(self.test_data)
+
+        self.collected_data = []
+        self.collected_is_checked = []
+
+        highest_vao = 0
+
+        for i in self.debug_data:
+            if i.hull_vao > highest_vao:
+                highest_vao = i.hull_vao
+        for j in self.demo_data:
+            if j.hull_vao > highest_vao:
+                highest_vao = j.hull_vao
+
+        #print(highest_vao)
+
+
+
+    
+    def create_points_on_initialisation(self, ints):
+        if type(ints) == list:
+            for num in ints:
+                self.add_point(num)
+        elif type(ints) == int:
+            self.add_point(num)
+        else:
+            raise TypeError(f'{ints} in type {type(ints)} is not a supported type yet')
+        
+        data_list = self.data
+        checked_list = self.impl_data_is_checked
         self.reset_data_checks()
+
+        return data_list, checked_list
 
 
 
@@ -143,12 +183,20 @@ class Data(MathDisplayValues):
                 data = arduino.get_data_from_arduino()
                 for data_point in data:
                     self.add_point(data_point)
+                self.collected_data.extend(self.data)
+                self.collected_is_checked.extend(self.impl_data_is_checked)
+            self.data = self.collected_data
+            self.impl_data_is_checked = self.collected_data
 
         elif self.mode == 'debug':
-            if self.data == []:
-                debug_data = self.test_data
-                for data_point in debug_data:
-                    self.add_point(data_point)
+
+            self.data = self.debug_data
+            if any(self.impl_data_is_checked):
+                pass # center + 4 on each side
+            else:
+                self.impl_data_is_checked = self.debug_is_checked
+
+            #print("k", len(self.data), len(self.impl_data_is_checked))
 
         elif self.mode == 'demo':
 
@@ -157,19 +205,20 @@ class Data(MathDisplayValues):
                 self.most_recent_demo_update=time.time()
 
 
-
             def get_i_range(item):
                 # gets indices of list for modulo-ed demo index, plus 4 on either side
-                return [(self.demo_index+j)%len(item) for j in range(-4, 5+1)]
+                return [(self.demo_index+j)%len(item) for j in range(-4, 5)]
 
 
-            self.data = [self.demo_2025_04_09_data[i] for i in get_i_range(self.demo_2025_04_09_data)]
+            self.data = [self.demo_data[i] for i in get_i_range(self.demo_data)]
 
             if any(self.impl_data_is_checked):
                 pass # center + 4 on each side
             else:
-                self.impl_data_is_checked = [self.demo_2025_04_09_is_checked[i] for i in get_i_range(self.demo_2025_04_09_is_checked)]
+                self.impl_data_is_checked = [self.demo_is_checked[i] for i in get_i_range(self.demo_is_checked)]
 
+            #print("start?", self.impl, len(self.data), len(self.impl_data_is_checked),
+            #      len(get_i_range(self.demo_2025_04_09_data)), len(range(-4, 5)))
 
 
 
@@ -258,10 +307,16 @@ class Data(MathDisplayValues):
 
         bit24 = raw_data & 0xffffff
                 
-        point = [new_hull_bounds, cooked_data, bit24, time, self.mode]
+        vao, n = self.create_hull_data_and_vao(new_hull_bounds)
 
-
-        self.data.append(point)
+        self.data.append(DataPoint(new_hull_bounds,
+                                   cooked_data,
+                                   bit24,
+                                   time,
+                                   self.mode,
+                                   vao,
+                                   GL_TRIANGLES,
+                                   n))
         self.impl_data_is_checked.append(False)
 
     def transform_coordinates_impl_a(self,data):
@@ -405,15 +460,14 @@ class Data(MathDisplayValues):
         n = hull_data.shape[0]
         return hull_vao, n
     
-    def draw_active_hulls(self, data_points, data_active):
+    def draw_active_hulls(self, data_points, data_active) -> DataPoint:
         if data_points == []:
             return
         else:
             for i, j in enumerate(data_active):
                 if j == True:
-                    hull_bounds = data_points[i][0]
-                    vao, n = self.create_hull_data_and_vao(hull_bounds)
-                    draw_vao(vao, GL_TRIANGLES, n)
+                    point : DataPoint = data_points[i]
+                    draw_vao(point.hull_vao, point.draw_type, point.n_shapes)
 
     
     def generate_data_csv(self):

@@ -142,10 +142,12 @@ class Window(MathDisplayValues):
         if not paused:
             self.data_manager.update_data(self.arduino)
 
+        #if self.data_manager.mode == "debug":
+        #    print("window", len(self.data_manager.impl_data_is_checked))
+
             
 
         self.data_manager.draw_active_hulls(self.data_manager.data, self.data_manager.impl_data_is_checked)
-
 
 
         self.scintillator_structure.reset_scintillator_colour()  
@@ -163,3 +165,5 @@ class Window(MathDisplayValues):
 
         draw_vao(self.p_vao, GL_POINTS, 1)
         #draw_vao(self.l_vao, GL_TRIANGLES, 3)
+        #if self.data_manager.mode == "debug":
+        #    print("window_2", len(self.data_manager.impl_data_is_checked))

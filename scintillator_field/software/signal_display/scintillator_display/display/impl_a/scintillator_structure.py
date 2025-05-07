@@ -124,7 +124,7 @@ class Plane(MathDisplayValues):
             y_grey = -1
             self.set_colour_default()
         else:
-                cooked_data = pt_selected[1]
+                cooked_data = pt_selected.scintillator_binary
                 x_scintillators = cooked_data[0]
                 y_scintillators = cooked_data[1]
         

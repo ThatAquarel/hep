@@ -9,7 +9,7 @@ import time
 
 import numpy as np
 
-from scintillator_display.compat.viewport_manager import ViewportManager
+from scintillator_display.display.impl_compatibility.data_manager import DataPoint
 
 
 class Controls:
@@ -239,21 +239,29 @@ class Controls:
         
         def set_data_choices(row, column):
 
+            #print(f"c1_01 {start_idx_012}", len(self.checked_data[0]), len(self.checked_data[1]))
+
 
             self.checked_data = [self.impl_a.data_manager.impl_data_is_checked,
-                                self.impl_b.data_manager.impl_data_is_checked]
-            self.point_info = [self.impl_a.data_manager.data,
-                            self.impl_b.data_manager.data]
+                                 self.impl_b.data_manager.impl_data_is_checked]
+            self.point_info   = [self.impl_a.data_manager.data,
+                                 self.impl_b.data_manager.data]
 
 
             len_info = [len(self.point_info[0]), len(self.point_info[1])]
+
+            #print(f"c1_02 {start_idx_012}", len(self.checked_data[0]), len(self.checked_data[1]))
+
 
             #if row-1<=len_info[column//2]:
             if c%2==0: # checkbox
                 _, self.checked_data[column//2][row-1] = imgui.checkbox(
                     f"##{row}{column}", self.checked_data[column//2][row-1])
             else: # point info
-                imgui.text(f'{self.point_info[column//2][row-1][-3]}')
+                imgui.text(f'{self.point_info[column//2][row-1].int_number}')
+
+            #print(f"c1_03 {start_idx_012}", len(self.checked_data[0]), len(self.checked_data[1]))
+
 
             if self.data_shown[column//2][-1] == 'newest':
                 if row==len_info[column//2]: # -1 to zero index it
@@ -261,15 +269,39 @@ class Controls:
                 else:
                     self.checked_data[column//2][row-1] = False
 
+                #print(f"c1_04 {start_idx_012}", len(self.checked_data[0]), len(self.checked_data[1]))
+
+
             elif self.data_shown[column//2][-1] == 'middle':
-                self.checked_data[column//2] = [
-                    *(False,)*4, True, *(False,)*4]
+                #self.checked_data[column//2] = [
+                #    *(False,)*4, True, *(False,)*4]
+                num_items = len(self.checked_data[column//2])
+                #if num_items == 10:
+                #    raise Exception
+                
+                if num_items%2==0 :
+                    # even
+                    self.checked_data[column//2] = [
+                        *(False,)*(num_items//2), True, *(False,)*(num_items - num_items//2 - 1)]
+                    pass
+                else:
+                    # odd
+                    self.checked_data[column//2] = [
+                        *(False,)*(num_items//2), True, *(False,)*(num_items//2)]
+                    pass
+
+                #print(f"c1_05 {start_idx_012}", len(self.checked_data[0]), len(self.checked_data[1]))
+
 
             elif self.data_shown[column//2][-1] == 'none':
                 self.checked_data[column//2][row-1] = False
 
+                #print(f"c1_06 {start_idx_012}", len(self.checked_data[0]), len(self.checked_data[1]))
+
+
             self.impls[column//2].data_manager.impl_data_is_checked = self.checked_data[column//2]
 
+            #print(f"c1_07 {start_idx_012}", len(self.checked_data[0]), len(self.checked_data[1]))
 
             
                 
@@ -280,6 +312,7 @@ class Controls:
                 self.impls[column//2].pt_selected = None
 
 
+            #print(f"c1_07 {start_idx_012}", len(self.checked_data[0]), len(self.checked_data[1]))
 
 
 
@@ -289,14 +322,16 @@ class Controls:
         
         
         self.checked_data = [self.impl_a.data_manager.impl_data_is_checked,
-                                self.impl_b.data_manager.impl_data_is_checked]
-        self.point_info = [self.impl_a.data_manager.data,
-                            self.impl_b.data_manager.data]
+                             self.impl_b.data_manager.impl_data_is_checked]
+        self.point_info   = [self.impl_a.data_manager.data,
+                             self.impl_b.data_manager.data]
 
 
+        start_idx_012 = 0
 
         #table_height = np.maximum(len(self.impl_a_checked), len(self.impl_b_checked))
         table_height = np.maximum(len(self.checked_data[0]), len(self.checked_data[1]))+1
+        #print("c", len(self.checked_data[0]), len(self.checked_data[1]))
         if table_height != 0:
             imgui.text("shown data points")
             imgui.separator()
@@ -314,8 +349,13 @@ class Controls:
                         imgui.text(header[c])
                     else:
                         if r-1 < len(self.checked_data[c//2]):
-                            set_data_choices(r, c)
+                            set_data_choices(r, c) # IT HAPPENS HERE (turning 10 into 9)
 
+                    start_idx_012 += 1
+
+        #print("c2", len(self.checked_data[0]), len(self.checked_data[1]))
+        #if self.impls[1].data_manager.mode == "debug" and len(self.checked_data[0])==10:
+        #    raise Exception
 
         imgui.end()
 
