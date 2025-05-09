@@ -22,6 +22,7 @@ def parse_data(data_dir):
         with open(log_file, "r") as handle:
             lines = np.array(handle.readlines())
             lines = lines[lines != "start recorder\n"]
+            lines = lines[~np.strings.startswith(lines, "restart")]
 
             trigger_data.append(lines[::4])
 
@@ -204,7 +205,7 @@ def graph_alt(df):
 
 
 def main():
-    df = parse_data("scintillator_field/data/sc_data*")
+    df = parse_data("scintillator_field/data/11_incline_west/sc_data*")
 
     avg_analysis(df)
     sensor_p_analysis(df)
