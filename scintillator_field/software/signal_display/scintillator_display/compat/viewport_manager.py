@@ -78,6 +78,7 @@ class ViewportManager:
         glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
 
         # create window and context
+        # window = glfw.create_window(*window_size, name, glfw.get_primary_monitor(), None) # for full screen
         window = glfw.create_window(*window_size, name, None, None)
         if not window:
             glfw.terminate()
