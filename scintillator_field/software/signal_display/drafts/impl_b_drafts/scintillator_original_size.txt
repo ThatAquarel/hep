@@ -1,0 +1,14 @@
+
+        #self.setup_structure(
+        #                num_doubles      =               3, # 3 each
+        #                x_i              =               0,
+        #                y_i              =               0,
+        #                z_i              =               0,
+        #                square_side_len  =               8, # 120 mm
+        #                width_per_one    =               1, # 10mm
+        #                dead_space       =               0.2, # 2 mm
+        #                c1               = [1, 0.75, 0.75],
+        #                c2               = [0.75, 1, 0.75],
+        #                alpha            =             0.8,
+        #                in_between_space =               8, # 162 mm
+        #                )

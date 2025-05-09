@@ -1,4 +1,4 @@
-
+from scintillator_display.compat.universal_values import MathDisplayValues
 '''
 
 Algorithm that takes in which scintillators lit up and returns a convex hull to bound the muon path
@@ -22,49 +22,33 @@ UPCOMING CHANGES : (In order of importance)
 Unit x is mm
 '''   
 
-class ConvexHullDetection:
-    def __init__(self):
+class ConvexHullDetection(MathDisplayValues):
+    def __init__(self, impl_constant=1):
         pass
 
-        # Global variables
-        self.level_count = 1
-        self.n = 2*60 # Sideview length of scintillator in unit x
+        # constant multiplication from each impl
+        self.impl_constant = impl_constant
 
-
-        # These values are used for x perspective
-        self.upper_side_views = [(0, self.n)] # (start, end) coordinates for each level 
-        self.lower_side_views = [(0, self.n)]
-
-        self.plate_thickness = 10 # In unit x
-        self.intra_level_gap = 2 #Actual physical gap between each level, in unit x
-        self.inter_level_gap = self.plate_thickness + self.intra_level_gap # Adjusted inter level gap for computation 
-
-        self.half_gap_size =  162/2# In unit x
-        self.top_half_gap = self.half_gap_size + self.plate_thickness + self.intra_level_gap
-        self.bottom_half_gap = self.half_gap_size
-        self.gap_line = 0
-        self.highest_point = self.half_gap_size + 5*self.intra_level_gap + 6*self.plate_thickness # Values custom set to this detector
-        self.lowest_point = -self.highest_point
+        self.reset_to_initial_values()
 
     def reset_to_initial_values(self):
         # Global variables
         self.level_count = 1
-        self.n = 2*60 # Sideview length of scintillator in unit x
-
+        self.n = self.SQUARE_LEN * self.impl_constant # Sideview length of scintillator in unit x
 
         # These values are used for x perspective
         self.upper_side_views = [(0, self.n)] # (start, end) coordinates for each level 
         self.lower_side_views = [(0, self.n)]
 
-        self.plate_thickness = 10 # In unit x
-        self.intra_level_gap = 2 #Actual physical gap between each level, in unit x
+        self.plate_thickness = self.SCINTILLATOR_THICKNESS * self.impl_constant # In unit x
+        self.intra_level_gap = self.SPACE_BETWEEN_SCINTILLATORS * self.impl_constant #Actual physical gap between each level, in unit x
         self.inter_level_gap = self.plate_thickness + self.intra_level_gap # Adjusted inter level gap for computation 
 
-        self.half_gap_size =  162/2# In unit x
+        self.half_gap_size =  self.SPACE_BETWEEN_STRUCTURES / 2 *self.impl_constant# In unit x
         self.top_half_gap = self.half_gap_size + self.plate_thickness + self.intra_level_gap
         self.bottom_half_gap = self.half_gap_size
         self.gap_line = 0
-        self.highest_point = self.half_gap_size + 5*self.intra_level_gap + 6*self.plate_thickness # Values custom set to this detector
+        self.highest_point = self.half_gap_size + self.NUM_SMALL_SPACES*self.intra_level_gap + self.NUM_SCINTILLATORS_PER_STRUCTURE*self.plate_thickness # Values custom set to this detector
         self.lowest_point = -self.highest_point
 
     def update_perspective_values(self):
@@ -148,10 +132,7 @@ class ConvexHullDetection:
                         (x_left_bound[1], z_right_bound[1], self.lowest_point), (x_left_bound[1], z_left_bound[1], self.lowest_point),
                         (x_right_bound[1], z_right_bound[1], self.lowest_point), (x_right_bound[1], z_left_bound[1], self.lowest_point)]
         
-        fan_out_points = [(bounding_points[0], bounding_points[-1]), (bounding_points[1], bounding_points[-2]),
-                        (bounding_points[2], bounding_points[-3]), (bounding_points[3], bounding_points[-4])]
-        
-        return bounding_points, fan_out_points
+        return bounding_points
 
     def group_corresponding_levels(self, levels):
         '''
@@ -330,10 +311,10 @@ class ConvexHullDetection:
         for i in range(2):
             z_bounds[i] = ((self.n - z_bounds[i][0][0], z_bounds[i][0][1]), (self.n - z_bounds[i][1][0], z_bounds[i][1][1]))
 
-        hull_bounds, fan_out_lines = self.hull_coordinates(x_bounds, z_bounds)
+        hull_bounds = self.hull_coordinates(x_bounds, z_bounds)
 
         # Reset initial values before next use
         self.reset_to_initial_values()
 
-        return hull_bounds, fan_out_lines
+        return hull_bounds
 

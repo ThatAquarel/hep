@@ -1,2 +1,5 @@
 *.ini
 *.csv
+*.mdp
+**/screenshots
+**/venv
